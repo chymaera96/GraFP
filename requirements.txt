@@ -1,0 +1,9 @@
+torch
+torchaudio
+librosa
+torch-audiomentations
+soundfile
+faiss-gpu
+tensorboard
+PyYAML
+prettytable
