@@ -48,6 +48,7 @@ class Analyzer(object):
         self.oversamp = cfg['oversamp']
         self.hpf_pole = cfg['hpf_pole']
 
+
     def spreadpeaksinvector(self, vector, width=4.0):
         """ Create a blurred version of vector, where each of the local maxes
             is spread by a gaussian with SD <width>.
@@ -150,7 +151,7 @@ class Analyzer(object):
             sthresh = a_dec * sthresh
         return peaks
 
-    def find_peaks(self, d, sr):
+    def find_peaks(self, d=None, sr=None, sgram=None):
         """ Find the local peaks in the spectrogram as basis for fingerprints.
             Returns a list of (time_frame, freq_bin) pairs.
 
@@ -161,23 +162,38 @@ class Analyzer(object):
           sr - int
             Sampling rate of d (not used)
 
+        sgram - np.array of float
+            Spectrogram of d, as returned by librosa.stft
+
         :returns:
           pklist - list of (int, int)
             Ordered list of landmark peaks found in STFT.  First value of
             each pair is the time index (in STFT frames, i.e., units of
             n_hop/sr secs), second is the FFT bin (in units of sr/n_fft
             Hz).
+        
+          peaks - np.array of int
+            Constellation map of peaks in sgram.  peaks[i, j] is True if the
+            spectrogram has a peak at time i and frequency j.
         """
-        if len(d) == 0:
-            return []
+
+        if d is None and sgram is None:
+            raise ValueError("find_peaks: must specify d or sgram")
+
+        if sgram is not None:
+            # we've been given a spectrogram, so we don't need to calculate it
+            pass
+        else:
+            if len(d) == 0:
+                return []
+            mywin = np.hanning(self.n_fft + 2)[1:-1]
+            sgram = np.abs(librosa.stft(y=d, n_fft=self.n_fft,
+                                    hop_length=self.n_hop,
+                                    window=mywin))
 
         # masking envelope decay constant
         a_dec = (1 - 0.01 * (self.density * np.sqrt(self.n_hop / 352.8) / 35)) ** (1 / self.oversamp)
-        # Take spectrogram
-        mywin = np.hanning(self.n_fft + 2)[1:-1]
-        sgram = np.abs(librosa.stft(y=d, n_fft=self.n_fft,
-                                 hop_length=self.n_hop,
-                                 window=mywin))
+
         sgrammax = np.max(sgram)
         if sgrammax > 0.0:
             sgram = np.log(np.maximum(sgram, np.max(sgram) / 1e6))
@@ -220,9 +236,36 @@ class Analyzer(object):
             print(message, "skipping")
             d = []
             sr = self.target_sr
-        # Store duration in a global because it's hard to handle
-        dur = len(d) / sr
+
         peaks, pklist = self.find_peaks(d, sr)
 
         return peaks, pklist
 
+
+
+def peaks2mask(peaks, patch_shape=(8, 6)):
+    """ Divide the spectrogram into patch regions. If the patch contains a peak,
+        set the mask to 1. Otherwise, set the mask to 0."""
+    
+    mask = peaks.copy()
+
+    # Divide mask in to 8x8 regions
+    h, w = peaks.shape
+    nrows = patch_shape[0]
+    ncols = patch_shape[1]
+
+    assert h % nrows == 0, f"Height {h} is not divisible by nrows {nrows}"
+    assert w % ncols == 0, f"Width {w} is not divisible by ncols {ncols} "
+
+    mask = mask.reshape(h // nrows, nrows, -1, ncols).swapaxes(1, 2).reshape(-1, nrows, ncols)
+
+    # Set mask to 1 if patch contains a peak
+    for ix in range(mask.shape[0]):
+        if mask[ix].sum() > 0:
+            mask[ix] = 1
+        else:
+            mask[ix] = 0
+
+    # Reshape mask to original shape
+    mask = mask.reshape(h // nrows, -1, nrows, ncols).swapaxes(1, 2).reshape(h, w)
+    return mask
