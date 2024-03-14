@@ -1,0 +1,52 @@
+# Dataset directories
+data_dir: 'data'
+train_dir: '/import/c4dm-datasets-ext/fma/fma/data/fma_medium'
+val_dir: 'data/valid'
+ir_dir: 'data/aug/ir'
+noise_dir: 'data/aug/noise'
+
+# Model input parameters
+arch: 'grafp'
+fs: 11025
+dur: 0.96
+offset: 0.2
+norm: 0.95
+win_len: 400
+hop_len: 256
+n_mels: 64
+n_fft: 512
+hpf_pole: 0.98  # spectrogram enhancement
+density: 100.0
+f_sd : 5.0   # how wide to spreak peaks
+maxpksperframe: 20   # maximum number of peaks per frame
+
+
+# Dataset and Model hyperparameters
+train_sz: 10000
+val_sz: 500
+bsz_train: 256
+tau: 0.05
+lr: 5.0e-5
+min_lr: 3.0e-6
+n_epochs: 220
+T_max: 250
+
+# Augmentation hyperparameters
+n_frames: 42 # depends on the spectrogram parameters
+overlap: 0.5
+tr_snr: [0, 10]
+val_snr: [0, 10]
+test_snr: [0, 10]
+# time_mask: 48
+# freq_mask: 32
+noise_prob: 0.5
+ir_prob: 0.5
+
+# Model architecture
+d: 128
+h: 1024
+u: 32
+
+# Database sizes (validation)
+n_dummy: 100
+n_query: 20

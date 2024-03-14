@@ -40,7 +40,7 @@ class Analyzer(object):
             self.density = density
         self.target_sr = cfg['fs']
         self.n_fft = cfg['n_fft']
-        self.n_hop = cfg['n_hop']
+        self.n_hop = cfg['hop_len']
         # how wide to spreak peaks
         self.f_sd = cfg['f_sd']
         # Maximum number of local maxima to keep per frame
