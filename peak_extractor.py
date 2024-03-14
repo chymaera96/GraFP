@@ -247,8 +247,6 @@ def peaks2mask(peaks, patch_shape=(8, 6)):
     """ Divide the spectrogram into patch regions. If the patch contains a peak,
         set the mask to 1. Otherwise, set the mask to 0."""
     
-    mask = peaks.copy()
-
     # Divide mask in to 8x8 regions
     h, w = peaks.shape
     nrows = patch_shape[0]
@@ -257,7 +255,7 @@ def peaks2mask(peaks, patch_shape=(8, 6)):
     assert h % nrows == 0, f"Height {h} is not divisible by nrows {nrows}"
     assert w % ncols == 0, f"Width {w} is not divisible by ncols {ncols} "
 
-    mask = mask.reshape(h // nrows, nrows, -1, ncols).swapaxes(1, 2).reshape(-1, nrows, ncols)
+    mask = peaks.reshape(h // nrows, nrows, -1, ncols).swapaxes(1, 2).reshape(-1, nrows, ncols)
 
     # Set mask to 1 if patch contains a peak
     for ix in range(mask.shape[0]):
