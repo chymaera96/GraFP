@@ -14,7 +14,7 @@
 fs : 11025
 oversamp: 1
 n_fft : 512
-n_hop : 256
+hop_len : 256
 hpf_pole: 0.98  # spectrogram enhancement
 density: 100.0
 f_sd : 5.0   # how wide to spreak peaks
