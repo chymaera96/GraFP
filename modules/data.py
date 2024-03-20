@@ -64,6 +64,9 @@ class NeuralfpDataset(Dataset):
             if self.transform is not None:
                 a_i, a_j = self.transform(a_i, a_j)
 
+            if a_i is None or a_j is None:
+                return self[idx + 1]
+            
             offset_mod = int(self.sample_rate*(self.offset) + clip_frames)
             if len(audio_resampled) < offset_mod:
                 print(len(audio_resampled), offset_mod)

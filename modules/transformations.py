@@ -14,7 +14,7 @@ class GPUTransformNeuralfp(nn.Module):
         self.sample_rate = cfg['fs']
         self.ir_dir = ir_dir
         self.noise_dir = noise_dir
-        self.n_frames = cfg['n_frames']
+        self.n_peaks = cfg['n_peaks']
         self.overlap = cfg['overlap']
         self.arch = cfg['arch']
         self.train = train
@@ -62,21 +62,23 @@ class GPUTransformNeuralfp(nn.Module):
                 # Increase length of x_j by 1 sample
                 x_j = F.pad(x_j, (0,1))
                 x_j = self.train_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate).flatten()
+                
             X_i = self.melspec(x_i)
-            X_i = F.pad(X_i, (self.n_frames - X_i.size(-1), 0)).numpy()
-            p_i, _ = analyzer.find_peaks(sgram=X_i)
-            X_i = peaks2mask(p_i) * X_i 
-            X_i = torch.from_numpy(X_i)
+            _, p_i = analyzer.find_peaks(sgram=X_i)
+            p_i = torch.Tensor(p_i)
+            if not p_i.shape[0] < self.n_peaks:
+                return None, None
+            p_i = torch.cat((p_i, torch.zeros(self.n_peaks - p_i.shape[0], 3)))
+        
 
             X_j = self.melspec(x_j)
-            X_j = F.pad(X_j, (self.n_frames - X_j.size(-1), 0)).numpy()
-            p_j, _ = analyzer.find_peaks(sgram=X_j)
-            X_j = peaks2mask(p_j) * X_j
-            X_j = torch.from_numpy(X_j)
+            _, p_j = analyzer.find_peaks(sgram=X_j)
+            p_j = torch.Tensor(p_j)
+            p_j = torch.cat((p_j, torch.zeros(self.n_peaks - p_j.shape[0], 3)))
      
         else:
             X_i = self.melspec(x_i.squeeze(0)).squeeze(0).numpy()
-            X_i = self.spec2patches(X_i, analyzer)
+            p_i = self.spec2points(X_i, analyzer)
 
             try:
                 x_j = self.val_transform(x_j, sample_rate=self.sample_rate)
@@ -85,20 +87,25 @@ class GPUTransformNeuralfp(nn.Module):
                 x_j = self.val_transform(x_j, sample_rate=self.sample_rate)
 
             X_j = self.melspec(x_j.squeeze(0)).squeeze(0).numpy()
-            X_j = self.spec2patches(X_j, analyzer)
+            p_j = self.spec2points(X_j, analyzer)
 
-        return X_i, X_j
+        return p_i, p_j
     
-    def spec2patches(self, X, analyzer):
+    def spec2points(self, X, analyzer):
         """
-        Spectrogram --> Peak computation --> Segmentation --> Masking --> Patches
+        Spectrogram --> Segmentation --> Peaks --> batch of point clouds
         """
-        p, _ = analyzer.find_peaks(sgram=X)
         X = torch.from_numpy(X).transpose(0,1)
-        p = torch.from_numpy(p).transpose(0,1)
         X = X.unfold(0, size=self.n_frames, step=int(self.n_frames*(1-self.overlap)))
-        p = p.unfold(0, size=self.n_frames, step=int(self.n_frames*(1-self.overlap)))
+        p_list = []
         for i in range(X.shape[0]):
-            X[i] = peaks2mask(p[i]) * X[i]
+            _, p = analyzer.find_peaks(sgram=X[i].numpy())
+            p_list.append(torch.Tensor(p))
 
-        return X.unsqueeze(1)
+        max_p = max(arr.shape[0] for arr in p_list)
+        for i in range(len(p_list)):
+            p_list[i] = torch.cat((p_list[i], torch.zeros(max_p - p_list[i].shape[0], 3)))
+
+        p = torch.stack(p_list)
+
+        return p

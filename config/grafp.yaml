@@ -8,18 +8,18 @@ noise_dir: 'data/aug/noise'
 # Model input parameters
 arch: 'grafp'
 fs: 11025
-dur: 0.96
+dur: 1.0
 offset: 0.2
 norm: 0.95
 win_len: 400
-hop_len: 256
+hop_len: 128
 n_mels: 64
 n_fft: 512
 hpf_pole: 0.98  # spectrogram enhancement
-density: 100.0
-f_sd : 5.0   # how wide to spreak peaks
-maxpksperframe: 20   # maximum number of peaks per frame
-
+density: 250.0
+f_sd : 1.0   # how wide to spreak peaks
+maxpksperframe: 64   # maximum number of peaks per frame
+n_peaks: 512  # max number of peaks to consider
 
 # Dataset and Model hyperparameters
 train_sz: 10000

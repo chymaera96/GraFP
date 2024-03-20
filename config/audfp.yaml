@@ -14,8 +14,8 @@
 fs : 11025
 oversamp: 1
 n_fft : 512
-hop_len : 256
+hop_len : 128
 hpf_pole: 0.98  # spectrogram enhancement
-density: 100.0
-f_sd : 5.0   # how wide to spreak peaks
-maxpksperframe: 20   # maximum number of peaks per frame
+density: 250.0
+f_sd : 1.0   # how wide to spreak peaks
+maxpksperframe: 64   # maximum number of peaks per frame

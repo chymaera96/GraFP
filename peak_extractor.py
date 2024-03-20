@@ -151,7 +151,7 @@ class Analyzer(object):
             sthresh = a_dec * sthresh
         return peaks
 
-    def find_peaks(self, d=None, sr=None, sgram=None):
+    def find_peaks(self, d=None, sr=None, sgram=None, backward=False):
         """ Find the local peaks in the spectrogram as basis for fingerprints.
             Returns a list of (time_frame, freq_bin) pairs.
 
@@ -164,6 +164,9 @@ class Analyzer(object):
 
         sgram - np.array of float
             Spectrogram of d, as returned by librosa.stft
+
+        backward - bool
+            If True, do a backward pass to prune peaks.  If False, don't.
 
         :returns:
           pklist - list of (int, int)
@@ -190,7 +193,7 @@ class Analyzer(object):
             sgram = np.abs(librosa.stft(y=d, n_fft=self.n_fft,
                                     hop_length=self.n_hop,
                                     window=mywin))
-
+        logmelspec = librosa.amplitude_to_db(sgram, ref=np.max)
         # masking envelope decay constant
         a_dec = (1 - 0.01 * (self.density * np.sqrt(self.n_hop / 352.8) / 35)) ** (1 / self.oversamp)
 
@@ -211,14 +214,16 @@ class Analyzer(object):
         peaks = self._decaying_threshold_fwd_prune(sgram, a_dec)
         # Further prune these peaks working backwards in time, to remove small peaks
         # that are closely followed by a large peak
-        peaks = self._decaying_threshold_bwd_prune_peaks(sgram, peaks, a_dec)
+        if backward:
+            peaks = self._decaying_threshold_bwd_prune_peaks(sgram, peaks, a_dec)
         # build a list of peaks we ended up with
         scols = np.shape(sgram)[1]
         pklist = []
         for col in range(scols):
             for bin_ in np.nonzero(peaks[:, col])[0]:
-                pklist.append((col, bin_))
-        return peaks, pklist
+                amp = logmelspec[bin_, col]
+                pklist.append([col/sgram.shape[1], bin_/sgram.shape[0], amp])
+        return peaks, np.array(pklist)
 
 
     def wavfile2peaks(self, filename):
