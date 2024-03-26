@@ -26,7 +26,7 @@ def load_index(cfg, data_dir, ext=['wav','mp3'], mode="train"):
         with open(train_json_path, 'r') as fp:
             train = json.load(fp)
     
-    elif mode =="test" and os.path.exists(valid_json_path):
+    elif mode != "train" and os.path.exists(valid_json_path):
         print(f"Valid index exists. Loading indices from {valid_json_path}")
         with open(valid_json_path, 'r') as fp:
             valid = json.load(fp)
