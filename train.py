@@ -43,7 +43,7 @@ parser.add_argument('--seed', default=42, type=int,
                     help='seed for initializing training. ')
 parser.add_argument('--ckp', default='test', type=str,
                     help='checkpoint_name')
-parser.add_argument('--encoder', default='sfnet', type=str)
+parser.add_argument('--encoder', default='grafp', type=str)
 parser.add_argument('--n_dummy_db', default=None, type=int)
 parser.add_argument('--n_query_db', default=None, type=int)
 
