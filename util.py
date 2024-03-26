@@ -21,12 +21,12 @@ def load_index(cfg, data_dir, ext=['wav','mp3'], mode="train"):
     train_json_path = os.path.join('data', data_dir.split('/')[-1] + "_train.json")
     valid_json_path = os.path.join('data', data_dir.split('/')[-1] + "_valid.json")
 
-    if os.path.exists(train_json_path):
+    if mode == "train" and os.path.exists(train_json_path):
         print(f"Train index exists. Loading indices from {train_json_path}")
         with open(train_json_path, 'r') as fp:
             train = json.load(fp)
     
-    if os.path.exists(valid_json_path):
+    elif mode =="test" and os.path.exists(valid_json_path):
         print(f"Valid index exists. Loading indices from {valid_json_path}")
         with open(valid_json_path, 'r') as fp:
             valid = json.load(fp)
@@ -234,7 +234,10 @@ def main():
 
     path = '/import/c4dm-datasets-ext/fma/fma/data/fma_medium'
     cfg = {'train_sz': 200, 'val_sz': 20}
-    fname = load_index(cfg, path, mode='train')
+    train = load_index(cfg, path, mode='train')
+    valid = load_index(cfg, path, mode='valid')
+    print(len(train))
+    print(len(valid))
 
 
 if __name__ == '__main__':
