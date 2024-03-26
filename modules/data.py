@@ -22,8 +22,12 @@ class NeuralfpDataset(Dataset):
         self.sample_rate = cfg['fs']
         self.dur = cfg['dur']
         self.n_frames = cfg['n_frames']
-        self.size = cfg['train_sz'] if train else cfg['val_sz']
-        self.filenames = load_index(path, max_len=self.size)
+
+        if train:
+            self.filenames = load_index(cfg, path, mode="train")
+        else:
+            self.filenames = load_index(cfg, path, mode="valid")
+
         print(f"Loaded {len(self.filenames)} files from {path}")
         self.ignore_idx = []
   

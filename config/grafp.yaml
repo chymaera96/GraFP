@@ -1,7 +1,8 @@
 # Dataset directories
 data_dir: 'data'
 train_dir: '/import/c4dm-datasets-ext/fma/fma/data/fma_medium'
-val_dir: 'data/valid'
+# val_dir: 'data/valid'
+val_dir: '/import/c4dm-datasets-ext/fma/fma/data/fma_medium'
 ir_dir: 'data/aug/ir'
 noise_dir: 'data/aug/noise'
 
@@ -22,7 +23,7 @@ maxpksperframe: 64   # maximum number of peaks per frame
 n_peaks: 512  # max number of peaks to consider
 
 # Dataset and Model hyperparameters
-train_sz: 10000
+train_sz: 15000
 val_sz: 500
 bsz_train: 256
 tau: 0.05
