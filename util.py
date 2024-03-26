@@ -235,9 +235,9 @@ def main():
     path = '/import/c4dm-datasets-ext/fma/fma/data/fma_medium'
     cfg = {'train_sz': 200, 'val_sz': 20}
     train = load_index(cfg, path, mode='train')
-    # valid = load_index(cfg, path, mode='valid')
+    valid = load_index(cfg, path, mode='valid')
     print(len(train))
-    # print(len(valid))
+    print(len(valid))
 
 
 if __name__ == '__main__':
