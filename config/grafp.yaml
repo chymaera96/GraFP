@@ -4,7 +4,7 @@ train_dir: '/import/c4dm-datasets-ext/fma/fma/data/fma_medium'
 # val_dir: 'data/valid'
 val_dir: '/import/c4dm-datasets-ext/fma/fma/data/fma_medium'
 ir_dir: 'data/aug/ir' # To-do: Change this
-noise_dir: 'import/c4dm-datasets/musan/''
+noise_dir: 'import/c4dm-datasets/musan/'
 
 # Model input parameters
 arch: 'grafp'
