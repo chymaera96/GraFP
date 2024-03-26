@@ -237,7 +237,7 @@ def main():
     train = load_index(cfg, path, mode='train')
     # valid = load_index(cfg, path, mode='valid')
     print(len(train))
-    print(len(valid))
+    # print(len(valid))
 
 
 if __name__ == '__main__':
