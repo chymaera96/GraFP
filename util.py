@@ -9,7 +9,7 @@ import yaml
 from prettytable import PrettyTable
 
 
-def load_index(data_dir, ext=['wav','mp3'], max_len=10000, inplace=False):
+def load_index(data_dir, ext=['wav','mp3'], max_len=15000, inplace=False):
     dataset = {}
 
     if data_dir.endswith('.json'):
