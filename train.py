@@ -14,9 +14,9 @@ from simclr.ntxent import ntxent_loss
 from simclr.simclr import SimCLR   
 from modules.transformations import GPUTransformNeuralfp
 from modules.data import NeuralfpDataset
-from sfnet.residual import SlowFastNetwork, ResidualUnit
-from baseline.encoder import Encoder, Residual, ResNet
-from transformer.encoder import ASTEncoder
+# from sfnet.residual import SlowFastNetwork, ResidualUnit
+# from baseline.encoder import Encoder, Residual, ResNet
+# from transformer.encoder import ASTEncoder
 from eval import eval_faiss
 from test_fp import create_fp_db, create_dummy_db
 
