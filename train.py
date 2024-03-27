@@ -146,7 +146,7 @@ def main():
 
 
     print("Checking dataset object...")
-    print([x[0].shape for x in train_loader[0:10]])
+    print([x[0].shape for x in train_dataset[0:10]])
 
     print("Checking data loader...")
     for ix, (x_i, x_j) in enumerate(train_loader):
