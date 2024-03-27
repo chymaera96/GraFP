@@ -146,6 +146,7 @@ def main():
 
 
     print("Checking dataset object...")
+    print(noise_train_idx[0])
     print(train_dataset[0][0].shape)
 
     print("Checking data loader...")
