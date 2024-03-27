@@ -83,8 +83,9 @@ class GPUTransformNeuralfp(nn.Module):
             p_j = torch.cat((p_j, torch.zeros(self.n_peaks - p_j.shape[0], 3))).permute(1,0)
      
         else:
-            print(f"X_i shape in validation augment {x_i.shape}")
+            print(f"x_i shape in validation augment {x_i.shape}")
             X_i = self.melspec(x_i.squeeze(0)).squeeze(0)
+            print(f"X_i shape in validation augment {X_i.shape}")
             p_i = self.spec2points(X_i, analyzer)
 
             try:
