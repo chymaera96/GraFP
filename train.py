@@ -145,7 +145,7 @@ def main():
                                             sampler=query_db_sampler)
 
 
-    for ix, (x_i, x_j) in enumerate(train_augment):
+    for ix, (x_i, x_j) in enumerate(train_loader):
         print(x_i.shape)
         print(x_j.shape)
         break

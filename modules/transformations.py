@@ -78,7 +78,7 @@ class GPUTransformNeuralfp(nn.Module):
             p_j = torch.cat((p_j, torch.zeros(self.n_peaks - p_j.shape[0], 3)))
      
         else:
-            X_i = self.melspec(x_i.squeeze(0)).squeeze(0).numpy()
+            X_i = self.melspec(x_i.squeeze(0)).squeeze(0)
             p_i = self.spec2points(X_i, analyzer)
 
             try:
@@ -87,7 +87,7 @@ class GPUTransformNeuralfp(nn.Module):
                 print("Error loading noise file. Retrying...")
                 x_j = self.val_transform(x_j, sample_rate=self.sample_rate)
 
-            X_j = self.melspec(x_j.squeeze(0)).squeeze(0).numpy()
+            X_j = self.melspec(x_j.squeeze(0)).squeeze(0)
             p_j = self.spec2points(X_j, analyzer)
 
         return p_i, p_j
@@ -96,7 +96,7 @@ class GPUTransformNeuralfp(nn.Module):
         """
         Spectrogram --> Segmentation --> Peaks --> batch of point clouds
         """
-        X = torch.from_numpy(X).transpose(0,1)
+        X = X.transpose(0,1)
         X = X.unfold(0, size=self.n_frames, step=int(self.n_frames*(1-self.overlap)))
         p_list = []
         for i in range(X.shape[0]):
