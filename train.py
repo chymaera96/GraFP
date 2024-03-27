@@ -109,11 +109,6 @@ def main():
     train_augment = GPUTransformNeuralfp(cfg=cfg, ir_dir=ir_train_idx, noise_dir=noise_train_idx, train=True)
     val_augment = GPUTransformNeuralfp(cfg=cfg, ir_dir=ir_val_idx, noise_dir=noise_val_idx, train=False)
 
-    for ix, (x_i, x_j) in enumerate(train_augment):
-        print(x_i.shape)
-        print(x_j.shape)
-        break
-
     print("Loading dataset...")
     train_dataset = NeuralfpDataset(cfg=cfg, path=train_dir, train=True, transform=train_augment)
     train_loader = torch.utils.data.DataLoader(
@@ -148,6 +143,12 @@ def main():
                                             pin_memory=True, 
                                             drop_last=False,
                                             sampler=query_db_sampler)
+
+
+    for ix, (x_i, x_j) in enumerate(train_augment):
+        print(x_i.shape)
+        print(x_j.shape)
+        break
 
     
     print("Creating new model...")
