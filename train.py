@@ -145,6 +145,10 @@ def main():
                                             sampler=query_db_sampler)
 
 
+    print("Checking dataset object...")
+    print(train_dataset[0][0].shape)
+
+    print("Checking data loader...")
     for ix, (x_i, x_j) in enumerate(train_loader):
         print(x_i.shape)
         print(x_j.shape)
