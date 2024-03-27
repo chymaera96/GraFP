@@ -69,12 +69,14 @@ class GPUTransformNeuralfp(nn.Module):
             p_i = torch.Tensor(p_i)
             if not p_i.shape[0] < self.n_peaks:
                 return None, None
+            print(f"p_i shape: {p_i.shape}")
             p_i = torch.cat((p_i, torch.zeros(self.n_peaks - p_i.shape[0], 3)))
         
 
             X_j = self.melspec(x_j)
             _, p_j = analyzer.find_peaks(sgram=X_j.numpy())
             p_j = torch.Tensor(p_j)
+            print(f"p_j shape: {p_j.shape}")
             p_j = torch.cat((p_j, torch.zeros(self.n_peaks - p_j.shape[0], 3)))
      
         else:
