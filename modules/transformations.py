@@ -18,6 +18,7 @@ class GPUTransformNeuralfp(nn.Module):
         self.overlap = cfg['overlap']
         self.arch = cfg['arch']
         self.train = train
+        self.cfg = cfg
 
         self.train_transform = Compose([
             ApplyImpulseResponse(ir_paths=self.ir_dir, p=cfg['ir_prob']),
@@ -64,7 +65,7 @@ class GPUTransformNeuralfp(nn.Module):
                 x_j = self.train_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate).flatten()
                 
             X_i = self.melspec(x_i)
-            _, p_i = analyzer.find_peaks(sgram=X_i)
+            _, p_i = analyzer.find_peaks(sgram=X_i.numpy())
             p_i = torch.Tensor(p_i)
             if not p_i.shape[0] < self.n_peaks:
                 return None, None
@@ -72,7 +73,7 @@ class GPUTransformNeuralfp(nn.Module):
         
 
             X_j = self.melspec(x_j)
-            _, p_j = analyzer.find_peaks(sgram=X_j)
+            _, p_j = analyzer.find_peaks(sgram=X_j.numpy())
             p_j = torch.Tensor(p_j)
             p_j = torch.cat((p_j, torch.zeros(self.n_peaks - p_j.shape[0], 3)))
      
