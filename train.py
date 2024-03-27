@@ -146,13 +146,16 @@ def main():
 
 
     print("Checking dataset object...")
-    print(train_dataset[0][0].shape)
+    print(valid_dataset[0].shape)
 
     print("Checking data loader...")
-    for ix, (x_i, x_j) in enumerate(train_loader):
+    for ix, x_i in enumerate(query_loader):
+        x_i, x_j = val_augment(x_i, x_i)
         print(x_i.shape)
         print(x_j.shape)
         break
+
+    
 
     
     print("Creating new model...")

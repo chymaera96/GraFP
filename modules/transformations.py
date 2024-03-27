@@ -70,7 +70,7 @@ class GPUTransformNeuralfp(nn.Module):
             if not p_i.shape[0] < self.n_peaks:
                 return None, None
             # print(f"p_i shape: {p_i.shape}")
-            p_i = torch.cat((p_i, torch.zeros(self.n_peaks - p_i.shape[0], 3)))
+            p_i = torch.cat((p_i, torch.zeros(self.n_peaks - p_i.shape[0], 3))).permute(1,0)
         
 
             X_j = self.melspec(x_j)
@@ -79,20 +79,20 @@ class GPUTransformNeuralfp(nn.Module):
             if not p_j.shape[0] < self.n_peaks:
                 return None, None
             # print(f"p_j shape: {p_j.shape}")
-            p_j = torch.cat((p_j, torch.zeros(self.n_peaks - p_j.shape[0], 3)))
+            p_j = torch.cat((p_j, torch.zeros(self.n_peaks - p_j.shape[0], 3))).permute(1,0)
      
         else:
             X_i = self.melspec(x_i.squeeze(0)).squeeze(0)
             p_i = self.spec2points(X_i, analyzer)
 
             try:
-                x_j = self.val_transform(x_j, sample_rate=self.sample_rate)
+                x_j = self.val_transform(x_j, sample_rate=self.sample_rate).permute(0,2,1)
             except ValueError:
                 print("Error loading noise file. Retrying...")
                 x_j = self.val_transform(x_j, sample_rate=self.sample_rate)
 
             X_j = self.melspec(x_j.squeeze(0)).squeeze(0)
-            p_j = self.spec2points(X_j, analyzer)
+            p_j = self.spec2points(X_j, analyzer).permute(0,2,1)
 
         return p_i, p_j
     
