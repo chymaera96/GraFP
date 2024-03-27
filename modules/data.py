@@ -37,6 +37,7 @@ class NeuralfpDataset(Dataset):
             return self[idx + 1]
         
         datapath = self.filenames[str(idx)]
+        print(datapath)
         try:
             # with warnings.catch_warnings():
             #     warnings.simplefilter("ignore")
