@@ -67,18 +67,22 @@ class GPUTransformNeuralfp(nn.Module):
                 
             X_i = self.melspec(x_i)
             _, p_i = analyzer.find_peaks(sgram=X_i.numpy())
-            p_i = torch.Tensor(p_i)
+            if p_i is None: # spectrogram is identically zero
+                return None, None
             if not p_i.shape[0] < self.n_peaks:
                 return None, None
+            p_i = torch.Tensor(p_i)
             # print(f"p_i shape: {p_i.shape}")
             p_i = torch.cat((p_i, torch.zeros(self.n_peaks - p_i.shape[0], 3))).permute(1,0)
         
 
             X_j = self.melspec(x_j)
             _, p_j = analyzer.find_peaks(sgram=X_j.numpy())
-            p_j = torch.Tensor(p_j)
+            if p_j is None: # spectrogram is identically zero
+                return None, None
             if not p_j.shape[0] < self.n_peaks:
                 return None, None
+            p_j = torch.Tensor(p_j)
             # print(f"p_j shape: {p_j.shape}")
             p_j = torch.cat((p_j, torch.zeros(self.n_peaks - p_j.shape[0], 3))).permute(1,0)
      
