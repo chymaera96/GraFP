@@ -149,8 +149,7 @@ def main():
     print(valid_dataset[0].shape)
 
     print("Checking data loader...")
-    for ix, x_i in enumerate(query_loader):
-        x_i, x_j = val_augment(x_i, x_i)
+    for ix, (x_i, x_j) in enumerate(train_loader):
         print(x_i.shape)
         print(x_j.shape)
         break
