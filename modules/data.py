@@ -65,11 +65,6 @@ class NeuralfpDataset(Dataset):
         if self.train:
             a_i = audio_resampled
             a_j = a_i.clone()
-            if self.transform is not None:
-                a_i, a_j = self.transform(a_i, a_j)
-
-            if a_i is None or a_j is None:
-                return self[idx + 1]
             
             offset_mod = int(self.sample_rate*(self.offset) + clip_frames)
             if len(audio_resampled) < offset_mod:
@@ -82,11 +77,17 @@ class NeuralfpDataset(Dataset):
             x_i = clip_i[ri:ri+clip_frames]
             x_j = clip_j[rj:rj+clip_frames]
 
-            return torch.unsqueeze(x_i, 0), torch.unsqueeze(x_j, 0)
+            if self.transform is not None:
+                x_i, x_j = self.transform(x_i, x_j)
+
+            if x_i is None or x_j is None:
+                return self[idx + 1]
+
+            return x_i, x_j
         
         #   For validation / test, output consecutive (overlapping) frames
         else:
-            return torch.unsqueeze(audio_resampled, 0)
+            return audio_resampled
             # return audio_resampled
     
     def __len__(self):

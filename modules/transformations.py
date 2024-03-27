@@ -17,7 +17,9 @@ class GPUTransformNeuralfp(nn.Module):
         self.n_peaks = cfg['n_peaks']
         self.overlap = cfg['overlap']
         self.arch = cfg['arch']
+        self.n_frames = cfg['n_frames']
         self.train = train
+        self.cfg = cfg
 
         self.train_transform = Compose([
             ApplyImpulseResponse(ir_paths=self.ir_dir, p=cfg['ir_prob']),
@@ -64,30 +66,40 @@ class GPUTransformNeuralfp(nn.Module):
                 x_j = self.train_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate).flatten()
                 
             X_i = self.melspec(x_i)
-            _, p_i = analyzer.find_peaks(sgram=X_i)
-            p_i = torch.Tensor(p_i)
+            _, p_i = analyzer.find_peaks(sgram=X_i.numpy())
+            if p_i is None: # spectrogram is identically zero
+                return None, None
             if not p_i.shape[0] < self.n_peaks:
                 return None, None
-            p_i = torch.cat((p_i, torch.zeros(self.n_peaks - p_i.shape[0], 3)))
+            p_i = torch.Tensor(p_i)
+            # print(f"p_i shape: {p_i.shape}")
+            p_i = torch.cat((p_i, torch.zeros(self.n_peaks - p_i.shape[0], 3))).permute(1,0)
         
 
             X_j = self.melspec(x_j)
-            _, p_j = analyzer.find_peaks(sgram=X_j)
+            _, p_j = analyzer.find_peaks(sgram=X_j.numpy())
+            if p_j is None: # spectrogram is identically zero
+                return None, None
+            if not p_j.shape[0] < self.n_peaks:
+                return None, None
             p_j = torch.Tensor(p_j)
-            p_j = torch.cat((p_j, torch.zeros(self.n_peaks - p_j.shape[0], 3)))
+            # print(f"p_j shape: {p_j.shape}")
+            p_j = torch.cat((p_j, torch.zeros(self.n_peaks - p_j.shape[0], 3))).permute(1,0)
      
         else:
-            X_i = self.melspec(x_i.squeeze(0)).squeeze(0).numpy()
-            p_i = self.spec2points(X_i, analyzer)
+            print(f"x_i shape in validation augment {x_i.shape}")
+            X_i = self.melspec(x_i.squeeze(0)).squeeze(0)
+            p_i = self.spec2points(X_i, analyzer).permute(0,2,1)
 
             try:
-                x_j = self.val_transform(x_j, sample_rate=self.sample_rate)
+                x_j = self.val_transform(x_j.reshape(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
             except ValueError:
                 print("Error loading noise file. Retrying...")
                 x_j = self.val_transform(x_j, sample_rate=self.sample_rate)
+                
 
-            X_j = self.melspec(x_j.squeeze(0)).squeeze(0).numpy()
-            p_j = self.spec2points(X_j, analyzer)
+            X_j = self.melspec(x_j.squeeze(0)).squeeze(0)
+            p_j = self.spec2points(X_j, analyzer).permute(0,2,1)
 
         return p_i, p_j
     
@@ -95,7 +107,7 @@ class GPUTransformNeuralfp(nn.Module):
         """
         Spectrogram --> Segmentation --> Peaks --> batch of point clouds
         """
-        X = torch.from_numpy(X).transpose(0,1)
+        X = X.transpose(0,1)
         X = X.unfold(0, size=self.n_frames, step=int(self.n_frames*(1-self.overlap)))
         p_list = []
         for i in range(X.shape[0]):

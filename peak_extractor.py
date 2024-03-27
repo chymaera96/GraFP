@@ -203,8 +203,9 @@ class Analyzer(object):
             sgram = sgram - np.mean(sgram)
         else:
             # The sgram is identically zero, i.e., the input signal was identically
-            # zero.  Not good, but let's let it through for now.
+            # zero.
             print("find_peaks: Warning: input signal is identically zero.")
+            return None, None
         # High-pass filter onset emphasis
         sgram = np.array([scipy.signal.lfilter([1, -1],
                                                [1, -self.hpf_pole ** (1 / self.oversamp)], s_row)
