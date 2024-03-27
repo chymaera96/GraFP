@@ -113,7 +113,7 @@ def main():
     train_dataset = NeuralfpDataset(cfg=cfg, path=train_dir, train=True, transform=train_augment)
     train_loader = torch.utils.data.DataLoader(
         train_dataset, batch_size=batch_size, shuffle=True,
-        num_workers=8, pin_memory=True, drop_last=True)
+        num_workers=64, pin_memory=True, drop_last=True)
     
     valid_dataset = NeuralfpDataset(cfg=cfg, path=valid_dir, train=False)
     print("Creating validation dataloaders...")
@@ -146,7 +146,7 @@ def main():
 
 
     print("Checking dataset object...")
-    print([x[0].shape for x in list(train_dataset)[0:10]])
+    print(train_dataset[0][0].shape)
 
     print("Checking data loader...")
     for ix, (x_i, x_j) in enumerate(train_loader):
