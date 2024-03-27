@@ -10,6 +10,7 @@ noise_dir: '/homes/ab017/ContrastivePipeline/data/aug/noise'
 # Model input parameters
 arch: 'grafp'
 fs: 11025
+oversamp: 1
 dur: 1.0
 offset: 0.2
 norm: 0.95
