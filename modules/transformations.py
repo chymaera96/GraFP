@@ -17,6 +17,7 @@ class GPUTransformNeuralfp(nn.Module):
         self.n_peaks = cfg['n_peaks']
         self.overlap = cfg['overlap']
         self.arch = cfg['arch']
+        self.n_frames = cfg['n_frames']
         self.train = train
         self.cfg = cfg
 
