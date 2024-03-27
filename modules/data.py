@@ -48,8 +48,8 @@ class NeuralfpDataset(Dataset):
             return self[idx+1]
 
         audio_mono = audio.mean(dim=0)
-        if self.norm is not None:
-            audio_mono = qtile_normalize(audio_mono, q=self.norm)
+        # if self.norm is not None:
+        #     audio_mono = qtile_normalize(audio_mono, q=self.norm)
         resampler = torchaudio.transforms.Resample(sr, self.sample_rate)
         audio_resampled = resampler(audio_mono)    
 
