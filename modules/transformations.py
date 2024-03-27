@@ -88,7 +88,7 @@ class GPUTransformNeuralfp(nn.Module):
             p_i = self.spec2points(X_i, analyzer)
 
             try:
-                x_j = self.val_transform(x_j, sample_rate=self.sample_rate).permute(0,2,1)
+                x_j = self.val_transform(x_j.reshape(1,1,x_j.shape[-1]), sample_rate=self.sample_rate).permute(0,2,1)
             except ValueError:
                 print("Error loading noise file. Retrying...")
                 x_j = self.val_transform(x_j, sample_rate=self.sample_rate)
