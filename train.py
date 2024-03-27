@@ -146,7 +146,7 @@ def main():
 
 
     print("Checking dataset object...")
-    print(valid_dataset[0].shape)
+    print(train_dataset[0].shape)
 
     print("Checking data loader...")
     for ix, (x_i, x_j) in enumerate(train_loader):
