@@ -85,14 +85,14 @@ class GPUTransformNeuralfp(nn.Module):
         else:
             print(f"x_i shape in validation augment {x_i.shape}")
             X_i = self.melspec(x_i.squeeze(0)).squeeze(0)
-            print(f"X_i shape in validation augment {X_i.shape}")
-            p_i = self.spec2points(X_i, analyzer)
+            p_i = self.spec2points(X_i, analyzer).permute(0,2,1)
 
             try:
-                x_j = self.val_transform(x_j.reshape(1,1,x_j.shape[-1]), sample_rate=self.sample_rate).permute(0,2,1)
+                x_j = self.val_transform(x_j.reshape(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
             except ValueError:
                 print("Error loading noise file. Retrying...")
                 x_j = self.val_transform(x_j, sample_rate=self.sample_rate)
+                
 
             X_j = self.melspec(x_j.squeeze(0)).squeeze(0)
             p_j = self.spec2points(X_j, analyzer).permute(0,2,1)
