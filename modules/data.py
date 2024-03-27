@@ -83,7 +83,7 @@ class NeuralfpDataset(Dataset):
             if x_i is None or x_j is None:
                 return self[idx + 1]
 
-            return torch.unsqueeze(x_i, 0), torch.unsqueeze(x_j, 0)
+            return x_i, x_j
         
         #   For validation / test, output consecutive (overlapping) frames
         else:
