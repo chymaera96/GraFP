@@ -146,6 +146,9 @@ def main():
                                             sampler=query_db_sampler)
 
 
+    # Print formats
+    print(torchaudio.utils.sox_utils.list_read_formats())
+
     # Loading test file using torchaudio
     audio, sr = torchaudio.load("/import/c4dm-datasets-ext/fma/fma/data/fma_medium/071241.mp3")
     print(audio.shape)
