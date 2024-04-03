@@ -21,6 +21,7 @@ density: 250.0
 f_sd : 1.0   # how wide to spreak peaks
 maxpksperframe: 64   # maximum number of peaks per frame
 n_peaks: 512  # max number of peaks to consider
+oversample: 1  # oversample factor for peak detection
 
 # Dataset and Model hyperparameters
 train_sz: 15000
