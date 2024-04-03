@@ -7,6 +7,7 @@ import soundfile as sf
 import shutil
 import yaml
 from prettytable import PrettyTable
+import torchaudio
 
 
 def load_index(cfg, data_dir, ext=['wav','mp3'], mode="train"):
@@ -232,13 +233,9 @@ def get_test_index(data_dir):
     
 def main():
 
-    path = '/import/c4dm-datasets-ext/fma/fma/data/fma_medium'
-    cfg = {'train_sz': 200, 'val_sz': 20}
-    train = load_index(cfg, path, mode='train')
-    valid = load_index(cfg, path, mode='valid')
-    print(len(train))
-    print(len(valid))
-
-
+    print(torchaudio._extension._FFMPEG_INITIALIZED)
+    audio, sr = torchaudio.load("/import/c4dm-datasets-ext/fma/fma/data/fma_medium/071241.mp3")
+    print(audio.shape)
+    
 if __name__ == '__main__':
     main()
