@@ -3,7 +3,7 @@ import torch
 import numpy as np
 import json
 import glob
-import soundfile as sf
+# import soundfile as sf
 import shutil
 import yaml
 from prettytable import PrettyTable
@@ -236,6 +236,6 @@ def main():
     print(torchaudio._extension._FFMPEG_INITIALIZED)
     audio, sr = torchaudio.load("/import/c4dm-datasets-ext/fma/fma/data/fma_medium/071241.mp3")
     print(audio.shape)
-    
+
 if __name__ == '__main__':
     main()
