@@ -234,6 +234,7 @@ def get_test_index(data_dir):
 def main():
 
     print(torchaudio._extension._FFMPEG_INITIALIZED)
+    print(str(torchaudio.get_audio_backend()))
     audio, sr = torchaudio.load("/import/c4dm-datasets-ext/fma/fma/data/fma_medium/071241.mp3")
     print(audio.shape)
 

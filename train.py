@@ -148,10 +148,8 @@ def main():
 
     # Print formats
     print(torchaudio.__version__)
-    print(torchaudio._extension._FFMPEG_INITIALIZED)
-
+    print(str(torchaudio.get_audio_backend()))
     print(torchaudio.utils.sox_utils.list_read_formats())
-    print(torchaudio.utils.ffmpeg_utils.get_audio_decoders())
     # Loading test file using torchaudio
     audio, sr = torchaudio.load("/import/c4dm-datasets-ext/fma/fma/data/fma_medium/071241.mp3")
     print(audio.shape)
