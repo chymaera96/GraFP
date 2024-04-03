@@ -6,6 +6,7 @@ import gc
 import torch.nn.functional as F
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.tensorboard import SummaryWriter
+import torchaudio
 
 
 
@@ -145,6 +146,9 @@ def main():
                                             sampler=query_db_sampler)
 
 
+    # Loading test file using torchaudio
+    audio, sr = torchaudio.load("/import/c4dm-datasets-ext/fma/fma/data/fma_medium/071241.mp3")
+    print(audio.shape)
     print("Checking dataset object...")
     print(train_dataset[0][0].shape)
 
