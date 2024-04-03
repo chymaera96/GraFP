@@ -94,9 +94,6 @@ def main():
     ir_dir = cfg['ir_dir']
     noise_dir = cfg['noise_dir']
 
-    audio, sr = torchaudio.load("/import/c4dm-datasets-ext/fma/fma/data/fma_medium/071241.mp3")
-    print(audio.shape)
-    
     # Hyperparameters
     batch_size = cfg['bsz_train']
     learning_rate = cfg['lr']
