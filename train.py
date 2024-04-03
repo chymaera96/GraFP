@@ -93,6 +93,9 @@ def main():
     valid_dir = override(cfg['val_dir'], args.val_dir)
     ir_dir = cfg['ir_dir']
     noise_dir = cfg['noise_dir']
+
+    audio, sr = torchaudio.load("/import/c4dm-datasets-ext/fma/fma/data/fma_medium/071241.mp3")
+    print(audio.shape)
     
     # Hyperparameters
     batch_size = cfg['bsz_train']
@@ -151,8 +154,8 @@ def main():
     print(str(torchaudio.get_audio_backend()))
     print(torchaudio.utils.sox_utils.list_read_formats())
     # Loading test file using torchaudio
-    audio, sr = torchaudio.load("/import/c4dm-datasets-ext/fma/fma/data/fma_medium/071241.mp3")
-    print(audio.shape)
+    # audio, sr = torchaudio.load("/import/c4dm-datasets-ext/fma/fma/data/fma_medium/071241.mp3")
+    # print(audio.shape)
     print("Checking dataset object...")
     print(train_dataset[0][0].shape)
 
