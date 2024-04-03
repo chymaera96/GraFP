@@ -148,6 +148,8 @@ def main():
 
     # Print formats
     print(torchaudio.__version__)
+    print(torchaudio._extension._FFMPEG_INITIALIZED)
+
     print(torchaudio.utils.sox_utils.list_read_formats())
     print(torchaudio.utils.ffmpeg_utils.get_audio_decoders())
     # Loading test file using torchaudio
