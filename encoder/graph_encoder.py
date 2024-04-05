@@ -178,11 +178,11 @@ class GraphEncoder:
         return x 
 
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
 
-#     encoder = GraphEncoder()
-#     dummy_tensor = torch.rand(8,3,512)
-#     out = encoder.forward(dummy_tensor)
+    encoder = GraphEncoder()
+    dummy_tensor = torch.rand(8,3,512)
+    out = encoder.forward(dummy_tensor)
     
 
     
