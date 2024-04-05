@@ -3,7 +3,7 @@ data_dir: 'data'
 train_dir: '/import/c4dm-datasets-ext/fma/fma/data/fma_medium'
 # val_dir: 'data/valid'
 val_dir: '/import/c4dm-datasets-ext/fma/fma/data/fma_medium'
-ir_dir: 'data/aug/ir' # To-do: Change this
+ir_dir: '/import/research_c4dm/ss380/AIR_1_4' # To-do: Change this
 noise_dir: '/import/c4dm-datasets/musan'
 
 # Model input parameters
@@ -26,7 +26,7 @@ oversample: 1  # oversample factor for peak detection
 # Dataset and Model hyperparameters
 train_sz: 15000
 val_sz: 500
-bsz_train: 256
+bsz_train: 32
 tau: 0.05
 lr: 5.0e-5
 min_lr: 3.0e-6

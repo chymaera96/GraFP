@@ -14,9 +14,7 @@ from simclr.ntxent import ntxent_loss
 from simclr.simclr import SimCLR   
 from modules.transformations import GPUTransformNeuralfp
 from modules.data import NeuralfpDataset
-from sfnet.residual import SlowFastNetwork, ResidualUnit
-from baseline.encoder import Encoder, Residual, ResNet
-from transformer.encoder import ASTEncoder
+from encoder.graph_encoder import GraphEncoder
 from eval import eval_faiss
 from test_fp import create_fp_db, create_dummy_db
 
@@ -150,7 +148,7 @@ def main():
         # TODO: Add support for resnet encoder (deprecated)
         model = SimCLR(cfg, encoder=ResNet(Residual, cfg)).to(device)
     elif args.encoder == 'grafp':
-        raise NotImplementedError
+        model = SimCLR(cfg, encoder=GraphEncoder(cfg)).to(device)
 
     print(count_parameters(model, args.encoder))
 
@@ -207,19 +205,6 @@ def main():
         if hit_rates is not None and hit_rates[0][0] > best_hr:
             best_hr = hit_rates[0][0]
             save_ckp(checkpoint, model_name, model_folder, epoch)
-
-        # elif hit_rates is not None and hit_rates[0][0] > best_hr:
-        #     best_hr = hit_rates[0][0]
-        #     checkpoint = {
-        #         'epoch': epoch,
-        #         'loss': loss_log,
-        #         'valid_acc' : hit_rate_log,
-        #         'hit_rate': hit_rates,
-        #         'state_dict': model.state_dict(),
-        #         'optimizer': optimizer.state_dict(),
-        #         'scheduler': scheduler.state_dict()
-        #     }
-        #     save_ckp(checkpoint,epoch, model_name, model_folder)
             
         scheduler.step()
     
