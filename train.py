@@ -8,6 +8,7 @@ import torch.nn.functional as F
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.tensorboard import SummaryWriter
 import torchaudio
+torchaudio.set_audio_backend("soundfile")
 
 
 from util import *
@@ -146,20 +147,20 @@ def main():
     
 
 
-    print("torchaudio.get_audio_backend() = ", torchaudio.get_audio_backend())
+    # print("torchaudio.get_audio_backend() = ", torchaudio.get_audio_backend())
     torchaudio.set_audio_backend("soundfile")
 
-    print("Checking dataset object...")
-    print(train_dataset[0][0].shape)
+    # print("Checking dataset object...")
+    # print(train_dataset[0][0].shape)
     
 
-    print("Checking data loader...")
-    for ix, (x_i, x_j) in enumerate(train_loader):
-        print(x_i.shape)
-        print(x_j.shape)
-        break
+    # print("Checking data loader...")
+    # for ix, (x_i, x_j) in enumerate(train_loader):
+    #     print(x_i.shape)
+    #     print(x_j.shape)
+    #     break
 
-    return
+    # return
     
     print("Creating new model...")
     if args.encoder == 'resnet':
