@@ -148,7 +148,7 @@ def main():
 
 
     # print("torchaudio.get_audio_backend() = ", torchaudio.get_audio_backend())
-    torchaudio.set_audio_backend("soundfile")
+    # torchaudio.set_audio_backend("soundfile")
 
     # print("Checking dataset object...")
     # print(train_dataset[0][0].shape)
