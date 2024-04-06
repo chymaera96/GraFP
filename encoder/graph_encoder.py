@@ -5,8 +5,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn import Sequential as Seq
 from timm.models.layers import DropPath
-from gcn_lib.torch_vertex import Grapher
-from gcn_lib.torch_nn import act_layer, norm_layer, MLP, BasicConv
+from encoder.gcn_lib.torch_vertex import Grapher
+from encoder.gcn_lib.torch_nn import act_layer, norm_layer, MLP, BasicConv
 from timm.models.layers import to_2tuple,trunc_normal_
 from timm.models.layers import DropPath
 import timm
