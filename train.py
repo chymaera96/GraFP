@@ -7,6 +7,7 @@ import sys
 import torch.nn.functional as F
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.tensorboard import SummaryWriter
+from torch.nn.parallel import DataParallel
 import torchaudio
 torchaudio.set_audio_backend("soundfile")
 
@@ -167,8 +168,11 @@ def main():
         # TODO: Add support for resnet encoder (deprecated)
         raise NotImplementedError
     elif args.encoder == 'grafp':
-        model = SimCLR(cfg, encoder=GraphEncoder()).to(device)
-
+        model = SimCLR(cfg, encoder=GraphEncoder())
+        if torch.cuda.device_count() > 1:
+            print("Using", torch.cuda.device_count(), "GPUs!")
+            model = DataParallel(model)
+        model.to(device)
     print(count_parameters(model, args.encoder))
 
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
