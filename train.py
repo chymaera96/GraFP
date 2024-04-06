@@ -148,9 +148,9 @@ def main():
     print("Creating new model...")
     if args.encoder == 'resnet':
         # TODO: Add support for resnet encoder (deprecated)
-        model = SimCLR(cfg, encoder=ResNet(Residual, cfg)).to(device)
+        raise NotImplementedError
     elif args.encoder == 'grafp':
-        model = SimCLR(cfg, encoder=GraphEncoder(cfg)).to(device)
+        model = SimCLR(cfg, encoder=GraphEncoder()).to(device)
 
     print(count_parameters(model, args.encoder))
 
