@@ -176,6 +176,9 @@ class GraphEncoder:
         
         
         return x 
+    
+    def __call__(self, *args: sys.Any, **kwds: sys.Any) -> sys.Any:
+        pass
 
 
 if __name__ == '__main__':
