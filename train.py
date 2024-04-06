@@ -143,7 +143,18 @@ def main():
                                             pin_memory=True, 
                                             drop_last=False,
                                             sampler=query_db_sampler)
+    
 
+    print("Checking dataset object...")
+    print(train_dataset[0][0].shape)
+
+    print("Checking data loader...")
+    for ix, (x_i, x_j) in enumerate(train_loader):
+        print(x_i.shape)
+        print(x_j.shape)
+        break
+
+    return
     
     print("Creating new model...")
     if args.encoder == 'resnet':
