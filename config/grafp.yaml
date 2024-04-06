@@ -26,7 +26,7 @@ oversamp: 1  # oversample factor for peak detection
 # Dataset and Model hyperparameters
 train_sz: 15000
 val_sz: 500
-bsz_train: 256
+bsz_train: 128
 tau: 0.05
 lr: 5.0e-5
 min_lr: 3.0e-6
