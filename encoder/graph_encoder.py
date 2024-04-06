@@ -56,7 +56,7 @@ class FFN(nn.Module):
        
         return x
 
-class GraphEncoder:
+class GraphEncoder(nn.Module):
 
     def __init__(self,k=9,conv='mr',act='relu',norm='batch',bias=True,dropout=0.0,dilation=True,epsilon=0.2,drop_path=0.1,size ='s',
                emb_dims=1024,in_channels=3,num_points=512):
@@ -177,8 +177,8 @@ class GraphEncoder:
         
         return x 
     
-    def __call__(self, x):
-        return self.forward(x)
+    # def __call__(self, x):
+    #     return self.forward(x)
 
 
 if __name__ == '__main__':
