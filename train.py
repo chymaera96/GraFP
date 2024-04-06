@@ -3,6 +3,7 @@ import numpy as np
 import argparse
 import torch
 import gc
+import sys
 import torch.nn.functional as F
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.tensorboard import SummaryWriter
@@ -21,7 +22,8 @@ from test_fp import create_fp_db, create_dummy_db
 # Directories
 root = os.path.dirname(__file__)
 model_folder = os.path.join(root,"checkpoint")
-
+parent_dir = os.path.abspath(os.path.join(root, os.pardir))
+sys.path.append(parent_dir)
 
 device = torch.device("cuda")
 
