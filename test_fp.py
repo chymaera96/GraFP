@@ -17,8 +17,6 @@ query_len_from_seconds, seconds_from_query_len, \
 load_augmentation_index
 from modules.data import NeuralfpDataset
 from simclr.simclr import SimCLR
-from sfnet.residual import SlowFastNetwork, ResidualUnit
-from baseline.encoder import Encoder
 from modules.transformations import GPUTransformNeuralfp
 from eval import get_index, load_memmap_data, eval_faiss
 
