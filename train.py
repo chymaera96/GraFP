@@ -152,19 +152,19 @@ def main():
     # print("torchaudio.get_audio_backend() = ", torchaudio.get_audio_backend())
     # torchaudio.set_audio_backend("soundfile")
 
-    print("Checking dataset object...")
-    print(valid_dataset[0].shape)
+    # print("Checking dataset object...")
+    # print(valid_dataset[0].shape)
     
 
-    print("Checking data loader...")
-    for ix, audio in enumerate(query_loader):
-        with torch.no_grad():
-            X_i, X_j = val_augment(audio, audio)
-        print(X_i.shape)
-        print(X_j.shape)
-        break
+    # print("Checking data loader...")
+    # for ix, audio in enumerate(query_loader):
+    #     with torch.no_grad():
+    #         X_i, X_j = val_augment(audio, audio)
+    #     print(X_i.shape)
+    #     print(X_j.shape)
+    #     break
 
-    return
+    # return
     
     print("Creating new model...")
     if args.encoder == 'resnet':
