@@ -27,7 +27,7 @@ model_folder = os.path.join(root,"checkpoint")
 parent_dir = os.path.abspath(os.path.join(root, os.pardir))
 sys.path.append(parent_dir)
 
-device = torch.device("cuda:0")
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
 
 parser = argparse.ArgumentParser(description='Grafprint Training')
