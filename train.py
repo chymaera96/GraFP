@@ -153,13 +153,13 @@ def main():
     # torchaudio.set_audio_backend("soundfile")
 
     print("Checking dataset object...")
-    print(train_dataset[0][0].shape)
+    print(valid_dataset[0].shape)
     
 
     print("Checking data loader...")
-    for ix, (x_i, x_j) in enumerate(train_loader):
+    for ix, audio in enumerate(query_loader):
         with torch.no_grad():
-            X_i, X_j = gpu_augment(x_i, x_j)
+            X_i, X_j = gpu_augment(audio, audio)
         print(X_i.shape)
         print(X_j.shape)
         break
