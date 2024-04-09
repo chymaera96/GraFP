@@ -318,7 +318,7 @@ class GPUPeakExtractor(nn.Module):
                 # Pad points or truncate to a fixed size
                 pad_length = self.pad_length - nonzero_points.size(0)
                 if pad_length < 0:
-                    print("Warning: truncating points")
+                    print(f"Warning: truncating points; there are {nonzero_points.size(0)} points")
                     nonzero_points = nonzero_points[:self.pad_length].transpose(1,0)
                 else:
                     padded_points = F.pad(nonzero_points, (0, 0, 0, pad_length), mode='constant', value=0).transpose(1,0)
