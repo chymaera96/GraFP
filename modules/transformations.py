@@ -183,7 +183,7 @@ class GPUTransformNeuralfp(nn.Module):
 
         else:
             print(f"x_i shape in validation augment {x_i.shape}")
-            X_i = self.logmelspec(x_i.squeeze(0)).permute(2,0,1)
+            X_i = self.logmelspec(x_i.squeeze(0)).transpose(1,0)
             X_i = X_i.unfold(0, size=self.n_frames, step=int(self.n_frames*(1-self.overlap)))
             print(f"Intermediate X_i shape {X_i.shape}")
             X_i = self.extractor(X_i)
@@ -195,7 +195,7 @@ class GPUTransformNeuralfp(nn.Module):
                 print("Error loading noise file. Retrying...")
                 x_j = self.val_transform(x_j, sample_rate=self.sample_rate)
 
-            X_j = self.logmelspec(x_j.squeeze(0)).permute(2,0,1)
+            X_j = self.logmelspec(x_j.squeeze(0)).transpose(1,0)
             X_j = X_j.unfold(0, size=self.n_frames, step=int(self.n_frames*(1-self.overlap)))
             X_j = self.extractor(X_j)
 
