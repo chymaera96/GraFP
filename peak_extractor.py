@@ -2,7 +2,9 @@ import numpy as np
 import os
 import librosa
 import scipy
-
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 def locmax(vec, indices=False):
     """ Return a boolean vector of which points in vec are local maxima.
@@ -273,3 +275,45 @@ def peaks2mask(peaks, patch_shape=(8, 6)):
     # Reshape mask to original shape
     mask = mask.reshape(h // nrows, -1, nrows, ncols).swapaxes(1, 2).reshape(h, w)
     return mask
+
+
+class GPUPeakExtractor(nn.Module):
+    def __init__(self, pad_length=512):
+        super(GPUPeakExtractor, self).__init__()
+        self.pad_length = pad_length
+
+    def forward(self, spec_tensor):
+        # Find local maxima along the time axis
+        maxima_time = F.max_pool2d(spec_tensor.unsqueeze(1), kernel_size=(1, 3), stride=1, padding=(0, 1))
+        maxima_time = torch.eq(spec_tensor, maxima_time.squeeze(1))
+
+        # Find local maxima along the frequency axis
+        maxima_freq = F.max_pool2d(spec_tensor.unsqueeze(1), kernel_size=(3, 1), stride=1, padding=(1, 0))
+        maxima_freq = torch.eq(spec_tensor, maxima_freq.squeeze(1))
+
+        # Combine maxima along both axes to get a binary matrix
+        peaks = (maxima_time & maxima_freq).float()
+
+        # Compute nonzero indices once for the entire batch
+        nonzero_indices = torch.nonzero(peaks)
+
+        batch_nonzero_points = []
+        for ix in range(spec_tensor.shape[0]):
+            # Select indices for this item
+            item_indices = nonzero_indices[nonzero_indices[:, 0] == ix][:, 1:]
+
+            if item_indices.size(0) > 0:
+                # Get the corresponding values
+                nonzero_values = spec_tensor[ix][item_indices[:, 0], item_indices[:, 1]]
+
+                # Combine indices and values
+                nonzero_points = torch.cat((item_indices.float(), nonzero_values.unsqueeze(1)), dim=1)
+
+                # Normalize indices by dividing by the maximum dimension value
+                nonzero_points[:, :2] /= torch.tensor([spec_tensor.shape[1], spec_tensor.shape[2]], device=spec_tensor.device)
+                # Pad points to a fixed size
+                pad_length = self.pad_length - nonzero_points.size(0)
+                padded_points = F.pad(nonzero_points, (0, 0, 0, pad_length), mode='constant', value=0).transpose(1,0)
+                batch_nonzero_points.append(padded_points)
+
+        return torch.stack(batch_nonzero_points)
