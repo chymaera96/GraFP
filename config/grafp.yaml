@@ -20,7 +20,7 @@ hpf_pole: 0.98  # spectrogram enhancement
 density: 250.0
 f_sd : 1.0   # how wide to spreak peaks
 maxpksperframe: 64   # maximum number of peaks per frame
-n_peaks: 768  # max number of peaks to consider
+n_peaks: 1024  # max number of peaks to consider
 oversamp: 1  # oversample factor for peak detection
 
 # Dataset and Model hyperparameters
