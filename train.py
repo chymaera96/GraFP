@@ -51,7 +51,7 @@ parser.add_argument('--n_query_db', default=None, type=int)
 
 
 
-def train(cfg, train_loader, model, optimizer, ir_idx, noise_idx):
+def train(cfg, train_loader, model, optimizer, ir_idx, noise_idx, augment=None):
     model.train()
     loss_epoch = 0
     # return loss_epoch
@@ -61,6 +61,8 @@ def train(cfg, train_loader, model, optimizer, ir_idx, noise_idx):
         optimizer.zero_grad()
         x_i = x_i.to(device)
         x_j = x_j.to(device)
+        with torch.no_grad():
+            x_i, x_j = augment(x_i, x_j)
         h_i, h_j, z_i, z_j = model(x_i, x_j)
         loss = ntxent_loss(z_i, z_j, cfg)
         loss.backward()
@@ -203,7 +205,7 @@ def main():
 
     for epoch in range(start_epoch+1, num_epochs+1):
         print("#######Epoch {}#######".format(epoch))
-        loss_epoch = train(cfg, train_loader, model, optimizer, ir_train_idx, noise_train_idx)
+        loss_epoch = train(cfg, train_loader, model, optimizer, ir_train_idx, noise_train_idx, gpu_augment)
         writer.add_scalar("Loss/train", loss_epoch, epoch)
         loss_log.append(loss_epoch)
         output_root_dir = create_fp_dir(ckp=args.ckp, epoch=epoch)
