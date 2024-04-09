@@ -159,7 +159,7 @@ def main():
     print("Checking data loader...")
     for ix, audio in enumerate(query_loader):
         with torch.no_grad():
-            X_i, X_j = gpu_augment(audio, audio)
+            X_i, X_j = val_augment(audio, audio)
         print(X_i.shape)
         print(X_j.shape)
         break
