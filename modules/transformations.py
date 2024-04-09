@@ -171,7 +171,7 @@ class GPUTransformNeuralfp(nn.Module):
                 print("Error loading noise file. Hack to solve issue...")
                 # Increase length of x_j by 1 sample
                 x_j = F.pad(x_j, (0,1))
-                x_j = self.train_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
+                x_j = self._transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
             return x_i, x_j.flatten()
 
         if self.train:
@@ -182,9 +182,12 @@ class GPUTransformNeuralfp(nn.Module):
             X_j = self.extractor(X_j)
 
         else:
+            print(f"x_i shape in validation augment {x_i.shape}")
             X_i = self.logmelspec(x_i.squeeze(0)).permute(2,0,1)
             X_i = X_i.unfold(0, size=self.n_frames, step=int(self.n_frames*(1-self.overlap)))
+            print(f"Intermediate X_i shape {X_i.shape}")
             X_i = self.extractor(X_i)
+            print(f"Final X_i shape {X_i.shape}")
 
             try:
                 x_j = self.val_transform(x_j, sample_rate=self.sample_rate)
