@@ -125,7 +125,7 @@ class TransformNeuralfp(nn.Module):
 
 class GPUTransformNeuralfp(nn.Module):
     def __init__(self, cfg, ir_dir, noise_dir, train=True, cpu=False):
-        super(TransformNeuralfp, self).__init__()
+        super(GPUTransformNeuralfp, self).__init__()
         self.sample_rate = cfg['fs']
         self.ir_dir = ir_dir
         self.noise_dir = noise_dir
@@ -134,6 +134,7 @@ class GPUTransformNeuralfp(nn.Module):
         self.arch = cfg['arch']
         self.n_frames = cfg['n_frames']
         self.train = train
+        self.cpu = cpu
         self.cfg = cfg
 
         self.train_transform = Compose([

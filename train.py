@@ -108,11 +108,12 @@ def main():
     ir_train_idx = load_augmentation_index(ir_dir, splits=0.8)["train"]
     noise_val_idx = load_augmentation_index(noise_dir, splits=0.8)["test"]
     ir_val_idx = load_augmentation_index(ir_dir, splits=0.8)["test"]
-    train_augment = GPUTransformNeuralfp(cfg=cfg, ir_dir=ir_train_idx, noise_dir=noise_train_idx, train=True)
+    gpu_augment = GPUTransformNeuralfp(cfg=cfg, ir_dir=ir_train_idx, noise_dir=noise_train_idx, train=True)
+    cpu_augment = GPUTransformNeuralfp(cfg=cfg, ir_dir=ir_train_idx, noise_dir=noise_train_idx, cpu=True)
     val_augment = GPUTransformNeuralfp(cfg=cfg, ir_dir=ir_val_idx, noise_dir=noise_val_idx, train=False)
 
     print("Loading dataset...")
-    train_dataset = NeuralfpDataset(cfg=cfg, path=train_dir, train=True, transform=train_augment)
+    train_dataset = NeuralfpDataset(cfg=cfg, path=train_dir, train=True, transform=cpu_augment)
     train_loader = torch.utils.data.DataLoader(
         train_dataset, batch_size=batch_size, shuffle=True,
         num_workers=8, pin_memory=True, drop_last=True)
@@ -157,8 +158,10 @@ def main():
 
     print("Checking data loader...")
     for ix, (x_i, x_j) in enumerate(train_loader):
-        print(x_i.shape)
-        print(x_j.shape)
+        with torch.no_grad():
+            X_i, X_j = gpu_augment(x_i, x_j)
+        print(X_i.shape)
+        print(X_j.shape)
         break
 
     return
