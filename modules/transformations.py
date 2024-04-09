@@ -158,7 +158,6 @@ class GPUTransformNeuralfp(nn.Module):
         
         self.logmelspec = nn.Sequential(
             MelSpectrogram(sample_rate=self.sample_rate, 
-                           window_fn=self.window,
                            win_length=cfg['win_len'], 
                            hop_length=cfg['hop_len'], 
                            n_fft=cfg['n_fft'], 
