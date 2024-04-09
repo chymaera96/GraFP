@@ -161,7 +161,7 @@ def main():
         print(x_j.shape)
         break
 
-    # return
+    return
     
     print("Creating new model...")
     if args.encoder == 'resnet':
