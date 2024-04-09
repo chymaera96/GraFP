@@ -320,8 +320,9 @@ class GPUPeakExtractor(nn.Module):
                 if pad_length < 0:
                     print(f"Warning: truncating points; there are {nonzero_points.size(0)} points")
                     nonzero_points = nonzero_points[:self.pad_length].transpose(1,0)
+                    batch_nonzero_points.append(nonzero_points)
                 else:
                     padded_points = F.pad(nonzero_points, (0, 0, 0, pad_length), mode='constant', value=0).transpose(1,0)
-                batch_nonzero_points.append(padded_points)
+                    batch_nonzero_points.append(padded_points)
 
         return torch.stack(batch_nonzero_points)
