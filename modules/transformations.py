@@ -186,12 +186,12 @@ class GPUTransformNeuralfp(nn.Module):
             X_j = self.extractor(X_j)
 
         else:
-            print(f"x_i shape in validation augment {x_i.shape}")
+            # print(f"x_i shape in validation augment {x_i.shape}")
             X_i = self.logmelspec(x_i.squeeze(0)).transpose(1,0)
             X_i = X_i.unfold(0, size=self.n_frames, step=int(self.n_frames*(1-self.overlap)))
-            print(f"Intermediate X_i shape {X_i.shape}")
+            # print(f"Intermediate X_i shape {X_i.shape}")
             X_i = self.extractor(X_i)
-            print(f"Final X_i shape {X_i.shape}")
+            # print(f"Final X_i shape {X_i.shape}")
 
             try:
                 x_j = self.val_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
@@ -200,9 +200,9 @@ class GPUTransformNeuralfp(nn.Module):
                 x_j = self.val_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
 
             X_j = self.logmelspec(x_j.flatten()).transpose(1,0)
-            print(f"Intermediate X_j shape {X_j.shape}")
+            # print(f"Intermediate X_j shape {X_j.shape}")
             X_j = X_j.unfold(0, size=self.n_frames, step=int(self.n_frames*(1-self.overlap)))
-            print(f"After unfold X_j shape {X_j.shape}")
+            # print(f"After unfold X_j shape {X_j.shape}")
             X_j = self.extractor(X_j)
 
         return X_i, X_j
