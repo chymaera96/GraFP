@@ -190,10 +190,10 @@ class GPUTransformNeuralfp(nn.Module):
             print(f"Final X_i shape {X_i.shape}")
 
             try:
-                x_j = self.val_transform(x_j, sample_rate=self.sample_rate)
+                x_j = self.val_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
             except ValueError:
                 print("Error loading noise file. Retrying...")
-                x_j = self.val_transform(x_j, sample_rate=self.sample_rate)
+                x_j = self.val_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
 
             X_j = self.logmelspec(x_j.squeeze(0)).transpose(1,0)
             X_j = X_j.unfold(0, size=self.n_frames, step=int(self.n_frames*(1-self.overlap)))
