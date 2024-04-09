@@ -195,7 +195,7 @@ class GPUTransformNeuralfp(nn.Module):
                 print("Error loading noise file. Retrying...")
                 x_j = self.val_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
 
-            X_j = self.logmelspec(x_j.squeeze(0)).transpose(1,0)
+            X_j = self.logmelspec(x_j.flatten()).transpose(1,0)
             print(f"Intermediate X_j shape {X_j.shape}")
             X_j = X_j.unfold(0, size=self.n_frames, step=int(self.n_frames*(1-self.overlap)))
             print(f"After unfold X_j shape {X_j.shape}")
