@@ -175,7 +175,7 @@ class GPUTransformNeuralfp(nn.Module):
                 print("Error loading noise file. Hack to solve issue...")
                 # Increase length of x_j by 1 sample
                 x_j = F.pad(x_j, (0,1))
-                x_j = self._transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
+                x_j = self.train_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
             return x_i, x_j.flatten()
 
         if self.train:
