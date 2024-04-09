@@ -299,6 +299,10 @@ class GPUPeakExtractor(nn.Module):
 
         batch_nonzero_points = []
         for ix in range(spec_tensor.shape[0]):
+            # Check if spectrogram is all zero
+            if spec_tensor[ix].sum() == 0:
+                print(f"Warning: spectrogram {ix} is all zero")
+                continue
             # Select indices for this item
             item_indices = nonzero_indices[nonzero_indices[:, 0] == ix][:, 1:]
 
@@ -311,9 +315,13 @@ class GPUPeakExtractor(nn.Module):
 
                 # Normalize indices by dividing by the maximum dimension value
                 nonzero_points[:, :2] /= torch.tensor([spec_tensor.shape[1], spec_tensor.shape[2]], device=spec_tensor.device)
-                # Pad points to a fixed size
+                # Pad points or truncate to a fixed size
                 pad_length = self.pad_length - nonzero_points.size(0)
-                padded_points = F.pad(nonzero_points, (0, 0, 0, pad_length), mode='constant', value=0).transpose(1,0)
+                if pad_length < 0:
+                    print("Warning: truncating points")
+                    nonzero_points = nonzero_points[:self.pad_length].transpose(1,0)
+                else:
+                    padded_points = F.pad(nonzero_points, (0, 0, 0, pad_length), mode='constant', value=0).transpose(1,0)
                 batch_nonzero_points.append(padded_points)
 
         return torch.stack(batch_nonzero_points)
