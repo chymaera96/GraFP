@@ -5,12 +5,12 @@ from torch_audiomentations import Compose,AddBackgroundNoise, ApplyImpulseRespon
 from torchaudio.transforms import MelSpectrogram, TimeMasking, FrequencyMasking, AmplitudeToDB
 import warnings
 
-from peak_extractor import Analyzer, peaks2mask
+from peak_extractor import Analyzer, peaks2mask, GPUPeakExtractor
 
-class GPUTransformNeuralfp(nn.Module):
+class TransformNeuralfp(nn.Module):
     
     def __init__(self, cfg, ir_dir, noise_dir, train=True):
-        super(GPUTransformNeuralfp, self).__init__()
+        super(TransformNeuralfp, self).__init__()
         self.sample_rate = cfg['fs']
         self.ir_dir = ir_dir
         self.noise_dir = noise_dir
@@ -121,3 +121,78 @@ class GPUTransformNeuralfp(nn.Module):
         p = torch.stack(p_list)
 
         return p
+    
+
+class GPUTransformNeuralfp(nn.Module):
+    def __init__(self, cfg, ir_dir, noise_dir, train=True, cpu=False):
+        super(TransformNeuralfp, self).__init__()
+        self.sample_rate = cfg['fs']
+        self.ir_dir = ir_dir
+        self.noise_dir = noise_dir
+        self.n_peaks = cfg['n_peaks']
+        self.overlap = cfg['overlap']
+        self.arch = cfg['arch']
+        self.n_frames = cfg['n_frames']
+        self.train = train
+        self.cfg = cfg
+
+        self.train_transform = Compose([
+            ApplyImpulseResponse(ir_paths=self.ir_dir, p=cfg['ir_prob']),
+            AddBackgroundNoise(background_paths=self.noise_dir, 
+                               min_snr_in_db=cfg['tr_snr'][0],
+                               max_snr_in_db=cfg['tr_snr'][1], 
+                               p=cfg['noise_prob']),
+            ])
+        
+        self.val_transform = Compose([
+            ApplyImpulseResponse(ir_paths=self.ir_dir, p=1),
+            AddBackgroundNoise(background_paths=self.noise_dir, 
+                               min_snr_in_db=cfg['val_snr'][0], 
+                               max_snr_in_db=cfg['val_snr'][1], 
+                               p=1),
+
+            ])
+        
+        self.extractor = GPUPeakExtractor(pad_length=self.cfg['n_peaks'])
+        
+        self.logmelspec = nn.Sequential(
+            MelSpectrogram(sample_rate=self.sample_rate, win_length=cfg['win_len'], hop_length=cfg['hop_len'], n_fft=cfg['n_fft'], n_mels=cfg['n_mels']),
+            AmplitudeToDB()
+        ) 
+
+        self.melspec = MelSpectrogram(sample_rate=self.sample_rate, win_length=cfg['win_len'], hop_length=cfg['hop_len'], n_fft=cfg['n_fft'], n_mels=cfg['n_mels'])
+    
+    def forward(self, x_i, x_j):
+        if self.cpu:
+            try:
+                x_j = self.cpu_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
+            except ValueError:
+                print("Error loading noise file. Hack to solve issue...")
+                # Increase length of x_j by 1 sample
+                x_j = F.pad(x_j, (0,1))
+                x_j = self.cpu_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
+            return x_i, x_j.flatten()
+
+        if self.train:
+            X_i = self.logmelspec(x_i)
+            X_i = self.extractor(X_i)
+
+            X_j = self.logmelspec(x_j)
+            X_j = self.extractor(X_j)
+
+        else:
+            X_i = self.logmelspec(x_i.squeeze(0)).permute(2,0,1)
+            X_i = X_i.unfold(0, size=self.n_frames, step=int(self.n_frames*(1-self.overlap)))
+            X_i = self.extractor(X_i)
+
+            try:
+                x_j = self.val_transform(x_j, sample_rate=self.sample_rate)
+            except ValueError:
+                print("Error loading noise file. Retrying...")
+                x_j = self.val_transform(x_j, sample_rate=self.sample_rate)
+
+            X_j = self.logmelspec(x_j.squeeze(0)).permute(2,0,1)
+            X_j = X_j.unfold(0, size=self.n_frames, step=int(self.n_frames*(1-self.overlap)))
+            X_j = self.extractor(X_j)
+
+        return X_i, X_j
