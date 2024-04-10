@@ -22,7 +22,7 @@ f_sd : 1.0   # how wide to spreak peaks
 maxpksperframe: 64   # maximum number of peaks per frame
 n_peaks: 1024  # max number of peaks to consider
 oversamp: 1  # oversample factor for peak detection
-silence: 0.005  # silence threshold
+silence: 0.0005  # silence threshold
 
 # Dataset and Model hyperparameters
 train_sz: 15000
