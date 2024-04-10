@@ -22,6 +22,7 @@ class NeuralfpDataset(Dataset):
         self.sample_rate = cfg['fs']
         self.dur = cfg['dur']
         self.n_frames = cfg['n_frames']
+        self.silence = cfg['silence']
 
         if train:
             self.filenames = load_index(cfg, path, mode="train")
