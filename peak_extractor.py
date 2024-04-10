@@ -319,7 +319,7 @@ class GPUPeakExtractor(nn.Module):
                 pad_length = self.pad_length - nonzero_points.size(0)
                 if pad_length < 0:
                     print(f"Warning: truncating points; there are {nonzero_points.size(0)} points")
-                    print(f"Maximum possible peaks is {spec_tensor.shape[1] * spec_tensor.shape[2]}")
+                    print(f"Maximum possible peaks is {spec_tensor.shape[1]} * {spec_tensor.shape[2]}")
                     print(f"nonzero_values shape {nonzero_values.shape}")
                     nonzero_points = nonzero_points[:self.pad_length].transpose(1,0)
                     batch_nonzero_points.append(nonzero_points)
