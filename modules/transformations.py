@@ -176,7 +176,7 @@ class GPUTransformNeuralfp(nn.Module):
                 # Increase length of x_j by 1 sample
                 x_j = F.pad(x_j, (0,1))
                 x_j = self.train_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
-            return x_i, x_j.flatten()
+            return x_i, x_j.flatten()[:int(self.sample_rate*self.cfg['dur'])]
 
         if self.train:
             X_i = self.logmelspec(x_i)
