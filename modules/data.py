@@ -83,16 +83,17 @@ class NeuralfpDataset(Dataset):
             if x_i is None or x_j is None:
                 return self[idx + 1]
 
-            # Pad or truncate to n_frames
-            if x_i.shape[0] < self.n_frames:
-                x_i = F.pad(x_i, (0, 0, 0, self.n_frames - x_i.shape[0]))
-            else:
-                x_i = x_i[:self.n_frames]
+            # Pad or truncate to sample_rate * dur
+            if len(x_i) < clip_frames:
+                x_i = F.pad(x_i, (0, clip_frames - len(x_i)))
+            elif len(x_i) > clip_frames:
+                x_i = x_i[:clip_frames]
 
-            if x_j.shape[0] < self.n_frames:
-                x_j = F.pad(x_j, (0, 0, 0, self.n_frames - x_j.shape[0]))
-            else:
-                x_j = x_j[:self.n_frames]
+            if len(x_j) < clip_frames:
+                x_j = F.pad(x_j, (0, clip_frames - len(x_j)))
+            elif len(x_j) > clip_frames:    
+                x_j = x_j[:clip_frames]
+
 
             return x_i, x_j
         
