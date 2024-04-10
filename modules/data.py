@@ -83,6 +83,17 @@ class NeuralfpDataset(Dataset):
             if x_i is None or x_j is None:
                 return self[idx + 1]
 
+            # Pad or truncate to n_frames
+            if x_i.shape[0] < self.n_frames:
+                x_i = F.pad(x_i, (0, 0, 0, self.n_frames - x_i.shape[0]))
+            else:
+                x_i = x_i[:self.n_frames]
+
+            if x_j.shape[0] < self.n_frames:
+                x_j = F.pad(x_j, (0, 0, 0, self.n_frames - x_j.shape[0]))
+            else:
+                x_j = x_j[:self.n_frames]
+
             return x_i, x_j
         
         #   For validation / test, output consecutive (overlapping) frames
