@@ -278,14 +278,15 @@ def peaks2mask(peaks, patch_shape=(8, 6)):
 
 
 class GPUPeakExtractor(nn.Module):
-    def __init__(self, pad_length=512):
+    def __init__(self, pad_length=512, energy_threshold=-70.0):
         super(GPUPeakExtractor, self).__init__()
         self.pad_length = pad_length
+        self.energy_threshold = energy_threshold
 
     def forward(self, spec_tensor):
         # Find local maxima along the time axis
-        maxima_time = F.max_pool2d(spec_tensor.unsqueeze(1), kernel_size=(1, 3), stride=1, padding=(0, 1))
-        maxima_time = torch.eq(spec_tensor, maxima_time.squeeze(1))
+        maxima_time = F.max_pool2d(spec_tensor.unsqueeze(0), kernel_size=(1, 3), stride=1, padding=(0, 1))
+        maxima_time = torch.eq(spec_tensor, maxima_time.squeeze(0))
 
         # Find local maxima along the frequency axis
         maxima_freq = F.max_pool2d(spec_tensor.unsqueeze(1), kernel_size=(3, 1), stride=1, padding=(1, 0))
@@ -299,10 +300,13 @@ class GPUPeakExtractor(nn.Module):
 
         batch_nonzero_points = []
         for ix in range(spec_tensor.shape[0]):
-            # Check if spectrogram is all zero
-            if spec_tensor[ix].sum() == 0:
-                print(f"Warning: spectrogram {ix} is all zero")
+
+            # Check if spectrogram has low energy
+            if torch.max(spec_tensor[ix]) < self.energy_threshold:
+                print(f"Warning: spectrogram has low energy")
                 continue
+            # Normalize spectrogram
+            spec_tensor[ix] = (spec_tensor[ix] - torch.mean(spec_tensor[ix])) / torch.std(spec_tensor[ix])
             # Select indices for this item
             item_indices = nonzero_indices[nonzero_indices[:, 0] == ix][:, 1:]
 
