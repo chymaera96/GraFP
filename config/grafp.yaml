@@ -34,7 +34,7 @@ n_epochs: 220
 T_max: 250
 
 # Augmentation hyperparameters
-n_frames: 42 # depends on the spectrogram parameters
+n_frames: 87 # depends on the spectrogram parameters
 overlap: 0.5
 tr_snr: [0, 10]
 val_snr: [0, 10]
