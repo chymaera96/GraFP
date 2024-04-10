@@ -86,12 +86,12 @@ class NeuralfpDataset(Dataset):
             # Pad or truncate to sample_rate * dur
             if len(x_i) < clip_frames:
                 x_i = F.pad(x_i, (0, clip_frames - len(x_i)))
-            elif len(x_i) > clip_frames:
+            else:
                 x_i = x_i[:clip_frames]
 
             if len(x_j) < clip_frames:
                 x_j = F.pad(x_j, (0, clip_frames - len(x_j)))
-            elif len(x_j) > clip_frames:    
+            else:    
                 x_j = x_j[:clip_frames]
 
 
