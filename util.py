@@ -106,7 +106,11 @@ def get_frames(y, frame_length, hop_length):
     return frames
 
 def qtile_normalize(y, q, eps=1e-8):
-    return y / (eps + torch.quantile(y,q=q))
+    return y / (eps + torch.quantile(y.abs(),q=q))
+
+def qtile_norm(y, q, eps=1e-8):
+    return eps + torch.quantile(y.abs(),q=q)
+
 
 def query_len_from_seconds(seconds, overlap, dur):
     hop = dur*(1-overlap)

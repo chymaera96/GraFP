@@ -9,7 +9,7 @@ import librosa
 import torch.nn as nn
 import warnings
 
-from util import load_index, get_frames, qtile_normalize
+from util import load_index, get_frames, qtile_normalize, qtile_norm
 
 
 class NeuralfpDataset(Dataset):
@@ -49,8 +49,7 @@ class NeuralfpDataset(Dataset):
             return self[idx+1]
 
         audio_mono = audio.mean(dim=0)
-        if self.norm is not None:
-            audio_mono = qtile_normalize(audio_mono, q=self.norm)
+        
         resampler = torchaudio.transforms.Resample(sr, self.sample_rate)
         audio_resampled = resampler(audio_mono)    
 
@@ -59,10 +58,7 @@ class NeuralfpDataset(Dataset):
         if len(audio_resampled) <= clip_frames:
             self.ignore_idx.append(idx)
             return self[idx + 1]
-        
-        if (audio_resampled.abs() < self.silence).all():
-            self.ignore_idx.append(idx)
-            return self[idx + 1]
+    
         
         #   For training pipeline, output a random frame of the audio
         if self.train:
@@ -79,6 +75,15 @@ class NeuralfpDataset(Dataset):
             clip_j = a_j[r:r+offset_mod]
             x_i = clip_i[ri:ri+clip_frames]
             x_j = clip_j[rj:rj+clip_frames]
+
+            if x_i.abs().max() < self.silence or x_j.abs().max() < self.silence:
+                print("Silence detected. Skipping...")
+                return self[idx + 1]
+            
+            if self.norm is not None:
+                norm_val = qtile_norm(audio_resampled, q=self.norm)
+                x_i = x_i / norm_val
+                x_j = x_j / norm_val
 
             if self.transform is not None:
                 x_i, x_j = self.transform(x_i, x_j)
