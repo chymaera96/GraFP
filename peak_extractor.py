@@ -304,6 +304,7 @@ class GPUPeakExtractor(nn.Module):
             # Check if spectrogram has low energy
             if torch.max(spec_tensor[ix]) < self.energy_threshold:
                 print(f"Warning: spectrogram has low energy")
+                batch_nonzero_points.append(torch.zeros(self.pad_length, 3, device=spec_tensor.device))
                 continue
             # Normalize spectrogram
             spec_tensor[ix] = (spec_tensor[ix] - torch.mean(spec_tensor[ix])) / torch.std(spec_tensor[ix])
