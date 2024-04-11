@@ -279,9 +279,9 @@ def peaks2mask(peaks, patch_shape=(8, 6)):
 
 
 class GPUPeakExtractor(nn.Module):
-    def __init__(self, cfg, pad_length=512):
+    def __init__(self, cfg):
         super(GPUPeakExtractor, self).__init__()
-        self.pad_length = pad_length
+        self.pad_length = cfg['n_peaks']
         self.blur_kernel = cfg['blur_kernel']
         self.blur_sigma = cfg['blur_sigma']
 

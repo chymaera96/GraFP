@@ -154,7 +154,7 @@ class GPUTransformNeuralfp(nn.Module):
 
             ])
         
-        self.extractor = GPUPeakExtractor(pad_length=self.cfg['n_peaks'])
+        self.extractor = GPUPeakExtractor(cfg=self.cfg)
         
         self.logmelspec = nn.Sequential(
             MelSpectrogram(sample_rate=self.sample_rate, 
