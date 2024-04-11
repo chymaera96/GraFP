@@ -299,11 +299,11 @@ class GPUPeakExtractor(nn.Module):
         peaks = (maxima_time & maxima_freq).float()  
 
         # Normalize the spectrogram
-        min_vals = torch.min(spec_tensor, dim=[2, 3], keepdim=True).values
-        max_vals = torch.max(spec_tensor, dim=[2, 3], keepdim=True).values
-        spec_tensor = (spec_tensor - min_vals) / (max_vals - min_vals)     
+        min_vals = torch.min(features, dim=[2, 3], keepdim=True).values
+        max_vals = torch.max(features, dim=[2, 3], keepdim=True).values
+        features = (features - min_vals) / (max_vals - min_vals)     
 
-        return peaks * spec_tensor
+        return peaks * features
 
     def forward(self, spec_tensor):
 
