@@ -5,6 +5,7 @@ import scipy
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torchvision.transforms.functional import gaussian_blur
 
 def locmax(vec, indices=False):
     """ Return a boolean vector of which points in vec are local maxima.
@@ -278,22 +279,37 @@ def peaks2mask(peaks, patch_shape=(8, 6)):
 
 
 class GPUPeakExtractor(nn.Module):
-    def __init__(self, pad_length=512, energy_threshold=-70.0):
+    def __init__(self, cfg, pad_length=512):
         super(GPUPeakExtractor, self).__init__()
         self.pad_length = pad_length
-        self.energy_threshold = energy_threshold
+        self.blur_kernel = cfg['blur_kernel']
+        self.blur_sigma = cfg['blur_sigma']
 
-    def forward(self, spec_tensor):
-        # Find local maxima along the time axis
-        maxima_time = F.max_pool2d(spec_tensor.unsqueeze(0), kernel_size=(1, 3), stride=1, padding=(0, 1))
-        maxima_time = torch.eq(spec_tensor, maxima_time.squeeze(0))
+
+    def peak_from_features(self, features):
+         # Find local maxima along the time axis
+        maxima_time = F.max_pool2d(features.unsqueeze(0), kernel_size=(1, 3), stride=1, padding=(0, 1))
+        maxima_time = torch.eq(features, maxima_time.squeeze(0))
 
         # Find local maxima along the frequency axis
-        maxima_freq = F.max_pool2d(spec_tensor.unsqueeze(1), kernel_size=(3, 1), stride=1, padding=(1, 0))
-        maxima_freq = torch.eq(spec_tensor, maxima_freq.squeeze(1))
+        maxima_freq = F.max_pool2d(features.unsqueeze(1), kernel_size=(3, 1), stride=1, padding=(1, 0))
+        maxima_freq = torch.eq(features, maxima_freq.squeeze(1))
 
         # Combine maxima along both axes to get a binary matrix
-        peaks = (maxima_time & maxima_freq).float()
+        peaks = (maxima_time & maxima_freq).float()  
+
+        # Normalize the spectrogram
+        min_vals = torch.min(spec_tensor, dim=[2, 3], keepdim=True).values
+        max_vals = torch.max(spec_tensor, dim=[2, 3], keepdim=True).values
+        spec_tensor = (spec_tensor - min_vals) / (max_vals - min_vals)     
+
+        return peaks * spec_tensor
+
+    def forward(self, spec_tensor):
+
+        peaks = self.peak_from_features(spec_tensor)
+        feature = gaussian_blur(peaks, kernel_size=self.blur_kernel, sigma=self.blur_sigma)
+        peaks = self.peak_from_features(feature)
 
         # Compute nonzero indices once for the entire batch
         nonzero_indices = torch.nonzero(peaks)
@@ -301,19 +317,12 @@ class GPUPeakExtractor(nn.Module):
         batch_nonzero_points = []
         for ix in range(spec_tensor.shape[0]):
 
-            # Check if spectrogram has low energy
-            if torch.max(spec_tensor[ix]) < self.energy_threshold:
-                print(f"Warning: spectrogram has low energy")
-                batch_nonzero_points.append(torch.zeros(3, self.pad_length, device=spec_tensor.device))
-                continue
-            # Normalize spectrogram
-            spec_tensor[ix] = (spec_tensor[ix] - torch.mean(spec_tensor[ix])) / torch.std(spec_tensor[ix])
             # Select indices for this item
             item_indices = nonzero_indices[nonzero_indices[:, 0] == ix][:, 1:]
 
             if item_indices.size(0) > 0:
                 # Get the corresponding values
-                nonzero_values = spec_tensor[ix][item_indices[:, 0], item_indices[:, 1]]
+                nonzero_values = peaks[ix][item_indices[:, 0], item_indices[:, 1]]
 
                 # Combine indices and values
                 nonzero_points = torch.cat((item_indices.float(), nonzero_values.unsqueeze(1)), dim=1)
