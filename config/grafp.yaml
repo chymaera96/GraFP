@@ -44,8 +44,8 @@ val_snr: [0, 10]
 test_snr: [0, 10]
 # time_mask: 48
 # freq_mask: 32
-noise_prob: 0.5
-ir_prob: 0.5
+noise_prob: 0.9
+ir_prob: 0.9
 
 # Model architecture
 d: 128
