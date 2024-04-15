@@ -10,7 +10,7 @@ noise_dir: '/import/c4dm-datasets/musan'
 arch: 'grafp'
 fs: 11025
 dur: 1.0
-offset: 0.2
+offset: 0.05
 norm: 0.95
 win_len: 400
 hop_len: 128
@@ -40,8 +40,8 @@ T_max: 250
 n_frames: 87 # depends on the spectrogram parameters
 overlap: 0.5
 tr_snr: [0, 20]
-val_snr: [0, 20]
-test_snr: [0, 20]
+val_snr: [0, 10]
+test_snr: [0, 10]
 # time_mask: 48
 # freq_mask: 32
 noise_prob: 1.0
