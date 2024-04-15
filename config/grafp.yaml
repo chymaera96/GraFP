@@ -29,7 +29,7 @@ blur_sigma: 3.0  # blur sigma
 # Dataset and Model hyperparameters
 train_sz: 15000
 val_sz: 500
-bsz_train: 128
+bsz_train: 256
 tau: 0.05
 lr: 5.0e-5
 min_lr: 3.0e-6
@@ -39,13 +39,13 @@ T_max: 250
 # Augmentation hyperparameters
 n_frames: 87 # depends on the spectrogram parameters
 overlap: 0.5
-tr_snr: [0, 10]
-val_snr: [0, 10]
-test_snr: [0, 10]
+tr_snr: [0, 20]
+val_snr: [0, 20]
+test_snr: [0, 20]
 # time_mask: 48
 # freq_mask: 32
-noise_prob: 0.9
-ir_prob: 0.9
+noise_prob: 1.0
+ir_prob: 1.0
 
 # Model architecture
 d: 128
