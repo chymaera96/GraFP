@@ -30,7 +30,7 @@ root = os.path.dirname(__file__)
 model_folder = os.path.join(root,"checkpoint")
 
 parser = argparse.ArgumentParser(description='Neuralfp Testing')
-parser.add_argument('--config', default=None, type=str,
+parser.add_argument('--config', default='config/grafp.yaml', type=str,
                     help='Path to config file')
 parser.add_argument('--test_config', default='config/test_config.yaml', type=str)
 parser.add_argument('--seed', default=42, type=int,
