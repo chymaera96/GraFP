@@ -173,7 +173,7 @@ def main():
         if torch.cuda.device_count() > 1:
             print("Using", torch.cuda.device_count(), "GPUs!")
             model = DataParallel(model)
-        model = model.to(device).module
+        model = model.to(device)
 
     print("Creating dataloaders ...")
 
