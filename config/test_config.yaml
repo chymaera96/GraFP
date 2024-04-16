@@ -1,8 +1,1 @@
-# baseline_10: best
-# config2_3: best
-# congif2_4: best
-# config2_5: best
-# config2_7: [20, 40, 60, 80, 100, 120, 'best']
-# tc_0: best
-# tc_1: [180, 'best']
-tc_4: [200, 'best']
+tc_6: [140, 200, 'best']
