@@ -243,7 +243,7 @@ def main():
                 checkpoint = torch.load(ckp)
                 # Check for DataParallel
                 if 'module' in list(checkpoint['model_state_dict'].keys())[0]:
-                    checkpoint['model_state_dict'] = {key.replace('module.', ''): value for key, value in checkpoint['model_state_dict'].items()}
+                    checkpoint['state_dict'] = {key.replace('module.', ''): value for key, value in checkpoint['state_dict'].items()}
                 model.load_state_dict(checkpoint['model_state_dict'])
                 print("=> no checkpoint found at '{}'".format(ckp))
                 continue
