@@ -253,7 +253,7 @@ def main():
         if i % 200 == 0:
             print(f"Processed {i}/{len(all_file_list)} files")
         if fpath not in train_idx.values() and fpath.endswith('mp3'):
-            test_idx[str(i)] = fpath
+            test_idx[str(ix)] = fpath
             ix += 1
 
     with open(test_idx_path, 'w') as fp:
