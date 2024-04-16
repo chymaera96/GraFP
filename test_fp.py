@@ -125,7 +125,6 @@ def create_dummy_db(dataloader, augment, model, output_root_dir, fname='dummy_db
     fp = []
     print("=> Creating dummy fingerprints...")
     for idx, audio in enumerate(dataloader):
-        print(f'Processing {idx}th audio file')
         audio = audio.to(device)
         x_i, _ = augment(audio, audio)
         # x_i = torch.unsqueeze(db[0],1)
