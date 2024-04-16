@@ -247,12 +247,14 @@ def main():
     test_idx_path = os.path.join('data', path.split('/')[-1] + "_test.json")
     test_idx = {}
     print("Creating test index...")
+    ix = 0
     for i, fpath in enumerate(all_file_list):
         fpath = os.path.join(path, fpath)
         if i % 200 == 0:
             print(f"Processed {i}/{len(all_file_list)} files")
         if fpath not in train_idx.values() and fpath.endswith('mp3'):
             test_idx[str(i)] = fpath
+            ix += 1
 
     with open(test_idx_path, 'w') as fp:
         json.dump(test_idx, fp)
