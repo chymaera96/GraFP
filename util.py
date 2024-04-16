@@ -124,7 +124,7 @@ def load_ckp(checkpoint_fpath, model, optimizer, scheduler):
     checkpoint = torch.load(checkpoint_fpath)
     # Check if dataparallel is used
     if 'module' in list(checkpoint['state_dict'].keys())[0]:
-        model = torch.nn.DataParallel(model)
+        checkpoint = {key.replace('module.', ''): value for key, value in checkpoint.items()}
     model.load_state_dict(checkpoint['state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer'])
     scheduler.load_state_dict(checkpoint['scheduler'])
