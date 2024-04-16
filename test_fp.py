@@ -245,6 +245,7 @@ def main():
                 if 'module' in list(checkpoint['state_dict'].keys())[0]:
                     checkpoint['state_dict'] = {key.replace('module.', ''): value for key, value in checkpoint['state_dict'].items()}
                 model.load_state_dict(checkpoint['state_dict'])
+            else:
                 print("=> no checkpoint found at '{}'".format(ckp))
                 continue
             
