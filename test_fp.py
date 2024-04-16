@@ -241,11 +241,10 @@ def main():
             if os.path.isfile(ckp):
                 print("=> loading checkpoint '{}'".format(ckp))
                 checkpoint = torch.load(ckp)
-                if torch.cuda.device_count() > 1:
-                    model.module.load_state_dict(checkpoint['state_dict'])
-                else:
-                    model.load_state_dict(checkpoint['state_dict'])
-            else:
+                # Check for DataParallel
+                if 'module' in list(checkpoint['model_state_dict'].keys())[0]:
+                    checkpoint['model_state_dict'] = {key.replace('module.', ''): value for key, value in checkpoint['model_state_dict'].items()}
+                model.load_state_dict(checkpoint['model_state_dict'])
                 print("=> no checkpoint found at '{}'".format(ckp))
                 continue
             
