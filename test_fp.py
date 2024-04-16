@@ -241,7 +241,10 @@ def main():
             if os.path.isfile(ckp):
                 print("=> loading checkpoint '{}'".format(ckp))
                 checkpoint = torch.load(ckp)
-                model.load_state_dict(checkpoint['state_dict'])
+                if torch.cuda.device_count() > 1:
+                    model.module.load_state_dict(checkpoint['state_dict'])
+                else:
+                    model.load_state_dict(checkpoint['state_dict'])
             else:
                 print("=> no checkpoint found at '{}'".format(ckp))
                 continue
