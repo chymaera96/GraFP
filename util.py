@@ -237,25 +237,21 @@ def get_test_index(data_dir):
 def main():
 
     path = '/import/c4dm-datasets-ext/fma/fma/data/fma_medium'
-    # Get all files in valid and train json index files
     cfg = load_config('config/grafp.yaml')
     train_json_path = os.path.join('data', path.split('/')[-1] + "_train.json")
-    valid_json_path = os.path.join('data', path.split('/')[-1] + "_valid.json")
     train_idx = load_index(cfg, data_dir=train_json_path, mode='train')
-    valid_idx = load_index(cfg, data_dir=valid_json_path, mode='valid')
     print("Train index length: ", len(train_idx))
-    print("Valid index length: ", len(valid_idx))
     all_file_list = os.listdir(path)
     print(f'Number of files in {path}: {len(all_file_list)}')
     test_idx_path = os.path.join('data', path.split('/')[-1] + "_test.json")
     test_idx = {}
-    test_idx_list = list(set(all_file_list) - set(train_idx.values()))
-    test_idx_list = list(set(test_idx_list) - set(valid_idx.values()))
-    print(f'Number of files in test index: {len(test_idx_list)}')
     print("Creating test index...")
-    for i, fpath in enumerate(test_idx_list):
-        if fpath.endswith('mp3'):
+    for i, fpath in enumerate(all_file_list):
+        if i % 200 == 0:
+            print(f"Processed {i}/{len(all_file_list)} files")
+        if fpath not in train_idx.values() and fpath.endswith('mp3'):
             test_idx[str(i)] = fpath
+
 
     with open(test_idx_path, 'w') as fp:
         json.dump(test_idx, fp)
