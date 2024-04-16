@@ -241,7 +241,7 @@ def main():
                 print("=> loading checkpoint '{}'".format(ckp))
                 checkpoint = torch.load(ckp)
                 # Check for DataParallel
-                if 'module' in list(checkpoint['state_dict'].keys())[0]:
+                if 'module' in list(checkpoint['state_dict'].keys())[0] and torch.cuda.device_count() == 1:
                     checkpoint['state_dict'] = {key.replace('module.', ''): value for key, value in checkpoint['state_dict'].items()}
                 model.load_state_dict(checkpoint['state_dict'])
             else:
