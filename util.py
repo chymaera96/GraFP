@@ -249,7 +249,7 @@ def main():
     print(f'Number of files in {path}: {len(all_file_list)}')
     test_idx_path = os.path.join('data', path.split('/')[-1] + "_test.json")
     test_idx = {}
-    test_idx_list = list(all_file_list - set(train_idx.values()) - set(valid_idx.values()))
+    test_idx_list = list(set(all_file_list) - set(train_idx.values()) - set(valid_idx.values()))
     print("Creating test index...")
     for i, fpath in enumerate(test_idx_list):
         if fpath.endswith('mp3'):
