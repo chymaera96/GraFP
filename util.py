@@ -238,7 +238,7 @@ def main():
 
     path = '/import/c4dm-datasets-ext/fma/fma/data/fma_medium'
     # Get all files in valid and train json index files
-    cfg = load_config('grafp.yaml')
+    cfg = load_config('config/grafp.yaml')
     train_json_path = os.path.join('data', path.split('/')[-1] + "_train.json")
     valid_json_path = os.path.join('data', path.split('/')[-1] + "_valid.json")
     train_idx = load_index(cfg, data_dir=train_json_path, mode='train')
