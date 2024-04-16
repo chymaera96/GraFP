@@ -9,6 +9,8 @@ import json
 import shutil
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.tensorboard import SummaryWriter
+from torch.nn.parallel import DataParallel
+
 
 
 from util import \
@@ -16,7 +18,8 @@ create_fp_dir, load_config, \
 query_len_from_seconds, seconds_from_query_len, \
 load_augmentation_index
 from modules.data import NeuralfpDataset
-from simclr.simclr import SimCLR
+from encoder.graph_encoder import GraphEncoder
+from simclr.simclr import SimCLR   
 from modules.transformations import GPUTransformNeuralfp
 from eval import get_index, load_memmap_data, eval_faiss
 
@@ -38,11 +41,12 @@ parser.add_argument('--noise_split', default='all', type=str,
                     help='Noise index file split to use for testing (all, test)')
 parser.add_argument('--fp_dir', default='fingerprints', type=str)
 parser.add_argument('--query_lens', default=None, type=str)
-parser.add_argument('--encoder', default='sfnet', type=str)
+parser.add_argument('--encoder', default='grafp', type=str)
 parser.add_argument('--n_dummy_db', default=None, type=int)
 parser.add_argument('--n_query_db', default=1000, type=int)
-parser.add_argument('--compute_fp', default=True, type=bool)
 parser.add_argument('--small_test', default=False, type=bool)
+parser.add_argument('--label', default='test', type=str)
+parser.add_argument('--test_snr', default=20, type=int)
 
 
 device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
@@ -148,6 +152,7 @@ def main():
 
     args = parser.parse_args()
     cfg = load_config(args.config)
+    cfg['test_snr'] = [args.test_snr]
     test_cfg = load_config(args.test_config)
     ir_dir = cfg['ir_dir']
     noise_dir = cfg['noise_dir']
@@ -155,12 +160,16 @@ def main():
     random_seed = 42
     shuffle_dataset =True
             
-    print("Creating Model...")
-    if args.encoder == 'baseline':
-        model = SimCLR(cfg, encoder=Encoder()).to(device)
-    elif args.encoder == 'grafp':
+    print("Creating new model...")
+    if args.encoder == 'resnet':
+        # TODO: Add support for resnet encoder (deprecated)
         raise NotImplementedError
-
+    elif args.encoder == 'grafp':
+        model = SimCLR(cfg, encoder=GraphEncoder())
+        if torch.cuda.device_count() > 1:
+            print("Using", torch.cuda.device_count(), "GPUs!")
+            model = DataParallel(model)
+        model.to(device)
 
     print("Creating dataloaders ...")
 
@@ -239,10 +248,8 @@ def main():
             create_fp_db(query_db_loader, augment=test_augment, 
                          model=model, output_root_dir=fp_dir, verbose=False)
             
-            if type(epoch) == int:
-                label = epoch
-            else:
-                label = 0
+            
+            label = f'{args.label}_{str(epoch)}'
 
             if args.query_lens is not None:
                 hit_rates = eval_faiss(emb_dir=fp_dir, 
