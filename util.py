@@ -243,17 +243,19 @@ def main():
     valid_json_path = os.path.join('data', path.split('/')[-1] + "_valid.json")
     train_idx = load_index(cfg, data_dir=train_json_path, mode='train')
     valid_idx = load_index(cfg, data_dir=valid_json_path, mode='valid')
+    print("Train index length: ", len(train_idx))
+    print("Valid index length: ", len(valid_idx))
     all_file_list = glob.glob(os.path.join(path,'**/*.mp3'), recursive=True)
+    print(f'Number of files in {path}: {len(all_file_list)}')
     test_idx_path = os.path.join('data', path.split('/')[-1] + "_test.json")
     test_idx = {}
-    for i, fpath in enumerate(all_file_list):
-        if i % 200 == 0:
-            print(f"Processed {i}/{len(all_file_list)} files")
-        if fpath not in train_idx.values() and fpath not in valid_idx.values():
-            test_idx[str(i)] = fpath
+    test_idx_list = list(all_file_list) - list(train_idx.values()) - list(valid_idx.values())
+    print("Creating test index...")
+    for i, fpath in enumerate(test_idx_list):
+        test_idx[str(i)] = fpath
 
     with open(test_idx_path, 'w') as fp:
         json.dump(test_idx, fp)
-
+    print("Test index length: ", len(test_idx))
 if __name__ == '__main__':
     main()
