@@ -32,7 +32,7 @@ model_folder = os.path.join(root,"checkpoint")
 parser = argparse.ArgumentParser(description='Neuralfp Testing')
 parser.add_argument('--config', default=None, type=str,
                     help='Path to config file')
-parser.add_argument('--test_config', default=None, type=str)
+parser.add_argument('--test_config', default='config/test_config.yaml', type=str)
 parser.add_argument('--seed', default=42, type=int,
                     help='seed for initializing testing. ')
 parser.add_argument('--test_dir', default='', type=str)
