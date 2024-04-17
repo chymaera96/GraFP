@@ -50,7 +50,7 @@ parser.add_argument('--n_query_db', default=100, type=int)
 parser.add_argument('--small_test', default=False, type=bool)
 parser.add_argument('--text', default='test', type=str)
 parser.add_argument('--test_snr', default=None, type=int)
-parser.add_argument('--comp', default=False, type=bool)
+parser.add_argument('--recompute', default=False, type=bool)
 
 device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
 
@@ -161,10 +161,10 @@ def main():
     test_cfg = load_config(args.test_config)
     ir_dir = cfg['ir_dir']
     noise_dir = cfg['noise_dir']
-    if args.comp == True:
+    if args.recompute == True:
         print("Fishier")
         print(f"small_test={args.small_test}")
-        args.comp=False
+        # args.recompute=False
     # Hyperparameters
     random_seed = 42
     shuffle_dataset =True
@@ -255,7 +255,7 @@ def main():
                 continue
             
             fp_dir = create_fp_dir(resume=ckp, train=False)
-            if args.compute:
+            if args.recompute:
                 print("Something fishy")
                 create_dummy_db(dummy_db_loader, augment=test_augment,
                                 model=model, output_root_dir=fp_dir, verbose=True)
