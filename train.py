@@ -118,7 +118,7 @@ def main():
     train_dataset = NeuralfpDataset(cfg=cfg, path=train_dir, train=True, transform=cpu_augment)
     train_loader = torch.utils.data.DataLoader(
         train_dataset, batch_size=batch_size, shuffle=True,
-        num_workers=64, pin_memory=True, drop_last=True)
+        num_workers=16, pin_memory=True, drop_last=True)
     
     valid_dataset = NeuralfpDataset(cfg=cfg, path=valid_dir, train=False)
     print("Creating validation dataloaders...")
