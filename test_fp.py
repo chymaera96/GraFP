@@ -160,7 +160,7 @@ def main():
         cfg['test_snr'] = [int(args.test_snr), int(args.test_snr)]
     test_cfg = load_config(args.test_config)
     ir_dir = cfg['ir_dir']
-    assert args.recompute == False
+    assert args.recompute is False
     # Hyperparameters
     random_seed = 42
     shuffle_dataset =True
