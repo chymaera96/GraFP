@@ -173,7 +173,7 @@ def main():
         # TODO: Add support for resnet encoder (deprecated)
         raise NotImplementedError
     elif args.encoder == 'grafp':
-        model = SimCLR(cfg, encoder=GraphEncoder(in_channels=2))
+        model = SimCLR(cfg, encoder=GraphEncoder(in_channels=3))
         if torch.cuda.device_count() > 1:
             print("Using", torch.cuda.device_count(), "GPUs!")
             model = DataParallel(model)

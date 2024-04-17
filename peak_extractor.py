@@ -321,12 +321,12 @@ class GPUPeakExtractor(nn.Module):
             item_indices = nonzero_indices[nonzero_indices[:, 0] == ix][:, 1:]
 
             if item_indices.size(0) > 0:
-                # # Get the corresponding values
-                # nonzero_values = peaks[ix][item_indices[:, 0], item_indices[:, 1]]
+                # Get the corresponding values
+                nonzero_values = peaks[ix][item_indices[:, 0], item_indices[:, 1]]
 
-                # # Combine indices and values
-                # nonzero_points = torch.cat((item_indices.float(), nonzero_values.unsqueeze(1)), dim=1)
-                nonzero_points = item_indices.float()
+                # Combine indices and values
+                nonzero_points = torch.cat((item_indices.float(), nonzero_values.unsqueeze(1)), dim=1)
+                non_zero_points = item_indices.float()
 
                 # Normalize indices by dividing by the maximum dimension value
                 nonzero_points[:, :2] /= torch.tensor([spec_tensor.shape[1], spec_tensor.shape[2]], device=spec_tensor.device)
