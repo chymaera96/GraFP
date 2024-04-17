@@ -50,7 +50,7 @@ parser.add_argument('--n_query_db', default=100, type=int)
 parser.add_argument('--small_test', default=False, type=bool)
 parser.add_argument('--text', default='test', type=str)
 parser.add_argument('--test_snr', default=None, type=int)
-parser.add_argument('--compute', default=False, type=bool)
+parser.add_argument('--comp', default=False, type=bool)
 
 device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
 
@@ -161,7 +161,7 @@ def main():
     test_cfg = load_config(args.test_config)
     ir_dir = cfg['ir_dir']
     noise_dir = cfg['noise_dir']
-    if args.compute == True:
+    if args.comp == True:
         print("Fishier")
         print(f"small_test={args.small_test}")
         exit(0)
