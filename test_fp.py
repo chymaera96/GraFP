@@ -253,6 +253,7 @@ def main():
             
             fp_dir = create_fp_dir(resume=ckp, train=False)
             if args.compute:
+                print("Something fishy")
                 create_dummy_db(dummy_db_loader, augment=test_augment,
                                 model=model, output_root_dir=fp_dir, verbose=True)
             else:
