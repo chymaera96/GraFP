@@ -43,7 +43,7 @@ parser.add_argument('--noise_idx', default=None, type=str)
 parser.add_argument('--noise_split', default='all', type=str,
                     help='Noise index file split to use for testing (all, test)')
 parser.add_argument('--fp_dir', default='fingerprints', type=str)
-parser.add_argument('--compute_dummy_db', default=True, type=bool)
+parser.add_argument('--compute', default=True, type=bool)
 parser.add_argument('--query_lens', default=None, type=str)
 parser.add_argument('--encoder', default='grafp', type=str)
 parser.add_argument('--n_dummy_db', default=None, type=int)
@@ -252,9 +252,11 @@ def main():
                 continue
             
             fp_dir = create_fp_dir(resume=ckp, train=False)
-            if args.compute_dummy_db:
+            if args.compute:
                 create_dummy_db(dummy_db_loader, augment=test_augment,
                                 model=model, output_root_dir=fp_dir, verbose=True)
+            else:
+                print("=> Skipping dummy db creation...")
 
             create_fp_db(query_db_loader, augment=test_augment, 
                          model=model, output_root_dir=fp_dir, verbose=True)
