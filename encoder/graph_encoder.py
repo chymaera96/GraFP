@@ -117,7 +117,7 @@ class GraphEncoder(nn.Module):
         max_dilation = 128//max(num_k) # max_dilation value 
 
         # Stem conv for extracting non linear representation from the points
-        self.stem = nn.Sequential(nn.Conv2d(3,self.channels[0], kernel_size=1, bias=False),
+        self.stem = nn.Sequential(nn.Conv2d(in_channels,self.channels[0], kernel_size=1, bias=False),
                                    nn.BatchNorm2d(self.channels[0]),
                                    nn.LeakyReLU(negative_slope=0.2))
         dpr = [x.item() for x in torch.linspace(0, drop_path, self.num_blocks)]
