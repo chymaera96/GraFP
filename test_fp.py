@@ -43,7 +43,6 @@ parser.add_argument('--noise_idx', default=None, type=str)
 parser.add_argument('--noise_split', default='all', type=str,
                     help='Noise index file split to use for testing (all, test)')
 parser.add_argument('--fp_dir', default='fingerprints', type=str)
-parser.add_argument('--compute', default=True, type=bool)
 parser.add_argument('--query_lens', default=None, type=str)
 parser.add_argument('--encoder', default='grafp', type=str)
 parser.add_argument('--n_dummy_db', default=None, type=int)
@@ -51,7 +50,7 @@ parser.add_argument('--n_query_db', default=100, type=int)
 parser.add_argument('--small_test', default=False, type=bool)
 parser.add_argument('--text', default='test', type=str)
 parser.add_argument('--test_snr', default=None, type=int)
-
+parser.add_argument('--compute', default=True, type=bool)
 
 device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
 
@@ -164,6 +163,7 @@ def main():
     noise_dir = cfg['noise_dir']
     if args.compute == True:
         print("Fishier")
+        print(f"small_test={args.small_test}")
         exit(0)
     # Hyperparameters
     random_seed = 42
