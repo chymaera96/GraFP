@@ -270,7 +270,7 @@ def main():
                 writer.add_text("table", 
                                 create_table(hit_rates, 
                                             cfg['overlap'], cfg['dur'],
-                                            test_seq_len), 
+                                            test_seq_len, text=text), 
                                 label)
   
             else:
