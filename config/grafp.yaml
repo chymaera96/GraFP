@@ -29,12 +29,12 @@ blur_sigma: 3.0  # blur sigma
 # Dataset and Model hyperparameters
 train_sz: 15000
 val_sz: 500
-bsz_train: 128
+bsz_train: 512
 tau: 0.05
 lr: 1.0e-4
 min_lr: 5.0e-6
-n_epochs: 300
-T_max: 300
+n_epochs: 400
+T_max: 440
 
 # Augmentation hyperparameters
 n_frames: 87 # depends on the spectrogram parameters
