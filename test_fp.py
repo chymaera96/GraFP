@@ -262,7 +262,7 @@ def main():
                                     test_ids='all', 
                                     test_seq_len=test_seq_len, 
                                     index_type=index_type,
-                                    nogpu=True) 
+                                    nogpu=False) 
 
                 writer.add_text("table", 
                                 create_table(hit_rates, 
