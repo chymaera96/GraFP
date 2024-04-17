@@ -162,7 +162,9 @@ def main():
     test_cfg = load_config(args.test_config)
     ir_dir = cfg['ir_dir']
     noise_dir = cfg['noise_dir']
-    assert args.compute == False
+    if args.compute == True:
+        print("Fishier")
+        exit(0)
     # Hyperparameters
     random_seed = 42
     shuffle_dataset =True
