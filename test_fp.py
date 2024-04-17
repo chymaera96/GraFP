@@ -164,7 +164,7 @@ def main():
     if args.comp == True:
         print("Fishier")
         print(f"small_test={args.small_test}")
-        exit(0)
+        args.comp=False
     # Hyperparameters
     random_seed = 42
     shuffle_dataset =True
