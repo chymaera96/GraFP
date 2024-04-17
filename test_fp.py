@@ -160,11 +160,7 @@ def main():
         cfg['test_snr'] = [int(args.test_snr), int(args.test_snr)]
     test_cfg = load_config(args.test_config)
     ir_dir = cfg['ir_dir']
-    noise_dir = cfg['noise_dir']
-    if args.recompute == True:
-        print("Fishier")
-        print(f"small_test={args.small_test}")
-        # args.recompute=False
+    assert args.recompute == False
     # Hyperparameters
     random_seed = 42
     shuffle_dataset =True
