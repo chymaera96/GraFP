@@ -181,7 +181,7 @@ class GPUTransformNeuralfp(nn.Module):
         if self.train:
             X_i = self.logmelspec(x_i)
             X_i = self.extractor(X_i)
-            assert X_i.shape[1] == 2
+            assert X_i.shape[1] == 2, f"X_i shape: {X_i.shape}"
 
             X_j = self.logmelspec(x_j)
             X_j = self.extractor(X_j)
