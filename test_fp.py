@@ -43,13 +43,14 @@ parser.add_argument('--noise_idx', default=None, type=str)
 parser.add_argument('--noise_split', default='all', type=str,
                     help='Noise index file split to use for testing (all, test)')
 parser.add_argument('--fp_dir', default='fingerprints', type=str)
+parser.add_argument('--compute_dummy_db', default=True, type=bool)
 parser.add_argument('--query_lens', default=None, type=str)
 parser.add_argument('--encoder', default='grafp', type=str)
 parser.add_argument('--n_dummy_db', default=None, type=int)
 parser.add_argument('--n_query_db', default=100, type=int)
 parser.add_argument('--small_test', default=False, type=bool)
 parser.add_argument('--text', default='test', type=str)
-parser.add_argument('--test_snr', default=20, type=int)
+parser.add_argument('--test_snr', default=None, type=int)
 
 
 device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
@@ -250,8 +251,10 @@ def main():
                 continue
             
             fp_dir = create_fp_dir(resume=ckp, train=False)
-            create_dummy_db(dummy_db_loader, augment=test_augment,
-                             model=model, output_root_dir=fp_dir, verbose=True)
+            if args.compute_dummy_db:
+                create_dummy_db(dummy_db_loader, augment=test_augment,
+                                model=model, output_root_dir=fp_dir, verbose=True)
+
             create_fp_db(query_db_loader, augment=test_augment, 
                          model=model, output_root_dir=fp_dir, verbose=True)
             
@@ -261,11 +264,11 @@ def main():
 
 
             if args.query_lens is not None:
-                hit_rates = eval_faiss(emb_dir=fp_dir, 
+                hit_rates = eval_faiss(emb_dir=fp_dir,
                                     test_ids='all', 
                                     test_seq_len=test_seq_len, 
                                     index_type=index_type,
-                                    nogpu=False) 
+                                    nogpu=True) 
 
                 writer.add_text("table", 
                                 create_table(hit_rates, 
@@ -277,7 +280,7 @@ def main():
                 hit_rates = eval_faiss(emb_dir=fp_dir, 
                                     test_ids='all', 
                                     index_type=index_type,
-                                    nogpu=False)
+                                    nogpu=True)
                 
                 writer.add_text("table", 
                                 create_table(hit_rates, 
