@@ -50,7 +50,7 @@ parser.add_argument('--n_dummy_db', default=None, type=int)
 parser.add_argument('--n_query_db', default=100, type=int)
 parser.add_argument('--small_test', default=False, type=bool)
 parser.add_argument('--text', default='test', type=str)
-parser.add_argument('--test_snr', default=None, type=int)
+parser.add_argument('--test_snr', default=20, type=int)
 
 
 device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
