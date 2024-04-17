@@ -161,8 +161,8 @@ def main():
     test_cfg = load_config(args.test_config)
     ir_dir = cfg['ir_dir']
     print(args.recompute)
-    args.recompute = 'dhdh'
-    print(args.recompute)
+    # args.recompute = 'dhdh'
+    print(f"args.small_test {args.small_test}")
     assert args.recompute is False
     # Hyperparameters
     random_seed = 42
