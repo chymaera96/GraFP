@@ -48,7 +48,7 @@ parser.add_argument('--encoder', default='grafp', type=str)
 parser.add_argument('--n_dummy_db', default=None, type=int)
 parser.add_argument('--n_query_db', default=100, type=int)
 parser.add_argument('--small_test', default=False, type=bool)
-parser.add_argument('--label', default='test', type=str)
+parser.add_argument('--text', default='test', type=str)
 parser.add_argument('--test_snr', default=20, type=int)
 
 
@@ -56,9 +56,10 @@ device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
 
 
 
-def create_table(hit_rates, overlap, dur, test_seq_len=[1,3,5,9,11,19]):
+def create_table(hit_rates, overlap, dur, test_seq_len=[1,3,5,9,11,19], text="test"):
     table = f'''<table>
     <tr>
+    <th colspan="5">{text}/th>
     <th>Query Length</th>
     <th>Top-1 Exact</th>
     <th>Top-1 Near</th>
@@ -255,7 +256,9 @@ def main():
                          model=model, output_root_dir=fp_dir, verbose=True)
             
             
-            label = f'{args.label}_{str(epoch)}'
+            text = f'{args.text}_{str(epoch)}'
+            label = epoch if type(epoch) == int else 0
+
 
             if args.query_lens is not None:
                 hit_rates = eval_faiss(emb_dir=fp_dir, 
@@ -277,7 +280,7 @@ def main():
                 
                 writer.add_text("table", 
                                 create_table(hit_rates, 
-                                            cfg['overlap'], cfg['dur']), 
+                                            cfg['overlap'], cfg['dur'], text=text), 
                                 label)
 
 
