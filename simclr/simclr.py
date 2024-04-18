@@ -27,7 +27,6 @@ class SimCLR(nn.Module):
 
     def forward(self, x_i, x_j):
         
-        print(f'Shape of x_i {x_i.shape} inside the SimCLR forward function')
         h_i = self.encoder(x_i)
         # print(f'Shape of h_i {h_i.shape} inside the SimCLR forward function')
         z_i = self.projector(h_i)
