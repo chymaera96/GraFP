@@ -29,7 +29,7 @@ blur_sigma: 3.0  # blur sigma
 # Dataset and Model hyperparameters
 train_sz: 15000
 val_sz: 500
-bsz_train: 320
+bsz_train: 256
 tau: 0.05
 lr: 1.0e-4
 min_lr: 5.0e-6
