@@ -38,7 +38,7 @@ T_max: 440
 
 # Augmentation hyperparameters
 n_frames: 87 # depends on the spectrogram parameters
-overlap: 0.5
+overlap: 0.75
 tr_snr: [0, 20]
 val_snr: [0, 10]
 test_snr: [19, 21]
