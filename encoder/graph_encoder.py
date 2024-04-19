@@ -91,8 +91,6 @@ class GraphEncoder(nn.Module):
             self.emb_dims = 1024
         elif size == 's':
             self.blocks = [2, 2, 6, 2]
-            
-            
             self.channels = [80, 160, 400, 640]
             self.emb_dims = 1024
         elif size == 'm':
