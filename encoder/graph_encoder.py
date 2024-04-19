@@ -58,7 +58,7 @@ class FFN(nn.Module):
 
 class GraphEncoder(nn.Module):
 
-    def __init__(self,k=4,conv='mr',act='relu',norm='batch',bias=True,dropout=0.0,dilation=True,epsilon=0.2,drop_path=0.1,size ='s',
+    def __init__(self,k=3,conv='mr',act='relu',norm='batch',bias=True,dropout=0.0,dilation=True,epsilon=0.2,drop_path=0.1,size ='s',
                emb_dims=1024,in_channels=3,num_points=512):
         
         self.num_points = num_points
