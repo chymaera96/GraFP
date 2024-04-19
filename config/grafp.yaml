@@ -32,13 +32,13 @@ val_sz: 500
 bsz_train: 256
 tau: 0.05
 lr: 1.0e-4
-min_lr: 5.0e-6
+min_lr: 1.0e-6
 n_epochs: 400
-T_max: 440
+T_max: 380
 
 # Augmentation hyperparameters
 n_frames: 87 # depends on the spectrogram parameters
-overlap: 0.75
+overlap: 0.5
 tr_snr: [0, 20]
 val_snr: [0, 10]
 test_snr: [19, 21]
