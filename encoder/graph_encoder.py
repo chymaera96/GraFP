@@ -85,8 +85,11 @@ class GraphEncoder(nn.Module):
         """
         
         # Different versions of the encoder 
-
-        if size == 's':
+        if size == 't':
+            self.blocks = [2,2,6,2]
+            self.channels = [64, 128, 256, 512]
+            self.emb_dims = 1024
+        elif size == 's':
             self.blocks = [2, 2, 6, 2]
             
             
