@@ -37,7 +37,7 @@ parser.add_argument('--config', default='config/grafp.yaml', type=str,
 parser.add_argument('--test_config', default='config/test_config.yaml', type=str)
 parser.add_argument('--seed', default=42, type=int,
                     help='seed for initializing testing. ')
-parser.add_argument('--test_dir', default='data/fma_medium_all.json', type=str,
+parser.add_argument('--test_dir', default='data/fma_medium_train.json', type=str,
                     help='path to test data')
 parser.add_argument('--noise_idx', default=None, type=str)
 parser.add_argument('--noise_split', default='all', type=str,
@@ -161,7 +161,7 @@ def main():
     test_cfg = load_config(args.test_config)
     ir_dir = cfg['ir_dir']
     noise_dir = cfg['noise_dir']
-    args.recompute = False
+    # args.recompute = False
     # assert args.recompute is True
     # Hyperparameters
     random_seed = 42
