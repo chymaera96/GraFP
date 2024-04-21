@@ -161,8 +161,8 @@ def main():
     test_cfg = load_config(args.test_config)
     ir_dir = cfg['ir_dir']
     noise_dir = cfg['noise_dir']
-    # args.recompute = False
-    assert args.recompute is True
+    args.recompute = False
+    # assert args.recompute is True
     # Hyperparameters
     random_seed = 42
     shuffle_dataset =True
@@ -273,7 +273,7 @@ def main():
                                     test_ids='all', 
                                     test_seq_len=test_seq_len, 
                                     index_type=index_type,
-                                    nogpu=False) 
+                                    nogpu=True) 
 
                 writer.add_text("table", 
                                 create_table(hit_rates, 
@@ -285,7 +285,7 @@ def main():
                 hit_rates = eval_faiss(emb_dir=fp_dir, 
                                     test_ids='all', 
                                     index_type=index_type,
-                                    nogpu=False)
+                                    nogpu=True)
                 
                 writer.add_text("table", 
                                 create_table(hit_rates, 
