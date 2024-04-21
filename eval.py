@@ -153,6 +153,8 @@ def load_memmap_data(source_dir,
     else:
         data = np.memmap(path_data, dtype='float32', mode='r',
                          shape=(data_shape[0], data_shape[1]))
+    # Convert nan values to 0
+    data[np.isnan(data)] = 0.0
     if display:
         print(f'Load {data_shape[0]:,} items from \033[32m{path_data}\033[0m.')
     return data, data_shape
