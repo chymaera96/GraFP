@@ -151,7 +151,7 @@ def load_memmap_data(source_dir,
         data = np.memmap(path_data, dtype='float32', mode='r+',
                          shape=(data_shape[0], data_shape[1]))
     else:
-        data = np.memmap(path_data, dtype='float32', mode='r',
+        data = np.memmap(path_data, dtype='float32', mode='r+',
                          shape=(data_shape[0], data_shape[1]))
     # Convert nan values to 0
     data[np.isnan(data)] = 0.0
