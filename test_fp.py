@@ -161,7 +161,7 @@ def main():
     test_cfg = load_config(args.test_config)
     ir_dir = cfg['ir_dir']
     noise_dir = cfg['noise_dir']
-    # args.recompute = False
+    args.recompute = False
     # assert args.recompute is True
     # Hyperparameters
     random_seed = 42
