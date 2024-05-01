@@ -396,6 +396,11 @@ class GPUPeakExtractorv2(nn.Module):
 
     def forward(self, spec_tensor):
 
+        # Normalize the spectrogram
+        min_vals = torch.amin(spec_tensor, dim=(2, 3), keepdim=True)
+        max_vals = torch.amax(spec_tensor, dim=(2, 3), keepdim=True)
+        spec_tensor = (spec_tensor - min_vals) / (max_vals - min_vals)
+
         peaks = self.peak_from_features(spec_tensor.unsqueeze(1))
         feature = self.conv(peaks)
         self.conv_out = feature
