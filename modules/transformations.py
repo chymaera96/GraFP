@@ -153,9 +153,7 @@ class GPUTransformNeuralfp(nn.Module):
                                p=1),
 
             ])
-        
-        self.extractor = GPUPeakExtractor(cfg=self.cfg)
-        
+                
         self.logmelspec = nn.Sequential(
             MelSpectrogram(sample_rate=self.sample_rate, 
                            win_length=cfg['win_len'], 
@@ -180,18 +178,14 @@ class GPUTransformNeuralfp(nn.Module):
 
         if self.train:
             X_i = self.logmelspec(x_i)
-            X_i = self.extractor(X_i)
             # assert X_i.shape[1] == 2, f"X_i shape: {X_i.shape}"
 
             X_j = self.logmelspec(x_j)
-            X_j = self.extractor(X_j)
 
         else:
             # print(f"x_i shape in validation augment {x_i.shape}")
             X_i = self.logmelspec(x_i.squeeze(0)).transpose(1,0)
             X_i = X_i.unfold(0, size=self.n_frames, step=int(self.n_frames*(1-self.overlap)))
-            # print(f"Intermediate X_i shape {X_i.shape}")
-            X_i = self.extractor(X_i)
             # print(f"Final X_i shape {X_i.shape}")
 
             try:
@@ -204,6 +198,5 @@ class GPUTransformNeuralfp(nn.Module):
             # print(f"Intermediate X_j shape {X_j.shape}")
             X_j = X_j.unfold(0, size=self.n_frames, step=int(self.n_frames*(1-self.overlap)))
             # print(f"After unfold X_j shape {X_j.shape}")
-            X_j = self.extractor(X_j)
 
         return X_i, X_j

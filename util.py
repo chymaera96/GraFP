@@ -220,6 +220,12 @@ def count_parameters(model, encoder):
         f.write(str(table))
     return total_params
 
+def calculate_output_sparsity(output):
+    total_elements = torch.numel(output)
+    zero_elements = torch.sum((output == 0).int()).item()
+
+    sparsity = zero_elements / total_elements * 100
+    return sparsity
 
     # Get paths of files not in the index
 def get_test_index(data_dir):

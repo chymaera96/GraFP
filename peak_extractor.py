@@ -356,8 +356,9 @@ class GPUPeakExtractorv2(nn.Module):
         super(GPUPeakExtractorv2, self).__init__()
 
         self.blur_kernel = cfg['blur_kernel']
+        self.n_filters = cfg['n_filters']
         self.conv = nn.Sequential(
-            nn.Conv2d(1, 8, kernel_size=self.blur_kernel, padding=self.blur_kernel//2),
+            nn.Conv2d(1, self.n_filters, kernel_size=self.blur_kernel, padding=self.blur_kernel//2),
             nn.ReLU(),
         )
 
@@ -397,22 +398,27 @@ class GPUPeakExtractorv2(nn.Module):
 
         peaks = self.peak_from_features(spec_tensor.unsqueeze(1))
         feature = self.conv(peaks)
+        self.conv_out = feature
         peaks = self.peak_from_features(feature)
+        # print(f"Inital peaks shape: {peaks.shape}")
 
-        T_tensor = torch.arange(spec_tensor.shape[2]).unsqueeze(0).unsqueeze(0).repeat(spec_tensor.shape[0],
-                                                                                       self.conv.out_channels,
-                                                                                       spec_tensor.shape[1], 1)
-        F_tensor = torch.arange(spec_tensor.shape[1]).unsqueeze(0).transpose(0,1).unsqueeze(0).repeat(spec_tensor.shape[0],
-                                                                                                      self.conv.out_channels, 1,
-                                                                                                      spec_tensor.shape[2])
-
-
+        T_tensor = torch.arange(spec_tensor.shape[2]) / spec_tensor.shape[2]
+        T_tensor = T_tensor.unsqueeze(0).unsqueeze(0).repeat(spec_tensor.shape[0], 
+                                                             self.n_filters, 
+                                                             spec_tensor.shape[1], 1)
+        
+        F_tensor = torch.arange(spec_tensor.shape[1]) / spec_tensor.shape[1]
+        F_tensor = F_tensor.unsqueeze(0).transpose(0,1).unsqueeze(0).repeat(spec_tensor.shape[0],
+                                                                            self.n_filters, 1,
+                                                                            spec_tensor.shape[2])
         # Concatenate T_tensor, F_tensor and feature to get a tensor of shape (batch, 3, C, H, W)
         tensor = torch.cat((T_tensor.unsqueeze(1), F_tensor.unsqueeze(1), feature.unsqueeze(1)), dim=1)
+
         # Repeat peaks to match the shape of tensor
         peaks = peaks.unsqueeze(1).repeat(1, tensor.shape[1], 1, 1, 1)
-
-        # Get masked tensor
         tensor = tensor * peaks
+
+        B, _, C, F, T = tensor.shape
+        tensor = tensor.reshape(B, 3, C, -1)
     
         return tensor

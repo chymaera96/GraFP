@@ -58,8 +58,8 @@ class FFN(nn.Module):
 
 class GraphEncoder(nn.Module):
 
-    def __init__(self,k=3,conv='mr',act='relu',norm='batch',bias=True,dropout=0.0,dilation=True,epsilon=0.2,drop_path=0.1,size ='s',
-               emb_dims=1024,in_channels=3,num_points=512):
+    def __init__(self, cfg, k=25,conv='mr',act='relu',norm='batch',bias=True,dropout=0.0,dilation=True,epsilon=0.2,drop_path=0.1,size ='t',
+               emb_dims=1024,in_channels=3,num_points=64*87):
         
         self.num_points = num_points
 
@@ -118,7 +118,7 @@ class GraphEncoder(nn.Module):
         max_dilation = 128//max(num_k) # max_dilation value 
 
         # Stem conv for extracting non linear representation from the points
-        self.stem = nn.Sequential(nn.Conv2d(in_channels,self.channels[0], kernel_size=1, bias=False),
+        self.stem = nn.Sequential(nn.Conv2d(in_channels,self.channels[0], kernel_size=(cfg['n_filters'], 1), bias=False),
                                    nn.BatchNorm2d(self.channels[0]),
                                    nn.LeakyReLU(negative_slope=0.2))
         dpr = [x.item() for x in torch.linspace(0, drop_path, self.num_blocks)]
@@ -163,10 +163,9 @@ class GraphEncoder(nn.Module):
         Outputs:
             x: Output embedding with shape (B,emb_dim) # Batch,1024
         """
-        x = x.unsqueeze(-1)
         
-        B, C,N,_ = x.shape
         x = self.stem(x)
+        x = x.unsqueeze(2)  # (B,C,1,N) -> (B,C,N)
         
         for i in range(len(self.backbone)):
             

@@ -63,13 +63,19 @@ def train(cfg, train_loader, model, optimizer, ir_idx, noise_idx, augment=None):
         x_j = x_j.to(device)
         with torch.no_grad():
             x_i, x_j = augment(x_i, x_j)
-        h_i, h_j, z_i, z_j = model(x_i, x_j)
-        loss = ntxent_loss(z_i, z_j, cfg)
+        p_i, p_j, z_i, z_j = model(x_i, x_j)
+
+        # Calculate L1 loss for peaks
+        l1_i = torch.norm(p_i, 1)
+        l1_j = torch.norm(p_j, 1)
+
+        loss = ntxent_loss(z_i, z_j, cfg) + cfg['lambda'] * (l1_i + l1_j)
         loss.backward()
         optimizer.step()
 
         if idx % 10 == 0:
             print(f"Step [{idx}/{len(train_loader)}]\t Loss: {loss.item()}")
+            print(f"Peak matrix sparsity: {calculate_output_sparsity(p_i)}")
 
         loss_epoch += loss.item()
 
@@ -173,7 +179,7 @@ def main():
         # TODO: Add support for resnet encoder (deprecated)
         raise NotImplementedError
     elif args.encoder == 'grafp':
-        model = SimCLR(cfg, encoder=GraphEncoder(in_channels=3))
+        model = SimCLR(cfg, encoder=GraphEncoder(cfg=cfg, in_channels=3))
         if torch.cuda.device_count() > 1:
             print("Using", torch.cuda.device_count(), "GPUs!")
             model = DataParallel(model)
