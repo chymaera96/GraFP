@@ -247,7 +247,7 @@ def get_test_index(data_dir):
     
 def main():
 
-    path = '/import/c4dm-datasets-ext/fma/fma/data/fma_medium'
+    path = '/import/c4dm-datasets-ext/fma/fma/data/fma_small'
     cfg = load_config('config/grafp.yaml')
     # train_json_path = os.path.join('data', path.split('/')[-1] + "_train.json")
     # train_idx = load_index(cfg, data_dir=train_json_path, mode='train')
@@ -274,7 +274,7 @@ def main():
     # Create a index file containing all the files in the directory
     all_file_list = os.listdir(path)
     print(f'Number of files in {path}: {len(all_file_list)}')
-    all_idx_path = os.path.join('data', path.split('/')[-1] + "_all.json")
+    all_idx_path = os.path.join('data', path.split('/')[-1] + "_train.json")
     all_idx = {}
     print("Creating all index...")
     ix = 0
