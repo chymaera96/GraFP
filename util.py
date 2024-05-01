@@ -49,10 +49,11 @@ def load_index(cfg, data_dir, ext=['wav','mp3'], mode="train"):
 
         idx = 0
         valid = {}
+        existing = [f.split('/')[-1] for f in list(train.values())]
         for fpath in glob.iglob(os.path.join(data_dir,'**/*.*'), recursive=True):
             if len(valid) >= valid_len:
                 break
-            if fpath.split('.')[-1] in ext and fpath not in list(train.values()): 
+            if fpath.split('.')[-1] in ext and fpath.split('/')[-1] not in existing:
                 valid[str(idx)] = fpath
                 idx += 1
 
