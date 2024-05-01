@@ -63,11 +63,7 @@ def train(cfg, train_loader, model, optimizer, ir_idx, noise_idx, augment=None):
         x_j = x_j.to(device)
         with torch.no_grad():
             x_i, x_j = augment(x_i, x_j)
-        p_i, p_j, z_i, z_j = model(x_i, x_j)
-
-        # Calculate L1 loss for peaks
-        l1_i = torch.norm(p_i, 1)
-        l1_j = torch.norm(p_j, 1)
+        l1_i, l1_j, z_i, z_j = model(x_i, x_j)
 
         loss = ntxent_loss(z_i, z_j, cfg) + cfg['lambda'] * (l1_i + l1_j)
         loss.backward()

@@ -362,6 +362,9 @@ class GPUPeakExtractorv2(nn.Module):
             nn.ReLU(),
         )
 
+        # Initialize conv layer with kaiming initialization
+        self.init_weights()
+
     def peak_from_features(self, features, mask=False):
          # Find local maxima along the time axis
         maxima_time = F.max_pool2d(features, kernel_size=(1, 3), stride=1, padding=(0, 1))
@@ -385,6 +388,7 @@ class GPUPeakExtractorv2(nn.Module):
         else:
             return peaks * features
         
+
         # Initialize conv layer with kaiming initialization
     def init_weights(self):
         for m in self.modules():
@@ -403,7 +407,7 @@ class GPUPeakExtractorv2(nn.Module):
 
         peaks = self.peak_from_features(spec_tensor.unsqueeze(1))
         feature = self.conv(peaks)
-        self.conv_out = feature
+        self.l1 = torch.norm(feature, p=1)
         peaks = self.peak_from_features(feature)
         # print(f"Inital peaks shape: {peaks.shape}")
 

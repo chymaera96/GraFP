@@ -31,7 +31,7 @@ class SimCLR(nn.Module):
     def forward(self, x_i, x_j):
         
         x_i = self.peak_extractor(x_i)
-        p_i = self.peak_extractor.conv_out
+        l1_i = self.peak_extractor.l1
         h_i = self.encoder(x_i)
         # print(f'Shape of h_i {h_i.shape} inside the SimCLR forward function')
         z_i = self.projector(h_i)
@@ -39,10 +39,10 @@ class SimCLR(nn.Module):
         z_i = F.normalize(z_i, p=2)
 
         x_j = self.peak_extractor(x_j)
-        p_j = self.peak_extractor.conv_out
+        l1_j = self.peak_extractor.l1
         h_j = self.encoder(x_j)
         z_j = self.projector(h_j)
         z_j = F.normalize(z_j, p=2)
 
 
-        return p_i, p_j, z_i, z_j
+        return l1_i, l1_j, z_i, z_j
