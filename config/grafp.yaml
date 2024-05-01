@@ -1,6 +1,6 @@
 # Dataset directories
 data_dir: 'data'
-train_dir: '/import/c4dm-datasets-ext/fma/fma/data/fma_medium'
+train_dir: '/import/c4dm-datasets-ext/fma/fma/data/fma_small'
 # val_dir: 'data/valid'
 val_dir: '/import/c4dm-datasets-ext/fma/fma/data/fma_medium'
 ir_dir: '/import/research_c4dm/ss380/AIR_1_4' # To-do: Change this
@@ -27,9 +27,9 @@ blur_kernel: 9  # blur kernel size
 blur_sigma: 3.0  # blur sigma
 
 # Dataset and Model hyperparameters
-train_sz: 15000
+train_sz: 8000
 val_sz: 500
-bsz_train: 256
+bsz_train: 128
 n_filters : 8 # number of filters in the peak extraction layer
 tau: 0.05
 lr: 1.0e-4
