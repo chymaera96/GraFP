@@ -274,7 +274,7 @@ def main():
     # Create a index file containing all the files in the directory
     all_file_list = os.listdir(path)
     print(f'Number of files in {path}: {len(all_file_list)}')
-    all_idx_path = os.path.join('data', path.split('/')[-1] + "_train.json")
+    all_idx_path = os.path.join('data', path.split('/')[-1] + "_all.json")
     all_idx = {}
     print("Creating all index...")
     ix = 0
