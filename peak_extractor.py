@@ -405,18 +405,20 @@ class GPUPeakExtractorv2(nn.Module):
         max_vals = torch.amax(spec_tensor, dim=(1, 2), keepdim=True)
         spec_tensor = (spec_tensor - min_vals) / (max_vals - min_vals)
 
+        assert spec_tensor.device == torch.device('cuda'), "Input tensor must be on GPU"
+
         peaks = self.peak_from_features(spec_tensor.unsqueeze(1))
         feature = self.conv(peaks)
         self.l1 = torch.norm(feature, p=1)
         peaks = self.peak_from_features(feature)
         # print(f"Inital peaks shape: {peaks.shape}")
 
-        T_tensor = torch.arange(spec_tensor.shape[2]) / spec_tensor.shape[2]
+        T_tensor = torch.arange(spec_tensor.shape[2], device=spec_tensor.device) / spec_tensor.shape[2]
         T_tensor = T_tensor.unsqueeze(0).unsqueeze(0).repeat(spec_tensor.shape[0], 
                                                              self.n_filters, 
                                                              spec_tensor.shape[1], 1)
         
-        F_tensor = torch.arange(spec_tensor.shape[1]) / spec_tensor.shape[1]
+        F_tensor = torch.arange(spec_tensor.shape[1], device=spec_tensor.device) / spec_tensor.shape[1]
         F_tensor = F_tensor.unsqueeze(0).transpose(0,1).unsqueeze(0).repeat(spec_tensor.shape[0],
                                                                             self.n_filters, 1,
                                                                             spec_tensor.shape[2])
