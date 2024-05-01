@@ -63,6 +63,7 @@ def train(cfg, train_loader, model, optimizer, ir_idx, noise_idx, augment=None):
         x_j = x_j.to(device)
         with torch.no_grad():
             x_i, x_j = augment(x_i, x_j)
+        assert x_i.device == torch.device('cuda'), f"[IN TRAINING] x_i device: {x_i.device}"
         l1_i, l1_j, z_i, z_j = model(x_i, x_j)
 
         loss = ntxent_loss(z_i, z_j, cfg) + cfg['lambda'] * (l1_i + l1_j)
@@ -71,7 +72,7 @@ def train(cfg, train_loader, model, optimizer, ir_idx, noise_idx, augment=None):
 
         if idx % 10 == 0:
             print(f"Step [{idx}/{len(train_loader)}]\t Loss: {loss.item()}")
-            print(f"Peak matrix sparsity: {calculate_output_sparsity(p_i)}")
+            # print(f"Peak matrix sparsity: {calculate_output_sparsity(p_i)}")
 
         loss_epoch += loss.item()
 

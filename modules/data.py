@@ -34,8 +34,8 @@ class NeuralfpDataset(Dataset):
   
         
     def __getitem__(self, idx):
-        # if idx in self.ignore_idx:
-        #     return self[idx + 1]
+        if idx in self.ignore_idx:
+            return self[idx + 1]
         
         datapath = self.filenames[str(idx)]
         try:
@@ -56,7 +56,7 @@ class NeuralfpDataset(Dataset):
         clip_frames = int(self.sample_rate*self.dur)
         
         if len(audio_resampled) <= clip_frames:
-            self.ignore_idx.append(idx)
+            # self.ignore_idx.append(idx)
             return self[idx + 1]
     
         

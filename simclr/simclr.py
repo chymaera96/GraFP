@@ -23,11 +23,6 @@ class SimCLR(nn.Module):
                                        nn.Linear(d*u, d)
                                )
 
-        # self.projector = nn.Sequential(nn.Conv1d(h, d * u, kernel_size=(1,), groups=d),
-        #                                 nn.ELU(),
-        #                                 nn.Conv1d(d * u, d, kernel_size=(1,), groups=d)
-        #                                 )
-
     def forward(self, x_i, x_j):
         
         x_i = self.peak_extractor(x_i)
