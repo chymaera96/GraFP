@@ -134,7 +134,7 @@ class GraphEncoder(nn.Module):
 
                 self.backbone += [
                         Seq(Grapher(self.channels[i], num_k[idx], min(idx // 4 + 1, max_dilation), self.conv, self.act, self.norm,
-                                        self.bias, stochastic, epsilon, 1, n=num_points, drop_path=dpr[idx],
+                                        self.bias, stochastic, epsilon, 1, n=self.num_points, drop_path=dpr[idx],
                                         relative_pos=True),
                             FFN(in_features=self.channels[i],hidden_features= self.channels[i] * 4,out_features=self.channels[i], act=act, drop_path=dpr[idx])
                             )]
