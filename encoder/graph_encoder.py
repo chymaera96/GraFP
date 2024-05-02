@@ -164,11 +164,10 @@ class GraphEncoder(nn.Module):
             x: Output embedding with shape (B,emb_dim) # Batch,1024
         """
         
-        print(f"input shape {x.shape}")
         x = self.stem(x)
-        x = x.squeeze(2)  # (B,C,1,N) -> (B,C,N)
-        print(f"stem output shape {x.shape}")
-        exit(0)
+        # (B,C,1,N) -> (B,C,N,1)
+        x = x.permute(0,1,3,2)
+
         for i in range(len(self.backbone)):
             
             x = self.backbone[i](x)
