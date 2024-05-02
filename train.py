@@ -67,11 +67,8 @@ def train(cfg, train_loader, model, optimizer, ir_idx, noise_idx, augment=None):
         l1_i, l1_j, z_i, z_j = model(x_i, x_j)
 
 
-        loss = ntxent_loss(z_i, z_j, cfg) #+ cfg['lambda'] * (l1_i + l1_j)
-        l1_loss = cfg['lambda'] * (l1_i + l1_j)
-        print(loss.shape)
-        print(l1_loss.shape)
-        return
+        loss = ntxent_loss(z_i, z_j, cfg) + cfg['lambda'] * (l1_i + l1_j)
+
         loss.backward()
         optimizer.step()
 
