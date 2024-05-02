@@ -15,7 +15,7 @@ dur: 1.0
 offset: 0.05
 norm: 0.95
 win_len: 1024
-hop_len: 256
+hop_len: 512
 n_mels: 64
 n_fft: 1024
 hpf_pole: 0.98  # spectrogram enhancement
