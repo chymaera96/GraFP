@@ -164,13 +164,10 @@ class GraphEncoder(nn.Module):
             x: Output embedding with shape (B,emb_dim) # Batch,1024
         """
 
-        print(f"Shape of input tensor {x.shape}")
         x = x.unsqueeze(-1)
         
         B, C,N,_ = x.shape
         x = self.stem(x)
-        print(f"Shape of tensor after stem {x.shape}")
-        exit(0)
         
         for i in range(len(self.backbone)):
             
