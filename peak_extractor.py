@@ -411,6 +411,8 @@ class GPUPeakExtractorv2(nn.Module):
         peaks = self.peak_from_features(spec_tensor.unsqueeze(1))
         feature = self.conv(peaks)
         self.l1 = torch.norm(feature, p=1).mean()
+        # Assert l1 is a scalar
+        assert self.l1.dim() == 0, f"l1 norm must be a scalar. Instead found {self.l1}"
         peaks = self.peak_from_features(feature)
 
         T_tensor = torch.arange(feature.shape[3], device=feature.device) / feature.shape[3]
