@@ -10,14 +10,14 @@ noise_dir: '/import/c4dm-datasets/musan'
 
 # Model input parameters
 arch: 'grafp'
-fs: 11025
+fs: 16000
 dur: 1.0
 offset: 0.05
 norm: 0.95
-win_len: 400
-hop_len: 128
+win_len: 1024
+hop_len: 256
 n_mels: 64
-n_fft: 512
+n_fft: 1024
 hpf_pole: 0.98  # spectrogram enhancement
 density: 250.0
 f_sd : 1.0   # how wide to spreak peaks
@@ -25,13 +25,14 @@ maxpksperframe: 64   # maximum number of peaks per frame
 n_peaks: 512  # max number of peaks to consider
 oversamp: 1  # oversample factor for peak detection
 silence: 0.0005  # silence threshold
-blur_kernel: 9  # blur kernel size
+blur_kernel: 7  # blur kernel size
 blur_sigma: 3.0  # blur sigma
 
 # Dataset and Model hyperparameters
 train_sz: 8000
 val_sz: 500
-bsz_train: 128
+bsz_train: 80
+peak_stride: 2
 n_filters : 8 # number of filters in the peak extraction layer
 tau: 0.05
 lr: 1.0e-4
@@ -41,7 +42,7 @@ T_max: 380
 lambda: 0.02
 
 # Augmentation hyperparameters
-n_frames: 87 # depends on the spectrogram parameters
+n_frames: 63 # depends on the spectrogram parameters
 overlap: 0.9
 tr_snr: [0, 20]
 val_snr: [0, 10]

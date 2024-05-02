@@ -357,8 +357,9 @@ class GPUPeakExtractorv2(nn.Module):
 
         self.blur_kernel = cfg['blur_kernel']
         self.n_filters = cfg['n_filters']
+        self.stride =cfg['peak_stride']
         self.conv = nn.Sequential(
-            nn.Conv2d(1, self.n_filters, kernel_size=self.blur_kernel, padding=self.blur_kernel//2),
+            nn.Conv2d(1, self.n_filters, kernel_size=self.blur_kernel, stride=(self.stride, 1), padding=self.blur_kernel//2),
             nn.ReLU(),
         )
 
@@ -366,7 +367,7 @@ class GPUPeakExtractorv2(nn.Module):
         self.init_weights()
 
     def peak_from_features(self, features, mask=False):
-         # Find local maxima along the time axis
+        # Find local maxima along the time axis
         maxima_time = F.max_pool2d(features, kernel_size=(1, 3), stride=1, padding=(0, 1))
         maxima_time = torch.eq(features, maxima_time)
 

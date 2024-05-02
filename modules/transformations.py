@@ -22,19 +22,21 @@ class TransformNeuralfp(nn.Module):
         self.cfg = cfg
 
         self.train_transform = Compose([
-            ApplyImpulseResponse(ir_paths=self.ir_dir, p=cfg['ir_prob']),
+            ApplyImpulseResponse(ir_paths=self.ir_dir, p=cfg['ir_prob'], target_rate=self.sample_rate),
             AddBackgroundNoise(background_paths=self.noise_dir, 
                                min_snr_in_db=cfg['tr_snr'][0],
                                max_snr_in_db=cfg['tr_snr'][1], 
-                               p=cfg['noise_prob']),
+                               p=cfg['noise_prob'],
+                               target_rate=self.sample_rate),
             ])
         
         self.val_transform = Compose([
-            ApplyImpulseResponse(ir_paths=self.ir_dir, p=1),
+            ApplyImpulseResponse(ir_paths=self.ir_dir, p=1, target_rate=self.sample_rate),
             AddBackgroundNoise(background_paths=self.noise_dir, 
                                min_snr_in_db=cfg['val_snr'][0], 
                                max_snr_in_db=cfg['val_snr'][1], 
-                               p=1),
+                               p=1,
+                               target_rate=self.sample_rate),
 
             ])
         
