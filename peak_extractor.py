@@ -406,23 +406,23 @@ class GPUPeakExtractorv2(nn.Module):
         max_vals = torch.amax(spec_tensor, dim=(1, 2), keepdim=True)
         spec_tensor = (spec_tensor - min_vals) / (max_vals - min_vals)
 
-        assert spec_tensor.device == torch.device('cuda:0'), f"Input tensor must be on GPU. Instead found on {spec_tensor.device}"
+        # assert spec_tensor.device == torch.device('cuda:0'), f"Input tensor must be on GPU. Instead found on {spec_tensor.device}"
 
         peaks = self.peak_from_features(spec_tensor.unsqueeze(1))
         feature = self.conv(peaks)
         self.l1 = torch.norm(feature, p=1)
         peaks = self.peak_from_features(feature)
-        # print(f"Inital peaks shape: {peaks.shape}")
 
-        T_tensor = torch.arange(spec_tensor.shape[2], device=spec_tensor.device) / spec_tensor.shape[2]
-        T_tensor = T_tensor.unsqueeze(0).unsqueeze(0).repeat(spec_tensor.shape[0], 
+        T_tensor = torch.arange(feature.shape[3], device=feature.device) / feature.shape[3]
+        T_tensor = T_tensor.unsqueeze(0).unsqueeze(0).repeat(feature.shape[0], 
                                                              self.n_filters, 
-                                                             spec_tensor.shape[1], 1)
-        
-        F_tensor = torch.arange(spec_tensor.shape[1], device=spec_tensor.device) / spec_tensor.shape[1]
-        F_tensor = F_tensor.unsqueeze(0).transpose(0,1).unsqueeze(0).repeat(spec_tensor.shape[0],
+                                                             feature.shape[2], 1)
+                
+        F_tensor = torch.arange(feature.shape[2], device=spec_tensor.device) / spec_tensor.shape[2]
+        F_tensor = F_tensor.unsqueeze(0).transpose(0,1).unsqueeze(0).repeat(feature.shape[0],
                                                                             self.n_filters, 1,
-                                                                            spec_tensor.shape[2])
+                                                                            feature.shape[3])
+        
         # Concatenate T_tensor, F_tensor and feature to get a tensor of shape (batch, 3, C, H, W)
         tensor = torch.cat((T_tensor.unsqueeze(1), F_tensor.unsqueeze(1), feature.unsqueeze(1)), dim=1)
 
