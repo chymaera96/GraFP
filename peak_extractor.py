@@ -405,7 +405,7 @@ class GPUPeakExtractorv2(nn.Module):
         max_vals = torch.amax(spec_tensor, dim=(1, 2), keepdim=True)
         spec_tensor = (spec_tensor - min_vals) / (max_vals - min_vals)
 
-        assert spec_tensor.device == torch.device('cuda'), f"Input tensor must be on GPU. Instead found on {spec_tensor.device}"
+        assert spec_tensor.device == torch.device('cuda:0'), f"Input tensor must be on GPU. Instead found on {spec_tensor.device}"
 
         peaks = self.peak_from_features(spec_tensor.unsqueeze(1))
         feature = self.conv(peaks)
