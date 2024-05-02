@@ -165,7 +165,7 @@ class GraphEncoder(nn.Module):
         """
         
         x = self.stem(x)
-        x = x.unsqueeze(2)  # (B,C,1,N) -> (B,C,N)
+        x = x.squeeze(2)  # (B,C,1,N) -> (B,C,N)
         
         for i in range(len(self.backbone)):
             
