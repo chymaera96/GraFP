@@ -31,7 +31,7 @@ blur_sigma: 3.0  # blur sigma
 # Dataset and Model hyperparameters
 train_sz: 8000
 val_sz: 500
-bsz_train: 64
+bsz_train: 64nvidi
 peak_stride: 2
 n_filters : 8 # number of filters in the peak extraction layer
 tau: 0.05
@@ -39,7 +39,7 @@ lr: 1.0e-4
 min_lr: 1.0e-6
 n_epochs: 400
 T_max: 380
-lambda: 0.02
+lambda: 5.0e-4
 
 # Augmentation hyperparameters
 n_frames: 32 # depends on the spectrogram parameters
