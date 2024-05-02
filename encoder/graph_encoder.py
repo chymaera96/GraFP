@@ -166,6 +166,7 @@ class GraphEncoder(nn.Module):
         
         x = self.stem(x)
         x = x.squeeze(2)  # (B,C,1,N) -> (B,C,N)
+        print(f"stem output shape {x.shape}")
         
         for i in range(len(self.backbone)):
             
