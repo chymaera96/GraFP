@@ -230,8 +230,8 @@ def main():
             'scheduler': scheduler.state_dict()
         }
         save_ckp(checkpoint, model_name, model_folder, 'current')
-        assert os.path.exists(f'checkpoint/{model_name}_current.pth'), "Checkpoint not saved"
-        
+        assert os.path.exists(f'checkpoint/model_{model_name}_current.pth'), "Checkpoint not saved"
+
         if loss_epoch < best_loss:
             best_loss = loss_epoch
             save_ckp(checkpoint, model_name, model_folder, 'best')
