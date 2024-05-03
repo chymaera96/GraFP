@@ -84,7 +84,7 @@ def validate(epoch, query_loader, dummy_loader, augment, model, output_root_dir)
     if epoch==1 or epoch % 10 == 0:
         create_dummy_db(dummy_loader, augment=augment, model=model, output_root_dir=output_root_dir, verbose=False)
         create_fp_db(query_loader, augment=augment, model=model, output_root_dir=output_root_dir, verbose=False)
-        hit_rates = eval_faiss(emb_dir=output_root_dir, test_ids='all', index_type='l2', n_centroids=32, nogpu=False)
+        hit_rates = eval_faiss(emb_dir=output_root_dir, test_ids='all', index_type='l2', n_centroids=32, nogpu=True)
         print("-------Validation hit-rates-------")
         print(f'Top-1 exact hit rate = {hit_rates[0]}')
         print(f'Top-1 near hit rate = {hit_rates[1]}')
