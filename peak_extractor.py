@@ -410,7 +410,7 @@ class GPUPeakExtractorv2(nn.Module):
 
         peaks = self.peak_from_features(spec_tensor.unsqueeze(1))
         feature = self.conv(peaks)
-        self.l1 = torch.norm(feature, p=1)
+        self.l1 = torch.norm(feature, p=2)
         peaks = self.peak_from_features(feature)
 
         T_tensor = torch.arange(feature.shape[3], device=feature.device) / feature.shape[3]
