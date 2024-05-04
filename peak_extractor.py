@@ -359,7 +359,12 @@ class GPUPeakExtractorv2(nn.Module):
         self.n_filters = cfg['n_filters']
         self.stride =cfg['peak_stride']
         self.conv = nn.Sequential(
-            nn.Conv2d(1, self.n_filters, kernel_size=self.blur_kernel, stride=(self.stride, 1), padding=self.blur_kernel//2),
+            nn.Conv2d(1, 
+                      self.n_filters, 
+                      kernel_size=self.blur_kernel, 
+                      stride=(self.stride, 1), 
+                      padding=(self.blur_kernel[0] // 2, self.blur_kernel[1] // 2)
+                      ),
             nn.ReLU(),
         )
 
