@@ -57,8 +57,8 @@ def train(cfg, train_loader, model, optimizer, ir_idx, noise_idx, augment=None):
     # return loss_epoch
 
     for idx, (x_i, x_j) in enumerate(train_loader):
-
         optimizer.zero_grad()
+        print("Dataloading complete")
         x_i = x_i.to(device)
         x_j = x_j.to(device)
         with torch.no_grad():
