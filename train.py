@@ -63,7 +63,7 @@ def train(cfg, train_loader, model, optimizer, ir_idx, noise_idx, augment=None):
         x_j = x_j.to(device)
         with torch.no_grad():
             x_i, x_j = augment(x_i, x_j)
-        print("[2/4] Augmentation complete")
+        print(f"[2/4] Augmentation complete; x_i shape {x_i.shape}")
         assert x_i.device == torch.device('cuda:0'), f"[IN TRAINING] x_i device: {x_i.device}"
         l1_i, l1_j, z_i, z_j = model(x_i, x_j)
 
@@ -124,7 +124,7 @@ def main():
     train_dataset = NeuralfpDataset(cfg=cfg, path=train_dir, train=True, transform=cpu_augment)
     train_loader = torch.utils.data.DataLoader(
         train_dataset, batch_size=batch_size, shuffle=True,
-        num_workers=8, pin_memory=True, drop_last=True)
+        num_workers=64, pin_memory=True, drop_last=True)
     
     valid_dataset = NeuralfpDataset(cfg=cfg, path=valid_dir, train=False)
     print("Creating validation dataloaders...")
