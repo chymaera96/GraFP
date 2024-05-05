@@ -369,7 +369,7 @@ class GPUPeakExtractorv2(nn.Module):
         )
 
         # Initialize conv layer with kaiming initialization
-        self.init_weights()
+        # self.init_weights()
 
     def peak_from_features(self, features, mask=False):
         # Find local maxima along the time axis
@@ -418,6 +418,8 @@ class GPUPeakExtractorv2(nn.Module):
         print("[2.2] Peaks extracted")
         assert peaks.device == torch.device('cuda:0'), f"Peaks tensor must be on GPU. Instead found on {peaks.device}"
         print(f"Conv layer device: {next(self.conv.parameters()).device}")
+        # Check device of conv layer
+        assert next(self.conv.parameters()).device == torch.device('cuda:0'), f"Conv layer must be on GPU. Instead found on {next(self.conv.parameters()).device}"
         feature = self.conv(peaks)
         print("[2.3] Convolution completed")
         self.l1 = torch.norm(feature, p=2)
