@@ -18,6 +18,8 @@ from simclr.simclr import SimCLR
 from modules.transformations import GPUTransformNeuralfp
 from modules.data import NeuralfpDataset
 from encoder.graph_encoder import GraphEncoder
+from peak_extractor import GPUPeakExtractorv2
+
 from eval import eval_faiss
 from test_fp import create_fp_db, create_dummy_db
 
@@ -179,7 +181,7 @@ def main():
         # TODO: Add support for resnet encoder (deprecated)
         raise NotImplementedError
     elif args.encoder == 'grafp':
-        model = SimCLR(cfg, encoder=GraphEncoder(cfg=cfg, in_channels=3))
+        model = SimCLR(cfg, encoder=GraphEncoder(cfg=cfg, in_channels=3), extractor=GPUPeakExtractorv2(cfg=cfg))
         if torch.cuda.device_count() > 1:
             print("Using", torch.cuda.device_count(), "GPUs!")
             model = DataParallel(model)

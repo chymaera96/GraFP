@@ -417,9 +417,9 @@ class GPUPeakExtractorv2(nn.Module):
         peaks = self.peak_from_features(spec_tensor.unsqueeze(1))
         print("[2.2] Peaks extracted")
         assert peaks.device == torch.device('cuda:0'), f"Peaks tensor must be on GPU. Instead found on {peaks.device}"
-        # Print conv layer parameters
-        for param in self.module.conv.parameters():
-            print(param)
+        # # Print conv layer parameters
+        # for param in self.module.conv.parameters():
+        #     print(param)
 
         feature = self.conv(peaks)
         print("[2.3] Convolution completed")

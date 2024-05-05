@@ -1,11 +1,10 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from peak_extractor import GPUPeakExtractorv2
 
 
 class SimCLR(nn.Module):
-    def __init__(self, cfg, encoder):
+    def __init__(self, cfg, encoder, extractor):
         super(SimCLR, self).__init__()
         self.encoder = encoder
         # self.projector = nn.Sequential(nn.Linear(v,u),
@@ -16,7 +15,7 @@ class SimCLR(nn.Module):
         h = cfg['h']
         u = cfg['u']
 
-        self.peak_extractor = GPUPeakExtractorv2(cfg)
+        self.peak_extractor = extractor
 
         self.projector = nn.Sequential(nn.Linear(h, d*u),
                                        nn.ELU(),
