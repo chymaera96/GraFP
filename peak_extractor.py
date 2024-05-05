@@ -410,14 +410,18 @@ class GPUPeakExtractorv2(nn.Module):
         min_vals = torch.amin(spec_tensor, dim=(1, 2), keepdim=True)
         max_vals = torch.amax(spec_tensor, dim=(1, 2), keepdim=True)
         spec_tensor = (spec_tensor - min_vals) / (max_vals - min_vals)
+        print("[2.1] Normalization completed")
 
-        # assert spec_tensor.device == torch.device('cuda:0'), f"Input tensor must be on GPU. Instead found on {spec_tensor.device}"
+        assert spec_tensor.device == torch.device('cuda:0'), f"Input tensor must be on GPU. Instead found on {spec_tensor.device}"
 
         peaks = self.peak_from_features(spec_tensor.unsqueeze(1))
+        print("[2.2] Peaks extracted")
         feature = self.conv(peaks)
+        print("[2.3] Convolution completed")
         self.l1 = torch.norm(feature, p=2)
+        print("[2.4] L1 norm computed")
         peaks = self.peak_from_features(feature)
-
+        print("[2.5] Peaks extracted from feature")
         T_tensor = torch.arange(feature.shape[3], device=feature.device) / feature.shape[3]
         T_tensor = T_tensor.unsqueeze(0).unsqueeze(0).repeat(feature.shape[0], 
                                                              self.n_filters, 
@@ -427,7 +431,7 @@ class GPUPeakExtractorv2(nn.Module):
         F_tensor = F_tensor.unsqueeze(0).transpose(0,1).unsqueeze(0).repeat(feature.shape[0],
                                                                             self.n_filters, 1,
                                                                             feature.shape[3])
-        
+        print("[2.6] T and F tensors created")
         # Concatenate T_tensor, F_tensor and feature to get a tensor of shape (batch, 3, C, H, W)
         tensor = torch.cat((T_tensor.unsqueeze(1), F_tensor.unsqueeze(1), feature.unsqueeze(1)), dim=1)
 
