@@ -35,11 +35,11 @@ bsz_train: 64
 peak_stride: 2
 n_filters : 8 # number of filters in the peak extraction layer
 tau: 0.05
-lr: 5.0e-5
+lr: 1.0e-4
 min_lr: 1.0e-6
 n_epochs: 400
 T_max: 380
-lambda: 0.01
+lambda: 5.0e-4
 
 # Augmentation hyperparameters
 n_frames: 32 # depends on the spectrogram parameters
