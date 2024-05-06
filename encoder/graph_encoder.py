@@ -58,7 +58,7 @@ class FFN(nn.Module):
 
 class GraphEncoder(nn.Module):
 
-    def __init__(self, cfg, k=11,conv='mr',act='relu',norm='batch',bias=True,dropout=0.0,dilation=True,epsilon=0.2,drop_path=0.1,size ='t',
+    def __init__(self, cfg, k=7,conv='mr',act='relu',norm='batch',bias=True,dropout=0.0,dilation=True,epsilon=0.2,drop_path=0.1,size ='t',
                emb_dims=1024,in_channels=3):
         
         self.num_points = cfg['n_mels'] * cfg['n_frames'] // cfg['peak_stride']
