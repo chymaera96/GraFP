@@ -371,7 +371,7 @@ class GPUPeakExtractorv2(nn.Module):
         # Initialize conv layer with kaiming initialization
         self.init_weights()
 
-    def peak_from_features(self, features, mask=False):
+    def peak_from_features(self, features, as_mask=False):
         # Find local maxima along the time axis
         maxima_time = F.max_pool2d(features, kernel_size=(1, 3), stride=1, padding=(0, 1))
         maxima_time = torch.eq(features, maxima_time)
@@ -381,15 +381,13 @@ class GPUPeakExtractorv2(nn.Module):
         maxima_freq = torch.eq(features, maxima_freq)
 
         # Combine maxima along both axes to get a binary matrix
-        peaks = (maxima_time & maxima_freq).float()  
+        peaks = (maxima_time & maxima_freq).float()     
 
-        # # Normalize the spectrogram
-        # min_vals = torch.amin(features, dim=(1, 2), keepdim=True)
-        # max_vals = torch.amax(features, dim=(1, 2), keepdim=True)
-        # features = (features - min_vals) / (max_vals - min_vals)     
-
-        if mask:
-            return peaks
+        if as_mask:
+            mask = peaks * features
+            # Set all non-zero values to 1; this get rid of zero values that were picked up as peaks
+            mask[mask != 0] = 1.0
+            return mask
         
         else:
             return peaks * features
@@ -416,7 +414,8 @@ class GPUPeakExtractorv2(nn.Module):
         peaks = self.peak_from_features(spec_tensor.unsqueeze(1))
         feature = self.conv(peaks)
         self.l1 = torch.norm(feature, p=1)
-        peaks = self.peak_from_features(feature)
+        peaks = self.peak_from_features(feature, as_mask=True)
+
 
         T_tensor = torch.arange(feature.shape[3], device=feature.device) / feature.shape[3]
         T_tensor = T_tensor.unsqueeze(0).unsqueeze(0).repeat(feature.shape[0], 
