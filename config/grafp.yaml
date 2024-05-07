@@ -25,7 +25,7 @@ maxpksperframe: 64   # maximum number of peaks per frame
 n_peaks: 512  # max number of peaks to consider
 oversamp: 1  # oversample factor for peak detection
 silence: 0.0005  # silence threshold
-blur_kernel: [5,5]  # blur kernel size
+blur_kernel: [7,7]  # blur kernel size
 blur_sigma: 3.0  # blur sigma
 
 # Dataset and Model hyperparameters
@@ -33,13 +33,13 @@ train_sz: 8000
 val_sz: 500
 bsz_train: 64
 peak_stride: 2
-n_filters : 8 # number of filters in the peak extraction layer
+n_filters : 16 # number of filters in the peak extraction layer
 tau: 0.05
 lr: 1.0e-4
 min_lr: 1.0e-6
 n_epochs: 400
 T_max: 380
-lambda: 2.0e-5
+lambda: 0.0
 
 # Augmentation hyperparameters
 n_frames: 32 # depends on the spectrogram parameters
