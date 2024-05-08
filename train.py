@@ -181,8 +181,10 @@ def main():
         model = SimCLR(cfg, encoder=GraphEncoder(cfg=cfg, in_channels=3))
         if torch.cuda.device_count() > 1:
             print("Using", torch.cuda.device_count(), "GPUs!")
-            model = DataParallel(model)
-        model.to(device)
+            model = DataParallel(model).to(device)
+        else:
+            model = model.to(device)
+        
     print(count_parameters(model, args.encoder))
 
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
