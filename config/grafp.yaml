@@ -39,7 +39,7 @@ lr: 1.0e-4
 min_lr: 1.0e-6
 n_epochs: 400
 T_max: 380
-lambda: 1.0e-4
+lambda: 0.0
 
 # Augmentation hyperparameters
 n_frames: 32 # depends on the spectrogram parameters
