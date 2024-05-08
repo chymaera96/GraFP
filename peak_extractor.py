@@ -410,9 +410,11 @@ class GPUPeakExtractorv2(nn.Module):
         spec_tensor = (spec_tensor - min_vals) / (max_vals - min_vals)
 
         # assert spec_tensor.device == torch.device('cuda:0'), f"Input tensor must be on GPU. Instead found on {spec_tensor.device}"
-        print(f'checking if tensor on cuda {spec_tensor.is_cuda}')
+        print(f'checking if spec_tensor on cuda {spec_tensor.is_cuda}')
         peaks = self.peak_from_features(spec_tensor.unsqueeze(1))
+        print(f'checking if peak on cuda {peaks.is_cuda}')
         feature = self.conv(peaks)
+        print("Log: conv layer output shape", feature.shape)
         self.l1 = torch.norm(feature, p=1)
         peaks = self.peak_from_features(feature, as_mask=False)
 
