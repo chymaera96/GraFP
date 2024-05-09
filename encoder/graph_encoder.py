@@ -58,7 +58,7 @@ class FFN(nn.Module):
 
 class GraphEncoder(nn.Module):
 
-    def __init__(self, cfg, k=7,conv='mr',act='relu',norm='batch',bias=True,dropout=0.0,dilation=True,epsilon=0.2,drop_path=0.1,size ='t',
+    def __init__(self, cfg, k=3,conv='mr',act='relu',norm='batch',bias=True,dropout=0.0,dilation=True,epsilon=0.2,drop_path=0.1,size ='t',
                emb_dims=1024,in_channels=3):
         
         self.num_points = cfg['n_mels'] * cfg['n_frames'] // cfg['peak_stride']
@@ -118,7 +118,7 @@ class GraphEncoder(nn.Module):
         max_dilation = 128//max(num_k) # max_dilation value 
 
         # Stem conv for extracting non linear representation from the points
-        self.stem = nn.Sequential(nn.Conv2d(in_channels,self.channels[0], kernel_size=(cfg['n_filters'], 1), bias=False),
+        self.stem = nn.Sequential(nn.Conv2d(in_channels,self.channels[0], kernel_size=1, bias=False),
                                    nn.BatchNorm2d(self.channels[0]),
                                    nn.LeakyReLU(negative_slope=0.2))
         dpr = [x.item() for x in torch.linspace(0, drop_path, self.num_blocks)]

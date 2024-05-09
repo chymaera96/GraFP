@@ -403,40 +403,23 @@ class GPUPeakExtractorv2(nn.Module):
         
 
     def forward(self, spec_tensor):
-
         # Normalize the spectrogram
         min_vals = torch.amin(spec_tensor, dim=(1, 2), keepdim=True)
         max_vals = torch.amax(spec_tensor, dim=(1, 2), keepdim=True)
         spec_tensor = (spec_tensor - min_vals) / (max_vals - min_vals)
 
-        # assert spec_tensor.device == torch.device('cuda:0'), f"Input tensor must be on GPU. Instead found on {spec_tensor.device}"
-        # print(f'checking if spec_tensor on cuda {spec_tensor.is_cuda}')
         peaks = self.peak_from_features(spec_tensor.unsqueeze(1))
-        # print(f'checking if peak on cuda {peaks.is_cuda}')
-        feature = self.conv(peaks)
-        # print("Log: conv layer output shape", feature.shape)
+
+        T_tensor = torch.linspace(0, 1, steps=spec_tensor.shape[2], device=spec_tensor.device)
+        T_tensor = T_tensor.unsqueeze(0).unsqueeze(1).repeat(spec_tensor.shape[0], spec_tensor.shape[1], 1)
+
+        F_tensor = torch.linspace(0, 1, steps=spec_tensor.shape[1], device=spec_tensor.device)
+        F_tensor = F_tensor.unsqueeze(0).unsqueeze(2).repeat(spec_tensor.shape[0], 1, spec_tensor.shape[2])
+
+        # Concatenate T_tensor, F_tensor and spec_tensor to get a tensor of shape (batch, 3, H, W)
+        tensor = torch.cat((T_tensor.unsqueeze(1), F_tensor.unsqueeze(1), peaks), dim=1)
+
+        feature = self.conv(tensor)
         self.l1 = torch.norm(feature, p=1)
-        peaks = self.peak_from_features(feature, as_mask=False)
 
-
-        T_tensor = torch.arange(feature.shape[3], device=feature.device) / feature.shape[3]
-        T_tensor = T_tensor.unsqueeze(0).unsqueeze(0).repeat(feature.shape[0], 
-                                                             self.n_filters, 
-                                                             feature.shape[2], 1)
-                
-        F_tensor = torch.arange(feature.shape[2], device=spec_tensor.device) / spec_tensor.shape[2]
-        F_tensor = F_tensor.unsqueeze(0).transpose(0,1).unsqueeze(0).repeat(feature.shape[0],
-                                                                            self.n_filters, 1,
-                                                                            feature.shape[3])
-        
-        # Concatenate T_tensor, F_tensor and feature to get a tensor of shape (batch, 3, C, H, W)
-        tensor = torch.cat((T_tensor.unsqueeze(1), F_tensor.unsqueeze(1), feature.unsqueeze(1)), dim=1)
-
-        # Repeat peaks to match the shape of tensor
-        peaks = peaks.unsqueeze(1).repeat(1, tensor.shape[1], 1, 1, 1)
-        tensor = tensor * peaks
-
-        B, _, C, F, T = tensor.shape
-        tensor = tensor.reshape(B, 3, C, -1)
-    
-        return tensor
+        return feature
