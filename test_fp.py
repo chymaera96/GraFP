@@ -127,7 +127,7 @@ def create_dummy_db(dataloader, augment, model, output_root_dir, fname='dummy_db
     print("=> Creating dummy fingerprints...")
     for idx, audio in enumerate(dataloader):
         audio = audio.to(device)
-        x_i, _ = augment(audio, audio)
+        x_i, _ = augment(audio, None)
         # x_i = torch.unsqueeze(db[0],1)
         with torch.no_grad():
             _, _, z_i, _= model(x_i.to(device),x_i.to(device))  
@@ -162,7 +162,7 @@ def main():
     ir_dir = cfg['ir_dir']
     noise_dir = cfg['noise_dir']
     args.recompute = False
-    # assert args.recompute is True
+    assert args.recompute is True
     # Hyperparameters
     random_seed = 42
     shuffle_dataset =True
@@ -175,8 +175,11 @@ def main():
         model = SimCLR(cfg, encoder=GraphEncoder(cfg=cfg, in_channels=3))
         if torch.cuda.device_count() > 1:
             print("Using", torch.cuda.device_count(), "GPUs!")
-            model = DataParallel(model)
-        model = model.to(device)
+            # model = DataParallel(model).to(device)
+            model = model.to(device)
+            model = torch.nn.DataParallel(model)
+        else:
+            model = model.to(device)
 
     print("Creating dataloaders ...")
 

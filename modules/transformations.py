@@ -190,6 +190,9 @@ class GPUTransformNeuralfp(nn.Module):
             X_i = X_i.unfold(0, size=self.n_frames, step=int(self.n_frames*(1-self.overlap)))
             # print(f"Final X_i shape {X_i.shape}")
 
+            if x_j is None:
+                # Dummy db does not need augmentation
+                return X_i, X_i
             try:
                 x_j = self.val_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
             except ValueError:
