@@ -37,7 +37,7 @@ parser.add_argument('--config', default='config/grafp.yaml', type=str,
 parser.add_argument('--test_config', default='config/test_config.yaml', type=str)
 parser.add_argument('--seed', default=42, type=int,
                     help='seed for initializing testing. ')
-parser.add_argument('--test_dir', default='data/fma_small_all.json', type=str,
+parser.add_argument('--test_dir', default='data/fma_medium_all.json', type=str,
                     help='path to test data')
 parser.add_argument('--noise_idx', default=None, type=str)
 parser.add_argument('--noise_split', default='all', type=str,
@@ -276,7 +276,7 @@ def main():
                                     test_ids='all', 
                                     test_seq_len=test_seq_len, 
                                     index_type=index_type,
-                                    nogpu=False) 
+                                    nogpu=True) 
 
                 writer.add_text("table", 
                                 create_table(hit_rates, 
@@ -288,7 +288,7 @@ def main():
                 hit_rates = eval_faiss(emb_dir=fp_dir, 
                                     test_ids='all', 
                                     index_type=index_type,
-                                    nogpu=False)
+                                    nogpu=True)
                 
                 writer.add_text("table", 
                                 create_table(hit_rates, 
