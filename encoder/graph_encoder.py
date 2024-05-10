@@ -61,8 +61,6 @@ class GraphEncoder(nn.Module):
     def __init__(self, cfg, k=3,conv='mr',act='relu',norm='batch',bias=True,dropout=0.0,dilation=True,epsilon=0.2,drop_path=0.1,size ='t',
                emb_dims=1024,in_channels=3):
         
-        self.num_points = cfg['n_mels'] * cfg['n_frames'] // cfg['peak_stride']
-
         super().__init__()
         
         """
@@ -113,6 +111,8 @@ class GraphEncoder(nn.Module):
         stochastic = False
         self.num_blocks = sum(self.blocks)
         self.conv = 'mr'
+        self.num_points = cfg['n_mels'] * cfg['n_frames'] // cfg['peak_stride']
+
 
         num_k  = [int(x.item()) for x in torch.linspace(k,k,self.num_blocks)]
         max_dilation = 128//max(num_k) # max_dilation value 
@@ -164,9 +164,10 @@ class GraphEncoder(nn.Module):
             x: Output embedding with shape (B,emb_dim) # Batch,1024
         """
         
+        x = x.unsqueeze(-1)
+        
+        B, C,N,_ = x.shape
         x = self.stem(x)
-        # (B,C,1,N) -> (B,C,N,1)
-        x = x.permute(0,1,3,2)
 
         for i in range(len(self.backbone)):
             
