@@ -65,7 +65,8 @@ def train(cfg, train_loader, model, optimizer, ir_idx, noise_idx, augment=None):
             x_i, x_j = augment(x_i, x_j)
         assert x_i.device == torch.device('cuda:0'), f"[IN TRAINING] x_i device: {x_i.device}"
         l1_i, l1_j, z_i, z_j = model(x_i, x_j)
-
+        # assert loss is being computed for the whole batch
+        assert z_i.shape[0] == cfg['bsz_train'], f"Batch size mismatch: {z_i.shape[0]} != {cfg['bsz_train']}"
         l1_loss = cfg['lambda'] * (l1_i.mean() + l1_j.mean())
         loss = ntxent_loss(z_i, z_j, cfg) + l1_loss
 
