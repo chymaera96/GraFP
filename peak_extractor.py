@@ -419,6 +419,7 @@ class GPUPeakExtractorv2(nn.Module):
         peaks = self.peak_from_features(spec_tensor.unsqueeze(1))
         print(self.F_tensor.shape)
         print(self.T_tensor.shape)
+        print(peaks.shape)
         # Concatenate T_tensor, F_tensor and spec_tensor to get a tensor of shape (batch, 3, H, W)
         tensor = torch.cat((self.T_tensor.unsqueeze(1), self.F_tensor.unsqueeze(1), peaks), dim=1)
         feature = self.conv(tensor)
