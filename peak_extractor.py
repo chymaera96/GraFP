@@ -369,7 +369,7 @@ class GPUPeakExtractorv2(nn.Module):
         )
 
         T_tensor = torch.linspace(0, 1, steps=cfg['n_frames'], device='cuda')
-        T_tensor = T_tensor.unsqueeze(0).unsqueeze(1).repeat(cfg['bsz'], cfg['n_bins'], 1)
+        T_tensor = T_tensor.unsqueeze(0).unsqueeze(1).repeat(cfg['bsz_train'], cfg['n_bins'], 1)
         self.T_tensor = T_tensor
 
         F_tensor = torch.linspace(0, 1, steps=cfg['n_bins'], device='cuda')
