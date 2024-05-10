@@ -368,12 +368,15 @@ class GPUPeakExtractorv2(nn.Module):
             nn.ReLU(),
         )
 
+        # Get number of GPUs
+        self.n_gpus = torch.cuda.device_count()
+
         T_tensor = torch.linspace(0, 1, steps=cfg['n_frames'], device='cuda')
-        T_tensor = T_tensor.unsqueeze(0).unsqueeze(1).repeat(cfg['bsz_train'], cfg['n_mels'], 1)
+        T_tensor = T_tensor.unsqueeze(0).unsqueeze(1).repeat(cfg['bsz_train'] // self.n_gpus, cfg['n_mels'], 1)
         self.T_tensor = T_tensor
 
         F_tensor = torch.linspace(0, 1, steps=cfg['n_mels'], device='cuda')
-        F_tensor = F_tensor.unsqueeze(0).unsqueeze(2).repeat(cfg['bsz_train'], 1, cfg['n_frames'])
+        F_tensor = F_tensor.unsqueeze(0).unsqueeze(2).repeat(cfg['bsz_train'] // self.n_gpus, 1, cfg['n_frames'])
         self.F_tensor = F_tensor
         # Initialize conv layer with kaiming initialization
         self.init_weights()
@@ -417,9 +420,9 @@ class GPUPeakExtractorv2(nn.Module):
         spec_tensor = (spec_tensor - min_vals) / (max_vals - min_vals)
 
         peaks = self.peak_from_features(spec_tensor.unsqueeze(1))
-        print(self.F_tensor.shape)
-        print(self.T_tensor.shape)
-        print(peaks.shape)
+        # print(self.F_tensor.shape)
+        # print(self.T_tensor.shape)
+        # print(peaks.shape)
         # Concatenate T_tensor, F_tensor and spec_tensor to get a tensor of shape (batch, 3, H, W)
         tensor = torch.cat((self.T_tensor.unsqueeze(1), self.F_tensor.unsqueeze(1), peaks), dim=1)
         feature = self.conv(tensor)
