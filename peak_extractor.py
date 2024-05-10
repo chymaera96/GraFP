@@ -373,7 +373,7 @@ class GPUPeakExtractorv2(nn.Module):
         self.T_tensor = T_tensor
 
         F_tensor = torch.linspace(0, 1, steps=cfg['n_bins'], device='cuda')
-        F_tensor = F_tensor.unsqueeze(0).unsqueeze(2).repeat(cfg['bsz'], 1, cfg['n_frames'])
+        F_tensor = F_tensor.unsqueeze(0).unsqueeze(2).repeat(cfg['bsz_train'], 1, cfg['n_frames'])
         self.F_tensor = F_tensor
         # Initialize conv layer with kaiming initialization
         self.init_weights()
