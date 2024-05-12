@@ -419,7 +419,8 @@ class GPUPeakExtractorv2(nn.Module):
         max_vals = torch.amax(spec_tensor, dim=(1, 2), keepdim=True)
         spec_tensor = (spec_tensor - min_vals) / (max_vals - min_vals)
 
-        peaks = self.peak_from_features(spec_tensor.unsqueeze(1))
+        # peaks = self.peak_from_features(spec_tensor.unsqueeze(1))
+        peaks = spec_tensor.unsqueeze(1)
 
         # Put postional tensors to the same device as the peaks tensor
         self.T_tensor = self.T_tensor.to(peaks.device)
