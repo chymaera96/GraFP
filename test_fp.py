@@ -135,7 +135,7 @@ def create_dummy_db(dataloader, augment, model, output_root_dir, fname='dummy_db
         # print(f'Shape of z_i {z_i.shape} inside the create_dummy_db function')
         fp.append(z_i.detach().cpu().numpy())
         
-        if verbose and idx % 10 == 0:
+        if verbose and idx % 100 == 0:
             print(f"Step [{idx}/{len(dataloader)}]\t shape: {z_i.shape}")
         # fp = torch.cat(fp)
     
