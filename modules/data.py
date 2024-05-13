@@ -23,6 +23,7 @@ class NeuralfpDataset(Dataset):
         self.dur = cfg['dur']
         self.n_frames = cfg['n_frames']
         self.silence = cfg['silence']
+        self.error_threshold = cfg['error_threshold']
 
         if train:
             self.filenames = load_index(cfg, path, mode="train")
@@ -31,7 +32,7 @@ class NeuralfpDataset(Dataset):
 
         print(f"Loaded {len(self.filenames)} files from {path}")
         self.ignore_idx = []
-  
+        self.error_counts = {}
         
     def __getitem__(self, idx):
         if idx in self.ignore_idx:
@@ -45,7 +46,9 @@ class NeuralfpDataset(Dataset):
 
         except Exception:
             print("Error loading:" + self.filenames[str(idx)])
-            self.ignore_idx.append(idx)
+            self.error_counts[idx] = self.error_counts.get(idx, 0) + 1
+            if self.error_counts[idx] > self.error_threshold:
+                self.ignore_idx.append(idx)
             return self[idx+1]
 
         audio_mono = audio.mean(dim=0)
