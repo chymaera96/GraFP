@@ -48,10 +48,10 @@ class TransformNeuralfp(nn.Module):
         self.melspec = MelSpectrogram(sample_rate=self.sample_rate, win_length=cfg['win_len'], hop_length=cfg['hop_len'], n_fft=cfg['n_fft'], n_mels=cfg['n_mels'])
     
 
-        # self.spec_aug = nn.Sequential(
-        #     TimeMasking(time_mask_param=cfg['time_mask']),
-        #     FrequencyMasking(freq_mask_param=cfg['freq_mask'])
-        # )
+        self.spec_aug = nn.Sequential(
+            TimeMasking(time_mask_param=cfg['time_mask']),
+            FrequencyMasking(freq_mask_param=cfg['freq_mask'])
+        )
 
 
     def forward(self, x_i, x_j):
@@ -180,9 +180,11 @@ class GPUTransformNeuralfp(nn.Module):
 
         if self.train:
             X_i = self.logmelspec(x_i)
+            # X_i = self.spec_aug(X_i)
             # assert X_i.shape[1] == 2, f"X_i shape: {X_i.shape}"
             assert X_i.device == torch.device('cuda:0'), f"X_i device: {X_i.device}"
             X_j = self.logmelspec(x_j)
+            # X_j = self.spec_aug(X_j)
 
         else:
             # print(f"x_i shape in validation augment {x_i.shape}")
