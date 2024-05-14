@@ -7,3 +7,7 @@ faiss-gpu
 tensorboard
 PyYAML
 prettytable
+timm
+torchvision
+torchmetrics
+torchlars
