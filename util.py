@@ -79,7 +79,7 @@ def load_index(cfg, data_dir, ext=['wav','mp3'], shuffle_dataset=True, mode="tra
     if not os.path.exists(data_dir):
         raise FileNotFoundError(f"Directory {data_dir} not found")
     
-    json_path = os.path.join(data_dir, data_dir.split('/')[-1] + ".json")
+    json_path = os.path.join('data', data_dir.split('/')[-1] + ".json")
     if os.path.exists(json_path):
         print(f"Loading indices from {json_path}")
         with open(json_path, 'r') as fp:
