@@ -369,7 +369,9 @@ class GPUPeakExtractorv2(nn.Module):
         )
 
         # Get number of GPUs
-        self.n_gpus = torch.cuda.device_count()
+        self.n_gpus = torch.cuda.device_count() if torch.cuda.is_available() else 1
+        if self.n_gpus == 0:
+            self.n_gpus = 1
 
         T_tensor = torch.linspace(0, 1, steps=cfg['n_frames'])
         T_tensor = T_tensor.unsqueeze(0).unsqueeze(1).repeat(cfg['bsz_train'] // self.n_gpus, cfg['n_mels'], 1)
