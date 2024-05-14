@@ -9,7 +9,65 @@ import yaml
 from prettytable import PrettyTable
 
 
-def load_index(cfg, data_dir, ext=['wav','mp3'], mode="train"):
+# def load_index(cfg, data_dir, ext=['wav','mp3'], mode="train"):
+
+#     if data_dir.endswith('.json'):
+#         print(f"=>Loading indices from index file {data_dir}")
+#         with open(data_dir, 'r') as fp:
+#             dataset = json.load(fp)
+#         return dataset
+    
+#     print(f"=>Loading indices from {data_dir}")
+#     train_json_path = os.path.join('data', data_dir.split('/')[-1] + "_train.json")
+#     valid_json_path = os.path.join('data', data_dir.split('/')[-1] + "_valid.json")
+
+#     if mode == "train" and os.path.exists(train_json_path):
+#         print(f"Train index exists. Loading indices from {train_json_path}")
+#         with open(train_json_path, 'r') as fp:
+#             train = json.load(fp)
+    
+#     elif mode != "train" and os.path.exists(valid_json_path):
+#         print(f"Valid index exists. Loading indices from {valid_json_path}")
+#         with open(valid_json_path, 'r') as fp:
+#             valid = json.load(fp)
+
+#     else:
+#         print(f"Creating new index files {train_json_path} and {valid_json_path}")
+#         train_len = cfg['train_sz']
+#         valid_len = cfg['val_sz']
+#         idx = 0
+#         train = {}
+#         for fpath in glob.iglob(os.path.join(data_dir,'**/*.*'), recursive=True):
+#             if len(train) >= train_len:
+#                 break
+#             if fpath.split('.')[-1] in ext: 
+#                 train[str(idx)] = fpath
+#                 idx += 1
+
+#         with open(train_json_path, 'w') as fp:
+#             json.dump(train, fp)
+
+#         idx = 0
+#         valid = {}
+#         existing = [f.split('/')[-1] for f in list(train.values())]
+#         for fpath in glob.iglob(os.path.join(data_dir,'**/*.*'), recursive=True):
+#             if len(valid) >= valid_len:
+#                 break
+#             if fpath.split('.')[-1] in ext and fpath.split('/')[-1] not in existing:
+#                 valid[str(idx)] = fpath
+#                 idx += 1
+
+#         with open(valid_json_path, 'w') as fp:
+#             json.dump(valid, fp)
+
+#     if mode == "train":
+#         dataset = train
+#     else:
+#         dataset = valid
+
+#     return dataset
+
+def load_index(cfg, data_dir, ext=['wav','mp3'], shuffle_dataset=True, mode="train"):
 
     if data_dir.endswith('.json'):
         print(f"=>Loading indices from index file {data_dir}")
@@ -18,55 +76,33 @@ def load_index(cfg, data_dir, ext=['wav','mp3'], mode="train"):
         return dataset
     
     print(f"=>Loading indices from {data_dir}")
-    train_json_path = os.path.join('data', data_dir.split('/')[-1] + "_train.json")
-    valid_json_path = os.path.join('data', data_dir.split('/')[-1] + "_valid.json")
-
-    if mode == "train" and os.path.exists(train_json_path):
-        print(f"Train index exists. Loading indices from {train_json_path}")
-        with open(train_json_path, 'r') as fp:
-            train = json.load(fp)
+    if not os.path.exists(data_dir):
+        raise FileNotFoundError(f"Directory {data_dir} not found")
     
-    elif mode != "train" and os.path.exists(valid_json_path):
-        print(f"Valid index exists. Loading indices from {valid_json_path}")
-        with open(valid_json_path, 'r') as fp:
-            valid = json.load(fp)
-
-    else:
-        print(f"Creating new index files {train_json_path} and {valid_json_path}")
-        train_len = cfg['train_sz']
-        valid_len = cfg['val_sz']
-        idx = 0
-        train = {}
-        for fpath in glob.iglob(os.path.join(data_dir,'**/*.*'), recursive=True):
-            if len(train) >= train_len:
-                break
-            if fpath.split('.')[-1] in ext: 
-                train[str(idx)] = fpath
-                idx += 1
-
-        with open(train_json_path, 'w') as fp:
-            json.dump(train, fp)
-
-        idx = 0
-        valid = {}
-        existing = [f.split('/')[-1] for f in list(train.values())]
-        for fpath in glob.iglob(os.path.join(data_dir,'**/*.*'), recursive=True):
-            if len(valid) >= valid_len:
-                break
-            if fpath.split('.')[-1] in ext and fpath.split('/')[-1] not in existing:
-                valid[str(idx)] = fpath
-                idx += 1
-
-        with open(valid_json_path, 'w') as fp:
-            json.dump(valid, fp)
-
+    json_path = os.path.join(data_dir, data_dir.split('/')[-1] + ".json")
+    if os.path.exists(json_path):
+        print(f"Loading indices from {json_path}")
+        with open(json_path, 'r') as fp:
+            dataset = json.load(fp)
+        return dataset
+    
+    fpaths = glob.glob(os.path.join(data_dir,'**/*.*'), recursive=True)
+    fpaths = [p for p in fpaths if p.split('.')[-1] in ext]
+    dataset_size = len(fpaths)
+    indices = list(range(dataset_size))
+    if shuffle_dataset :
+        np.random.seed(42)
+        np.random.shuffle(indices)
     if mode == "train":
-        dataset = train
+        size = cfg['train_sz']
     else:
-        dataset = valid
+        size = cfg['val_sz']
+    dataset = {str(i):fpaths[ix] for i,ix in enumerate(indices[:size])}
+
+    with open(json_path, 'w') as fp:
+        json.dump(dataset, fp)
 
     return dataset
-        
 
 def load_augmentation_index(data_dir, splits, json_path=None, ext=['wav','mp3'], shuffle_dataset=True):
     dataset = {'train' : [], 'test' : [], 'validate': []}
