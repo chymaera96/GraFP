@@ -1,7 +1,3 @@
-
-# Add a loop to run test with a list of test_snr
-# Take user as parameter
-
 # Usage: bash test_pipeline.sh ab017
 
 
