@@ -163,6 +163,7 @@ def main():
     noise_dir = cfg['noise_dir']
     # args.recompute = False
     assert args.recompute is False
+    assert args.small_test is False
     # Hyperparameters
     random_seed = 42
     shuffle_dataset =True
