@@ -1,7 +1,8 @@
 # Usage: bash test_pipeline.sh ab017
 
 
-for snr in 20 10 5 0
+# for snr in 20 10 5 0
+for snr in 10 5 0
 do
     echo "Test with SNR = $snr"
     top -b -n 1 -u $1 | grep python | awk '{print $1}' | xargs kill -9
