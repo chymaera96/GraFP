@@ -36,7 +36,7 @@ blur_sigma: 3.0  # blur sigma
 # Dataset and Model hyperparameters
 train_sz: 8000
 val_sz: 25000
-bsz_train: 512
+bsz_train: 256
 peak_stride: 2
 n_filters : 8 # number of filters in the peak extraction layer
 tau: 0.05
