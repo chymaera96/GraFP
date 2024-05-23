@@ -47,7 +47,7 @@ def ntxent_loss(z_i, z_j, cfg):
     logits = torch.cat([positives.unsqueeze(1), negatives], dim=1)
     labels = torch.zeros(logits.shape[0], dtype=torch.long, device=z.device)
 
-    with torch.autocast(enabled=False):
+    with torch.autocast(enabled=False, device_type='cuda'):
         loss = F.cross_entropy(logits, labels)
 
     return loss
