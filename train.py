@@ -8,6 +8,7 @@ import torch.nn.functional as F
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.tensorboard import SummaryWriter
 from torch.nn.parallel import DataParallel
+from torch.cuda.amp import autocast, GradScaler
 import torchaudio
 torchaudio.set_audio_backend("soundfile")
 
@@ -51,7 +52,7 @@ parser.add_argument('--n_query_db', default=None, type=int)
 
 
 
-def train(cfg, train_loader, model, optimizer, ir_idx, noise_idx, augment=None):
+def train(cfg, train_loader, model, optimizer, scaler, ir_idx, noise_idx, augment=None):
     model.train()
     loss_epoch = 0
     # return loss_epoch
@@ -61,17 +62,20 @@ def train(cfg, train_loader, model, optimizer, ir_idx, noise_idx, augment=None):
         optimizer.zero_grad()
         x_i = x_i.to(device)
         x_j = x_j.to(device)
-        with torch.no_grad():
-            x_i, x_j = augment(x_i, x_j)
-        assert x_i.device == torch.device('cuda:0'), f"[IN TRAINING] x_i device: {x_i.device}"
-        l1_i, l1_j, z_i, z_j = model(x_i, x_j)
-        # assert loss is being computed for the whole batch
-        assert z_i.shape[0] == cfg['bsz_train'], f"Batch size mismatch: {z_i.shape[0]} != {cfg['bsz_train']}"
-        l1_loss = cfg['lambda'] * (l1_i.mean() + l1_j.mean())
-        loss = ntxent_loss(z_i, z_j, cfg) + l1_loss
 
-        loss.backward()
-        optimizer.step()
+        with autocast():
+            with torch.no_grad():
+                x_i, x_j = augment(x_i, x_j)
+            assert x_i.device == torch.device('cuda:0'), f"[IN TRAINING] x_i device: {x_i.device}"
+            l1_i, l1_j, z_i, z_j = model(x_i, x_j)
+            # assert loss is being computed for the whole batch
+            assert z_i.shape[0] == cfg['bsz_train'], f"Batch size mismatch: {z_i.shape[0]} != {cfg['bsz_train']}"
+            l1_loss = cfg['lambda'] * (l1_i.mean() + l1_j.mean())
+            loss = ntxent_loss(z_i, z_j, cfg) + l1_loss
+
+        scaler.scale(loss).backward()
+        scaler.step(optimizer)
+        scaler.update()
 
         if idx % 10 == 0:
             print(f"Step [{idx}/{len(train_loader)}]\t Net Loss: {loss.item()} \t L1 Loss: {l1_loss.item()}")
@@ -156,24 +160,6 @@ def main():
                                             sampler=query_db_sampler)
     
 
-
-    # print("torchaudio.get_audio_backend() = ", torchaudio.get_audio_backend())
-    # torchaudio.set_audio_backend("soundfile")
-
-    # print("Checking dataset object...")
-    # print(valid_dataset[0].shape)
-    
-
-    # print("Checking data loader...")
-    # for ix, audio in enumerate(query_loader):
-    #     with torch.no_grad():
-    #         X_i, X_j = val_augment(audio, audio)
-    #     print(X_i.shape)
-    #     print(X_j.shape)
-    #     break
-
-    # return
-    
     print("Creating new model...")
     if args.encoder == 'resnet':
         # TODO: Add support for resnet encoder (deprecated)
@@ -192,6 +178,7 @@ def main():
 
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max = cfg['T_max'], eta_min = cfg['min_lr'])
+    scaler = GradScaler()
        
     if args.resume:
         if os.path.isfile(args.resume):
@@ -215,7 +202,7 @@ def main():
 
     for epoch in range(start_epoch+1, num_epochs+1):
         print("#######Epoch {}#######".format(epoch))
-        loss_epoch = train(cfg, train_loader, model, optimizer, ir_train_idx, noise_train_idx, gpu_augment)
+        loss_epoch = train(cfg, train_loader, model, optimizer, scaler, ir_train_idx, noise_train_idx, gpu_augment)
         writer.add_scalar("Loss/train", loss_epoch, epoch)
         loss_log.append(loss_epoch)
         output_root_dir = create_fp_dir(ckp=args.ckp, epoch=epoch)
