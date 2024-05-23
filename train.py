@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.tensorboard import SummaryWriter
 from torch.nn.parallel import DataParallel
-from torch.cuda.amp import autocast, GradScaler
+from torch.cuda.amp import GradScaler
 import torchaudio
 torchaudio.set_audio_backend("soundfile")
 
@@ -63,7 +63,7 @@ def train(cfg, train_loader, model, optimizer, scaler, ir_idx, noise_idx, augmen
         x_i = x_i.to(device)
         x_j = x_j.to(device)
 
-        with autocast(device_type=device, dtype=torch.float32, enabled=False):
+        with torch.autocast(device_type=device, dtype=torch.float32, enabled=False):
             with torch.no_grad():
                 x_i, x_j = augment(x_i, x_j)
             assert x_i.device == torch.device('cuda:0'), f"[IN TRAINING] x_i device: {x_i.device}"
