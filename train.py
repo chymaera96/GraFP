@@ -63,7 +63,7 @@ def train(cfg, train_loader, model, optimizer, scaler, ir_idx, noise_idx, augmen
         x_i = x_i.to(device)
         x_j = x_j.to(device)
 
-        with torch.autocast(device_type='cuda', dtype=torch.float16, enabled=False):
+        with torch.autocast(device_type='cuda', dtype=torch.float16, enabled=True):
             with torch.no_grad():
                 x_i, x_j = augment(x_i, x_j)
             assert x_i.device == torch.device('cuda:0'), f"[IN TRAINING] x_i device: {x_i.device}"
@@ -178,7 +178,7 @@ def main():
 
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max = cfg['T_max'], eta_min = cfg['min_lr'])
-    scaler = GradScaler(enabled=False)
+    scaler = GradScaler(enabled=True)
        
     if args.resume:
         if os.path.isfile(args.resume):
