@@ -15,7 +15,25 @@ import torchvision
 
 
 
-# Dummy tensor. Shape (batch,channel,num_points)
+
+class Stem(nn.Module):
+    
+    def __init__(self, img_size=224, in_dim=3, out_dim=768, act='relu'):
+        super().__init__()        
+        self.convs = nn.Sequential(
+            nn.Conv2d(in_dim, out_dim//2, 3, stride=2, padding=1),
+            nn.BatchNorm2d(out_dim//2),
+            act_layer(act),
+            nn.Conv2d(out_dim//2, out_dim, 3, stride=2, padding=1),
+            nn.BatchNorm2d(out_dim),
+            act_layer(act),
+            nn.Conv2d(out_dim, out_dim, 3, stride=1, padding=1),
+            nn.BatchNorm2d(out_dim),
+        )
+
+    def forward(self, x):
+        x = self.convs(x)
+        return x
 
 
 class ChannelConv(nn.Module):
@@ -121,6 +139,10 @@ class GraphEncoder(nn.Module):
         self.stem = nn.Sequential(nn.Conv2d(in_channels,self.channels[0], kernel_size=1, bias=False),
                                    nn.BatchNorm2d(self.channels[0]),
                                    nn.LeakyReLU(negative_slope=0.2))
+
+        ################## New Stem ##########################################
+        self.stem_1 = Stem(in_dim=in_channels, out_dim=channels[0],act='relu')
+        ######################################################################          
         dpr = [x.item() for x in torch.linspace(0, drop_path, self.num_blocks)]
 
         self.backbone = nn.ModuleList([])
