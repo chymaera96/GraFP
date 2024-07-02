@@ -141,7 +141,7 @@ class GraphEncoder(nn.Module):
                                    nn.LeakyReLU(negative_slope=0.2))
 
         ################## New Stem ##########################################
-        self.stem_1 = Stem(in_dim=in_channels, out_dim=channels[0],act='relu')
+        # self.stem_1 = Stem(in_dim=in_channels, out_dim=self.channels[0],act='relu')
         ######################################################################          
         dpr = [x.item() for x in torch.linspace(0, drop_path, self.num_blocks)]
 

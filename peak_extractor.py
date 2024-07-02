@@ -358,14 +358,15 @@ class GPUPeakExtractorv2(nn.Module):
         self.blur_kernel = cfg['blur_kernel']
         self.n_filters = cfg['n_filters']
         self.stride =cfg['peak_stride']
-        self.conv = nn.Sequential(
-            nn.Conv2d(3, 
-                      self.n_filters, 
-                      kernel_size=self.blur_kernel, 
-                      stride=(self.stride, 1), 
-                      padding=(self.blur_kernel[0] // 2, self.blur_kernel[1] // 2)
-                      ),
-            nn.ReLU(),
+        self.convs = nn.Sequential(
+            nn.Conv2d(3, self.n_filters//2, 3, stride=2, padding=1),
+            nn.BatchNorm2d(self.n_filters//2),
+            nn.ReLU,
+            nn.Conv2d(self.n_filters//2, self.n_filters, 3, stride=2, padding=1),
+            nn.BatchNorm2d(self.n_filters),
+            nn.ReLU,
+            nn.Conv2d(self.n_filters, self.n_filters, 3, stride=1, padding=1),
+            nn.BatchNorm2d(self.n_filters),
         )
 
         # Get number of GPUs
@@ -439,7 +440,7 @@ class GPUPeakExtractorv2(nn.Module):
             F_tensor = F_tensor.unsqueeze(0).unsqueeze(2).repeat(spec_tensor.shape[0], 1, spec_tensor.shape[2])
             tensor = torch.cat((T_tensor.unsqueeze(1), F_tensor.unsqueeze(1), peaks), dim=1)
 
-        feature = self.conv(tensor)
+        feature = self.convs(tensor)
         # print(f"Log: Convolution completed with shape {feature.shape}")
         self.l1 = torch.norm(feature, p=1)
 
