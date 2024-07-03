@@ -262,10 +262,10 @@ class GPUPeakExtractorv2(nn.Module):
         self.convs = nn.Sequential(
             nn.Conv2d(3, self.n_filters//2, 3, stride=2, padding=1),
             nn.BatchNorm2d(self.n_filters//2),
-            nn.ReLU,
+            nn.ReLU(),
             nn.Conv2d(self.n_filters//2, self.n_filters, 3, stride=2, padding=1),
             nn.BatchNorm2d(self.n_filters),
-            nn.ReLU,
+            nn.ReLU(),
             nn.Conv2d(self.n_filters, self.n_filters, 3, stride=1, padding=1),
             nn.BatchNorm2d(self.n_filters),
         )
