@@ -178,7 +178,7 @@ def main():
 
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max = cfg['T_max'], eta_min = cfg['min_lr'])
-    scaler = GradScaler(enabled=True)
+    scaler = GradScaler(enabled=False)
        
     if args.resume:
         if os.path.isfile(args.resume):
