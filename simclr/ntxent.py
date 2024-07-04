@@ -17,11 +17,11 @@ def ntxent_loss(z_i, z_j, cfg):
     tau = cfg['tau']
     z = torch.stack((z_i,z_j), dim=1).view(2*z_i.shape[0], z_i.shape[1])
     a = torch.matmul(z, z.T)
-    
+    a /= tau
     Ls = []
     for i in range(z.shape[0]):
         nn_self = torch.cat([a[i,:i], a[i,i+1:]])
-        softmax = F.log_softmax(nn_self/tau, dim=0, dtype=torch.float32)
+        softmax = F.log_softmax(nn_self, dim=0)
         Ls.append(softmax[i if i%2 == 0 else i-1])
     Ls = torch.stack(Ls)
     
@@ -33,9 +33,7 @@ def ntxent_loss(z_i, z_j, cfg):
 #     batch_size = z_i.shape[0]
 #     z = torch.cat([z_i, z_j], dim=0)
 
-#     sim = torch.matmul(z, z.T)
-#     sim = sim / tau
-
+#     sim = torch.matmul(z, z.T) / tau
 #     sim_ij = torch.diag(sim, batch_size)
 #     sim_ji = torch.diag(sim, -batch_size)
 #     positives = torch.cat([sim_ij, sim_ji], dim=0)
@@ -47,9 +45,7 @@ def ntxent_loss(z_i, z_j, cfg):
 #     logits = torch.cat([positives.unsqueeze(1), negatives], dim=1)
 #     labels = torch.zeros(logits.shape[0], dtype=torch.long, device=z.device)
 
-#     with torch.autocast(enabled=False, device_type='cuda'):
-#         loss = F.cross_entropy(logits, labels)
-
+#     loss = F.cross_entropy(logits, labels)
 #     return loss
 
 

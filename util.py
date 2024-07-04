@@ -8,6 +8,16 @@ import shutil
 import yaml
 from prettytable import PrettyTable
 
+class DummyScaler:
+    def scale(self, loss):
+        return loss
+
+    def step(self, optimizer):
+        return optimizer.step()
+
+    def update(self):
+        pass
+
 
 # def load_index(cfg, data_dir, ext=['wav','mp3'], mode="train"):
 
