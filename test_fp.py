@@ -46,7 +46,7 @@ parser.add_argument('--fp_dir', default='fingerprints', type=str)
 parser.add_argument('--query_lens', default=None, type=str)
 parser.add_argument('--encoder', default='grafp', type=str)
 parser.add_argument('--n_dummy_db', default=None, type=int)
-parser.add_argument('--n_query_db', default=50, type=int)
+parser.add_argument('--n_query_db', default=350, type=int)
 parser.add_argument('--small_test', action='store_true', default=False)
 parser.add_argument('--text', default='test', type=str)
 parser.add_argument('--test_snr', default=None, type=int)
@@ -163,7 +163,7 @@ def main():
     noise_dir = cfg['noise_dir']
     # args.recompute = False
     # assert args.recompute is False
-    # assert args.small_test is False
+    assert args.small_test is False
     # Hyperparameters
     random_seed = 42
     shuffle_dataset =True
@@ -173,7 +173,7 @@ def main():
         # TODO: Add support for resnet encoder (deprecated)
         raise NotImplementedError
     elif args.encoder == 'grafp':
-        model = SimCLR(cfg, encoder=GraphEncoder(cfg=cfg, in_channels=8))
+        model = SimCLR(cfg, encoder=GraphEncoder(cfg=cfg, in_channels=16))
         if torch.cuda.device_count() > 1:
             print("Using", torch.cuda.device_count(), "GPUs!")
             # model = DataParallel(model).to(device)
@@ -214,14 +214,14 @@ def main():
 
     dummy_db_loader = torch.utils.data.DataLoader(dataset, batch_size=1, 
                                             shuffle=False,
-                                            num_workers=1, 
+                                            num_workers=4, 
                                             pin_memory=True, 
                                             drop_last=False,
                                             sampler=dummy_db_sampler)
     
     query_db_loader = torch.utils.data.DataLoader(dataset, batch_size=1, 
                                             shuffle=False,
-                                            num_workers=1, 
+                                            num_workers=4, 
                                             pin_memory=True, 
                                             drop_last=False,
                                             sampler=query_db_sampler)
