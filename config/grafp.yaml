@@ -23,15 +23,9 @@ win_len: 1024
 hop_len: 512
 n_mels: 64
 n_fft: 1024
-hpf_pole: 0.98  # spectrogram enhancement
-density: 250.0
-f_sd : 1.0   # how wide to spreak peaks
-maxpksperframe: 64   # maximum number of peaks per frame
 n_peaks: 512  # max number of peaks to consider
-oversamp: 1  # oversample factor for peak detection
 silence: 0.0005  # silence threshold
 blur_kernel: [7,7]  # blur kernel size
-blur_sigma: 3.0  # blur sigma
 
 # Dataset and Model hyperparameters
 train_sz: 8000

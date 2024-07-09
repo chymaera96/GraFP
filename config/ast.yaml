@@ -1,0 +1,50 @@
+# Dataset directories
+data_dir: 'data'
+train_dir: 'data/fma_medium'
+val_dir: 'data/valid'
+ir_dir: 'data/aug/ir'
+noise_dir: 'data/aug/noise'
+
+# Model input parameters
+arch: 'ast'
+fs: 16000
+dur: 1.0
+offset: 0.2
+norm: 0.95
+win_len: 400
+hop_len: 168
+n_mels: 64
+n_fft: 400
+
+
+# Dataset and Model hyperparameters
+train_sz: 8000
+val_sz: 25000
+bsz_train: 256
+tau: 0.1
+lr: 1.0e-4
+n_epochs: 300
+T_max: 300
+
+# Augmentation hyperparameters
+n_frames: 96 # depends on the spectrogram parameters
+overlap: 0.5
+tr_snr: [0, 20]
+val_snr: [0, 20]
+test_snr: [0, 20]
+time_mask: 48
+freq_mask: 32
+noise_prob: 1.0
+ir_prob: 1.0
+
+# Model architecture
+d: 128
+h: 1024
+u: 32
+
+# Database sizes (validation)
+n_dummy: 100
+n_query: 20
+
+
+  

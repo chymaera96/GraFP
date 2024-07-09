@@ -9,9 +9,9 @@ u = 32
 v = int(h/d)
 chang_fp = [d,d,2*d,2*d,4*d,4*d,h,h]
 
-class Encoder(nn.Module):
+class NAFPEncoder(nn.Module):
 	def __init__(self, in_channels=1, stride=2, kernel_size=3):
-		super(Encoder, self).__init__()
+		super(NAFPEncoder, self).__init__()
 		self.in_channels = in_channels
 		self.stride = stride
 		self.kernel_size = kernel_size

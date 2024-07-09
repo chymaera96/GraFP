@@ -8,6 +8,7 @@ class SimCLR(nn.Module):
     def __init__(self, cfg, encoder):
         super(SimCLR, self).__init__()
         self.encoder = encoder
+        self.cfg = cfg
         # self.projector = nn.Sequential(nn.Linear(v,u),
         #                                nn.ELU(),
         #                                nn.Linear(u,1)
@@ -25,16 +26,20 @@ class SimCLR(nn.Module):
 
     def forward(self, x_i, x_j):
         
-        x_i = self.peak_extractor(x_i)
-        l1_i = self.peak_extractor.l1
+        l1_i = 0.0
+        if self.cfg['arch'] == 'grafp':
+            x_i = self.peak_extractor(x_i)
+            l1_i = self.peak_extractor.l1
         h_i = self.encoder(x_i)
         # print(f'Shape of h_i {h_i.shape} inside the SimCLR forward function')
         z_i = self.projector(h_i)
         # print(f'Shape of z_i {z_i.shape} inside the SimCLR forward function')
         z_i = F.normalize(z_i, p=2)
 
-        x_j = self.peak_extractor(x_j)
-        l1_j = self.peak_extractor.l1
+        l1_j = 0.0
+        if self.cfg['arch'] == 'grafp':
+            x_j = self.peak_extractor(x_j)
+            l1_j = self.peak_extractor.l1
         h_j = self.encoder(x_j)
         z_j = self.projector(h_j)
         z_j = F.normalize(z_j, p=2)
