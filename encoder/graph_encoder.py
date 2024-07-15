@@ -34,6 +34,20 @@ class Stem(nn.Module):
     def forward(self, x):
         x = self.convs(x)
         return x
+    
+class Downsample(nn.Module):
+    """ Convolution-based downsample
+    """
+    def __init__(self, in_dim=3, out_dim=768):
+        super().__init__()        
+        self.conv = nn.Sequential(
+            nn.Conv2d(in_dim, out_dim, 3, stride=2, padding=1),
+            nn.BatchNorm2d(out_dim),
+        )
+
+    def forward(self, x):
+        x = self.conv(x)
+        return x
 
 
 class ChannelConv(nn.Module):
