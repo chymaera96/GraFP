@@ -66,11 +66,11 @@ class GPUTransformNeuralfp(nn.Module):
 
         if self.train:
             X_i = self.logmelspec(x_i)
-            X_i = self.spec_aug(X_i)
+            # X_i = self.spec_aug(X_i)
             # assert X_i.shape[1] == 2, f"X_i shape: {X_i.shape}"
             assert X_i.device == torch.device('cuda:0'), f"X_i device: {X_i.device}"
             X_j = self.logmelspec(x_j)
-            X_j = self.spec_aug(X_j)
+            # X_j = self.spec_aug(X_j)
 
         else:
             # print(f"x_i shape in validation augment {x_i.shape}")
