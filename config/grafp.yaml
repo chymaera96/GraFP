@@ -36,7 +36,7 @@ n_filters : 8 # number of filters in the peak extraction layer
 tau: 0.05
 lr: 2.0e-5
 min_lr: 7.0e-7
-n_epochs: 400
+n_epochs: 200
 T_max: 400
 lambda: 0.0
 error_threshold: 5
