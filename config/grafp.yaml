@@ -47,8 +47,8 @@ overlap: 0.5
 tr_snr: [0, 20]
 val_snr: [0, 10]
 test_snr: [19, 21]
-time_mask: 16
-freq_mask: 32
+time_mask: 8
+freq_mask: 16
 noise_prob: 1.0
 ir_prob: 1.0
 
