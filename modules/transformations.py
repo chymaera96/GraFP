@@ -46,6 +46,11 @@ class GPUTransformNeuralfp(nn.Module):
             AmplitudeToDB()
         ) 
 
+        self.spec_aug = nn.Sequential(
+            TimeMasking(cfg['time_mask'], True),
+            FrequencyMasking(cfg['freq_mask'], True)
+        )
+        
         self.melspec = MelSpectrogram(sample_rate=self.sample_rate, win_length=cfg['win_len'], hop_length=cfg['hop_len'], n_fft=cfg['n_fft'], n_mels=cfg['n_mels'])
     
     def forward(self, x_i, x_j):
