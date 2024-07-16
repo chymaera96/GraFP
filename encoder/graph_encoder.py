@@ -143,7 +143,7 @@ class GraphEncoder(nn.Module):
         stochastic = False
         self.num_blocks = sum(self.blocks)
         self.conv = 'mr'
-        self.num_points = cfg['n_mels'] * cfg['n_frames'] // cfg['peak_stride']
+        N = cfg['n_mels'] * cfg['n_frames'] // cfg['peak_stride']
 
 
         num_k  = [int(x.item()) for x in torch.linspace(k,k,self.num_blocks)]
@@ -164,13 +164,13 @@ class GraphEncoder(nn.Module):
         for i in range(len(self.blocks)):
 
             if i > 0:
-                self.backbone.append(ChannelConv(self.channels[i-1], self.channels[i]))
-
+                self.backbone.append(Downsample(self.channels[i-1], self.channels[i]))
+                N = N // 4
             for j in range(self.blocks[i]):
 
                 self.backbone += [
                         Seq(Grapher(self.channels[i], num_k[idx], min(idx // 4 + 1, max_dilation), self.conv, self.act, self.norm,
-                                        self.bias, stochastic, epsilon, 1, n=self.num_points, drop_path=dpr[idx],
+                                        self.bias, stochastic, epsilon, 1, n=N, drop_path=dpr[idx],
                                         relative_pos=True),
                             FFN(in_features=self.channels[i],hidden_features= self.channels[i] * 4,out_features=self.channels[i], act=act, drop_path=dpr[idx])
                             )]

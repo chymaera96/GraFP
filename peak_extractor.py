@@ -259,15 +259,25 @@ class GPUPeakExtractorv2(nn.Module):
         self.blur_kernel = cfg['blur_kernel']
         self.n_filters = cfg['n_filters']
         self.stride =cfg['peak_stride']
+        # self.convs = nn.Sequential(
+        #     nn.Conv2d(3, self.n_filters, 3, stride=2, padding=1),
+        #     nn.BatchNorm2d(self.n_filters),
+        #     nn.ReLU(),
+        #     nn.Conv2d(self.n_filters, self.n_filters, 3, stride=2, padding=1),
+        #     nn.BatchNorm2d(self.n_filters),
+        #     nn.ReLU(),
+        #     nn.Conv2d(self.n_filters, self.n_filters, 3, stride=1, padding=1),
+        #     nn.BatchNorm2d(self.n_filters),
+        # )
+
         self.convs = nn.Sequential(
-            nn.Conv2d(3, self.n_filters, 3, stride=2, padding=1),
-            nn.BatchNorm2d(self.n_filters),
+            nn.Conv2d(3, 
+                      self.n_filters, 
+                      kernel_size=self.blur_kernel, 
+                      stride=(self.stride, 1), 
+                      padding=(self.blur_kernel[0] // 2, self.blur_kernel[1] // 2)
+                      ),
             nn.ReLU(),
-            nn.Conv2d(self.n_filters, self.n_filters, 3, stride=2, padding=1),
-            nn.BatchNorm2d(self.n_filters),
-            nn.ReLU(),
-            nn.Conv2d(self.n_filters, self.n_filters, 3, stride=1, padding=1),
-            nn.BatchNorm2d(self.n_filters),
         )
 
         # Get number of GPUs
