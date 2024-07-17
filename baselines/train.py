@@ -12,6 +12,11 @@ from torch.cuda.amp import GradScaler
 import torchaudio
 torchaudio.set_audio_backend("soundfile")
 
+# Directories
+root = os.path.dirname(__file__)
+model_folder = os.path.join(root,"checkpoint")
+sys.path.insert(0, os.abspath(os.path.join(root, '..')))
+
 
 from util import *
 from simclr.ntxent import ntxent_loss
@@ -23,11 +28,7 @@ from encoder.neural_audio_fp import NAFPEncoder
 from eval import eval_faiss
 from test_fp import create_fp_db, create_dummy_db
 
-# Directories
-root = os.path.dirname(__file__)
-model_folder = os.path.join(root,"checkpoint")
-parent_dir = os.path.abspath(os.path.join(root, os.pardir))
-sys.path.append(parent_dir)
+
 
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
