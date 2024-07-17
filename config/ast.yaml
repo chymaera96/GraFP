@@ -17,6 +17,7 @@ win_len: 400
 hop_len: 168
 n_mels: 64
 n_fft: 400
+silence: 0.0005  # silence threshold
 
 
 # Dataset and Model hyperparameters
@@ -27,13 +28,14 @@ tau: 0.1
 lr: 1.0e-4
 n_epochs: 300
 T_max: 300
+error_threshold: 5
 
 # Augmentation hyperparameters
 n_frames: 96 # depends on the spectrogram parameters
 overlap: 0.5
 tr_snr: [0, 20]
 val_snr: [0, 20]
-test_snr: [0, 20]
+test_snr: [19, 21]
 time_mask: 48
 freq_mask: 32
 noise_prob: 1.0
