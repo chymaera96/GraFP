@@ -48,7 +48,7 @@ parser.add_argument('--seed', default=42, type=int,
                     help='seed for initializing training. ')
 parser.add_argument('--ckp', default='test', type=str,
                     help='checkpoint_name')
-parser.add_argument('--encoder', default='grafp', type=str)
+parser.add_argument('--encoder', default='ast', type=str)
 parser.add_argument('--n_dummy_db', default=None, type=int)
 parser.add_argument('--n_query_db', default=None, type=int)
 
@@ -100,7 +100,7 @@ def validate(epoch, query_loader, dummy_loader, augment, model, output_root_dir)
 def main():
     args = parser.parse_args()
     cfg = load_config(args.config)
-    writer = SummaryWriter(f'runs/{args.ckp}')
+    writer = SummaryWriter(f'../runs/{args.ckp}')
     train_dir = override(cfg['train_dir'], args.train_dir)
     valid_dir = override(cfg['val_dir'], args.val_dir)
     ir_dir = cfg['ir_dir']
