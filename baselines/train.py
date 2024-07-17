@@ -165,13 +165,16 @@ def main():
         raise NotImplementedError
     elif args.encoder == 'ast':
         model = SimCLR(cfg, encoder=ASTEncoder()).to(device)
-        if torch.cuda.device_count() > 1:
-            print("Using", torch.cuda.device_count(), "GPUs!")
-            # model = DataParallel(model).to(device)
-            model = model.to(device)
-            model = torch.nn.DataParallel(model)
-        else:
-            model = model.to(device)
+    else:
+        raise NotImplementedError
+    
+    if torch.cuda.device_count() > 1:
+        print("Using", torch.cuda.device_count(), "GPUs!")
+        # model = DataParallel(model).to(device)
+        model = model.to(device)
+        model = torch.nn.DataParallel(model)
+    else:
+        model = model.to(device)
     
     print(count_parameters(model, args.encoder))
 
