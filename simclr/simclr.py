@@ -16,8 +16,10 @@ class SimCLR(nn.Module):
         d = cfg['d']
         h = cfg['h']
         u = cfg['u']
-
-        self.peak_extractor = GPUPeakExtractorv2(cfg)
+        if cfg['arch'] == 'grafp':
+            self.peak_extractor = GPUPeakExtractorv2(cfg)
+        else:
+            self.peak_extractor = None
 
         self.projector = nn.Sequential(nn.Linear(h, d*u),
                                        nn.ELU(),
