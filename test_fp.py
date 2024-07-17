@@ -260,12 +260,12 @@ def main():
             if args.recompute or os.path.isfile(f'{fp_dir}/db.mm') is False:
                 print("=> Computing dummy fingerprints...")
                 create_dummy_db(dummy_db_loader, augment=test_augment,
-                                model=model, output_root_dir=fp_dir, verbose=True)
+                                model=model, output_root_dir=fp_dir, verbose=False)
             else:
                 print("=> Skipping dummy db creation...")
 
             create_fp_db(query_db_loader, augment=test_augment, 
-                         model=model, output_root_dir=fp_dir, verbose=True)
+                         model=model, output_root_dir=fp_dir, verbose=False)
             
             
             text = f'{args.text}_{str(epoch)}'

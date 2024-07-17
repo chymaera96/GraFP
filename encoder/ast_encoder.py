@@ -339,7 +339,7 @@ class ASTEncoder(nn.Module):
             in_channels=1,
             n_classes=1024,
             embed_dim=768,
-            depth=12,
+            depth=8,
             n_heads=12,
             mlp_ratio=4.,
             qkv_bias=True,
