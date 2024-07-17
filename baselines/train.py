@@ -65,6 +65,7 @@ def train(cfg, train_loader, model, optimizer, scaler, ir_idx, noise_idx, augmen
         x_i = x_i.to(device)
         x_j = x_j.to(device)
         print(x_i.shape, x_j.shape)
+        exit(0)
         # with torch.autocast(device_type='cuda', dtype=torch.float16, enabled=True):
         with torch.no_grad():
             x_i, x_j = augment(x_i, x_j)
