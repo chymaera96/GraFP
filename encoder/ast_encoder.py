@@ -391,6 +391,10 @@ class ASTEncoder(nn.Module):
         logits : torch.Tensor
             Logits over all the classes - `(n_samples, n_classes)`.
         """
+
+        x = x.unsqueeze(1)
+        assert len(x.shape) == 4, f"Input shape is not (n_samples, in_channels, F, T). Got: {x.shape}"
+        
         n_samples = x.shape[0]
         x = self.patch_embed(x)
 
