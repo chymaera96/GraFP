@@ -40,7 +40,7 @@ class SimCLR(nn.Module):
         # print(f'Shape of z_i {z_i.shape} inside the SimCLR forward function')
         z_i = F.normalize(z_i, p=2)
 
-        l1_i = torch.tensor(0.0)
+        l1_j = torch.tensor(0.0)
         if self.cfg['arch'] == 'grafp':
             x_j = self.peak_extractor(x_j)
             l1_j = self.peak_extractor.l1
