@@ -15,7 +15,7 @@ torchaudio.set_audio_backend("soundfile")
 # Directories
 root = os.path.dirname(__file__)
 model_folder = os.path.join(root,"checkpoint")
-sys.path.insert(0, os.abspath(os.path.join(root, '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(root, '..')))
 
 
 from util import *
