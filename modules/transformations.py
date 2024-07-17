@@ -12,7 +12,6 @@ class GPUTransformNeuralfp(nn.Module):
         self.sample_rate = cfg['fs']
         self.ir_dir = ir_dir
         self.noise_dir = noise_dir
-        self.n_peaks = cfg['n_peaks']
         self.overlap = cfg['overlap']
         self.arch = cfg['arch']
         self.n_frames = cfg['n_frames']
