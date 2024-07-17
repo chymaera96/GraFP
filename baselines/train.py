@@ -161,10 +161,10 @@ def main():
 
     print("Creating new model...")
     if args.encoder == 'nafp':
-        model = SimCLR(cfg, encoder=NAFPEncoder(cfg)).to(device)
+        model = SimCLR(cfg, encoder=NAFPEncoder()).to(device)
         raise NotImplementedError
     elif args.encoder == 'ast':
-        model = SimCLR(cfg, encoder=ASTEncoder(cfg)).to(device)
+        model = SimCLR(cfg, encoder=ASTEncoder()).to(device)
     if torch.cuda.device_count() > 1:
         print("Using", torch.cuda.device_count(), "GPUs!")
         # model = DataParallel(model).to(device)
