@@ -27,8 +27,8 @@ bsz_train: 512
 tau: 0.1
 lr: 1.0e-4
 min_lr: 1.0e-6
-n_epochs: 300
-T_max: 300
+n_epochs: 400
+T_max: 400
 error_threshold: 5
 
 # Augmentation hyperparameters
