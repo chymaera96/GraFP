@@ -14,7 +14,7 @@ dur: 1.0
 offset: 0.2
 norm: 0.95
 win_len: 400
-hop_len: 168
+hop_len: 161
 n_mels: 64
 n_fft: 400
 silence: 0.0005  # silence threshold
@@ -32,20 +32,20 @@ T_max: 400
 error_threshold: 5
 
 # Augmentation hyperparameters
-n_frames: 96 # depends on the spectrogram parameters
+n_frames: 100 # depends on the spectrogram parameters
 overlap: 0.5
 tr_snr: [0, 20]
 val_snr: [0, 20]
 test_snr: [19, 21]
-time_mask: 48
+time_mask: 50
 freq_mask: 32
 noise_prob: 1.0
 ir_prob: 1.0
 
 # Model architecture
 d: 128
-h: 1024
-u: 32
+h: 128
+u: 4
 
 # Database sizes (validation)
 n_dummy: 100
