@@ -49,6 +49,7 @@ parser.add_argument('--ckp', default='test', type=str,
 parser.add_argument('--encoder', default='grafp', type=str)
 parser.add_argument('--n_dummy_db', default=None, type=int)
 parser.add_argument('--n_query_db', default=None, type=int)
+parser.add_argument('--k', default=3, type=int)
 
 
 
@@ -165,7 +166,7 @@ def main():
         # TODO: Add support for resnet encoder (deprecated)
         raise NotImplementedError
     elif args.encoder == 'grafp':
-        model = SimCLR(cfg, encoder=GraphEncoder(cfg=cfg, in_channels=cfg['n_filters']))
+        model = SimCLR(cfg, encoder=GraphEncoder(cfg=cfg, in_channels=cfg['n_filters']), k=args.k)
         if torch.cuda.device_count() > 1:
             print("Using", torch.cuda.device_count(), "GPUs!")
             # model = DataParallel(model).to(device)
