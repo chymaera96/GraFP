@@ -51,6 +51,7 @@ parser.add_argument('--small_test', action='store_true', default=False)
 parser.add_argument('--text', default='test', type=str)
 parser.add_argument('--test_snr', default=None, type=int)
 parser.add_argument('--recompute', action='store_true', default=False)
+parser.add_argument('--k', default=3, type=int)
 
 device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
 
@@ -167,13 +168,18 @@ def main():
     # Hyperparameters
     random_seed = 42
     shuffle_dataset =True
-            
+
+    ################## kNN experimental setup ##################
+    if list(test_cfg.keys())[0] == 'tck':
+        test_cfg = { f'tck{args.k}' : ['best']}
+    ###########################################################
+
     print("Creating new model...")
     if args.encoder == 'resnet':
         # TODO: Add support for resnet encoder (deprecated)
         raise NotImplementedError
     elif args.encoder == 'grafp':
-        model = SimCLR(cfg, encoder=GraphEncoder(cfg=cfg, in_channels=cfg['n_filters']))
+        model = SimCLR(cfg, encoder=GraphEncoder(cfg=cfg, in_channels=cfg['n_filters'], k=args.k))
         if torch.cuda.device_count() > 1:
             print("Using", torch.cuda.device_count(), "GPUs!")
             # model = DataParallel(model).to(device)
