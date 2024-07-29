@@ -25,8 +25,8 @@ train_sz: 8000
 val_sz: 25000
 bsz_train: 512
 tau: 0.1
-lr: 1.0e-5
-min_lr: 1.0e-7
+lr: 1.0e-4
+min_lr: 1.0e-6
 n_epochs: 400
 T_max: 400
 error_threshold: 5
