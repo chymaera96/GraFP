@@ -337,11 +337,11 @@ class ASTEncoder(nn.Module):
             img_size=(64, 100),
             patch_size=(64, 10),
             in_channels=1,
-            n_classes=512,
-            embed_dim=128,
+            n_classes=1024,
+            embed_dim=640,
             depth=8,
-            n_heads=8,
-            mlp_ratio=8.,
+            n_heads=12,
+            mlp_ratio=4.,
             qkv_bias=True,
             p=0.,
             attn_p=0.,
@@ -411,7 +411,7 @@ class ASTEncoder(nn.Module):
         x = self.norm(x)    # (n_samples, 1 + n_patches, embed_dim)
 
         cls_token_final = x[:, 0]  # (n_samples, embed_dim)
-        # x = self.head(cls_token_final)  # (n_samples, n_classes)
-        x = cls_token_final
+        x = self.head(cls_token_final)  # (n_samples, n_classes)
+        # x = cls_token_final
 
         return x
