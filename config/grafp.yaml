@@ -17,7 +17,7 @@ noise_dir: '/data/home/acw723/datasets/musan/noise/'
 arch: 'grafp'
 fs: 16000
 dur: 1.0
-offset: 0.2
+offset: 0.05
 norm: 0.95
 win_len: 1024
 hop_len: 512
@@ -43,7 +43,7 @@ error_threshold: 5
 
 # Augmentation hyperparameters
 n_frames: 32 # depends on the spectrogram parameters
-overlap: 0.5
+overlap: 0.9
 tr_snr: [0, 20]
 val_snr: [0, 10]
 test_snr: [19, 21]
