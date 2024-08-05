@@ -27,7 +27,7 @@ bsz_train: 512
 tau: 0.1
 lr: 1.0e-4
 min_lr: 1.0e-6
-n_epochs: 400
+n_epochs: 800
 T_max: 400
 error_threshold: 5
 
