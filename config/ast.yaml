@@ -26,9 +26,9 @@ val_sz: 25000
 bsz_train: 512
 tau: 0.1
 lr: 1.0e-4
-min_lr: 1.0e-6
+min_lr: 1.0e-4
 n_epochs: 800
-T_max: 400
+T_max: 800
 error_threshold: 5
 
 # Augmentation hyperparameters
