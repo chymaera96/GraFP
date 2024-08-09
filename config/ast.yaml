@@ -44,7 +44,7 @@ ir_prob: 1.0
 
 # Model architecture
 d: 128
-h: 1024
+h: 384
 u: 32
 
 # Database sizes (validation)

@@ -338,13 +338,13 @@ class ASTEncoder(nn.Module):
             patch_size=(64, 10),
             in_channels=1,
             n_classes=1024,
-            embed_dim=640,
-            depth=8,
-            n_heads=10,
+            embed_dim=384,
+            depth=12,
+            n_heads=6,
             mlp_ratio=4.,
             qkv_bias=True,
-            p=0.,
-            attn_p=0.,
+            p=0.1,
+            attn_p=0.1,
     ):
         super().__init__()
 
@@ -411,7 +411,7 @@ class ASTEncoder(nn.Module):
         x = self.norm(x)    # (n_samples, 1 + n_patches, embed_dim)
 
         cls_token_final = x[:, 0]  # (n_samples, embed_dim)
-        x = self.head(cls_token_final)  # (n_samples, n_classes)
-        # x = cls_token_final
+        # x = self.head(cls_token_final)  # (n_samples, n_classes)
+        x = cls_token_final
 
         return x
