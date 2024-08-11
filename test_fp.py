@@ -52,6 +52,7 @@ parser.add_argument('--text', default='test', type=str)
 parser.add_argument('--test_snr', default=None, type=int)
 parser.add_argument('--recompute', action='store_true', default=False)
 parser.add_argument('--k', default=3, type=int)
+parser.add_argument('--test_ids', default=1000, type=int)
 
 device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
 
@@ -280,7 +281,7 @@ def main():
 
             if args.query_lens is not None:
                 hit_rates = eval_faiss(emb_dir=fp_dir,
-                                    test_ids='all', 
+                                    test_ids=cfg['test_ids'], 
                                     test_seq_len=test_seq_len, 
                                     index_type=index_type,
                                     nogpu=True) 
@@ -293,7 +294,7 @@ def main():
   
             else:
                 hit_rates = eval_faiss(emb_dir=fp_dir, 
-                                    test_ids='all', 
+                                    test_ids=cfg['test_ids'], 
                                     index_type=index_type,
                                     nogpu=True)
                 
