@@ -23,7 +23,7 @@ silence: 0.0005  # silence threshold
 # Dataset and Model hyperparameters
 train_sz: 8000
 val_sz: 25000
-bsz_train: 1024
+bsz_train: 4096
 tau: 0.1
 lr: 1.0e-4
 min_lr: 1.0e-4
@@ -44,8 +44,8 @@ ir_prob: 1.0
 
 # Model architecture
 d: 128
-h: 192
-u: 32
+h: 128
+u: 4
 
 # Database sizes (validation)
 n_dummy: 100
