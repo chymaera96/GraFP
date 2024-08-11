@@ -281,7 +281,7 @@ def main():
 
             if args.query_lens is not None:
                 hit_rates = eval_faiss(emb_dir=fp_dir,
-                                    test_ids=cfg['test_ids'], 
+                                    test_ids=args.test_ids, 
                                     test_seq_len=test_seq_len, 
                                     index_type=index_type,
                                     nogpu=True) 
@@ -294,7 +294,7 @@ def main():
   
             else:
                 hit_rates = eval_faiss(emb_dir=fp_dir, 
-                                    test_ids=cfg['test_ids'], 
+                                    test_ids=args.test_ids, 
                                     index_type=index_type,
                                     nogpu=True)
                 
