@@ -61,7 +61,7 @@ device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
 def create_table(hit_rates, overlap, dur, test_seq_len=[1,3,5,9,11,19], text="test"):
     table = f'''<table>
     <tr>
-    <th colspan="5">{text}/th>
+    <th colspan="5"{text}</th>
     <th>Query Length</th>
     <th>Top-1 Exact</th>
     <th>Top-1 Near</th>
