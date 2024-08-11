@@ -52,7 +52,7 @@ parser.add_argument('--text', default='test', type=str)
 parser.add_argument('--test_snr', default=None, type=int)
 parser.add_argument('--recompute', action='store_true', default=False)
 parser.add_argument('--k', default=3, type=int)
-parser.add_argument('--test_ids', default=1000, type=int)
+parser.add_argument('--test_ids', default='1000', type=str)
 
 device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
 
