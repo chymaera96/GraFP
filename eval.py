@@ -240,6 +240,7 @@ def eval_faiss(emb_dir,
     if test_ids.lower() == 'all':
         test_ids = np.arange(0, len(query) - max(test_seq_len), 1) # will test all segments in query/db set
     elif test_ids.isnumeric():
+        np.random.seed(42)
         test_ids = np.random.permutation(len(query) - max(test_seq_len))[:int(test_ids)]
     else:
         test_ids = np.load(test_ids)
