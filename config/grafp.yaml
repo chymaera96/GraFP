@@ -2,7 +2,8 @@
 data_dir: 'data'
 train_dir: '/data/home/acw723/datasets/fma/fma_small'
 # train_dir: 'data/fma_small_all.json'
-val_dir: '/data/home/acw723/datasets/fma/fma_medium'
+# val_dir: '/data/home/acw723/datasets/fma/fma_medium'
+val_dir: '/data/scratch/acw723/fma_large'
 # val_dir: 'data/fma_medium_all.json'
 ir_dir: '/data/home/acw723/datasets/ir'
 noise_dir: '/data/home/acw723/datasets/musan/noise/'
@@ -17,7 +18,7 @@ noise_dir: '/data/home/acw723/datasets/musan/noise/'
 arch: 'grafp'
 fs: 16000
 dur: 1.0
-offset: 0.125
+offset: 0.2
 norm: 0.95
 win_len: 1024
 hop_len: 512
@@ -29,7 +30,8 @@ blur_kernel: [7,7]  # blur kernel size
 
 # Dataset and Model hyperparameters
 train_sz: 8000
-val_sz: 25000
+# val_sz: 25000
+val_sz: 106574
 bsz_train: 256
 peak_stride: 2
 n_filters : 8 # number of filters in the peak extraction layer
@@ -43,7 +45,7 @@ error_threshold: 5
 
 # Augmentation hyperparameters
 n_frames: 32 # depends on the spectrogram parameters
-overlap: 0.75
+overlap: 0.5
 tr_snr: [0, 20]
 val_snr: [0, 10]
 test_snr: [19, 21]
