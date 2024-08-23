@@ -263,11 +263,11 @@ def main():
                 print("=> no checkpoint found at '{}'".format(ckp))
                 continue
             
-            if dataset_size > 25500:
+            if dataset_size > 50000:
                 fp_dir = create_fp_dir(resume=ckp, train=False, large=True)
             else:
                 fp_dir = create_fp_dir(resume=ckp, train=False, large=False)
-                
+
             if args.recompute or os.path.isfile(f'{fp_dir}/db.mm') is False:
                 print("=> Computing dummy fingerprints...")
                 create_dummy_db(dummy_db_loader, augment=test_augment,
