@@ -54,6 +54,7 @@ parser.add_argument('--text', default='test', type=str)
 parser.add_argument('--test_snr', default=None, type=int)
 parser.add_argument('--recompute', action='store_true', default=False)
 parser.add_argument('--k', default=3, type=int)
+parser.add_argument('--model', default=None, type=str)
 parser.add_argument('--test_ids', default='1000', type=str)
 
 device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
@@ -162,6 +163,12 @@ def main():
     cfg = load_config(args.config)
     if args.test_snr is not None:
         cfg['val_snr'] = [int(args.test_snr), int(args.test_snr)]
+
+    if args.test_dir == '../data/fma_medium.json':
+        cfg['val_sz'] = 25000
+    else:
+        cfg['val_sz'] = 106574
+
     test_cfg = load_config(args.test_config)
     ir_dir = cfg['ir_dir']
     noise_dir = cfg['noise_dir']
@@ -172,10 +179,10 @@ def main():
     random_seed = 42
     shuffle_dataset =True
 
-    #     ################## ablation experimental setup ##################
-    # if list(test_cfg.keys())[0] == 'tck':
-    #     test_cfg = { f'tck{args.k}' : ['best']}
-    # ###########################################################
+    ############# ablation experimental setup #################
+    if args.model is not None:
+        test_cfg = {args.model: test_cfg[args.model]}
+    ###########################################################
 
     print("Creating new model...")
     if args.encoder == 'nafp':
