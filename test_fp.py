@@ -52,6 +52,7 @@ parser.add_argument('--text', default='test', type=str)
 parser.add_argument('--test_snr', default=None, type=int)
 parser.add_argument('--recompute', action='store_true', default=False)
 parser.add_argument('--k', default=3, type=int)
+parser.add_argument('--model', default=None, type=str)
 parser.add_argument('--test_ids', default='1000', type=str)
 
 device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
@@ -128,14 +129,19 @@ def create_dummy_db(dataloader, augment, model, output_root_dir, fname='dummy_db
     fp = []
     print("=> Creating dummy fingerprints...")
     for idx, audio in enumerate(dataloader):
-        audio = audio.to(device)
-        x_i, _ = augment(audio, None)
-        # x_i = torch.unsqueeze(db[0],1)
-        with torch.no_grad():
-            _, _, z_i, _= model(x_i.to(device),x_i.to(device))  
+        # Split batch to half to deal with large batch sizes
+        audio1 = audio[:audio.shape[0]//2]
+        audio2 = audio[audio.shape[0]//2:]
+        for audio in [audio1, audio2]:
+
+            audio = audio.to(device)
+            x_i, _ = augment(audio, None)
+            # x_i = torch.unsqueeze(db[0],1)
+            with torch.no_grad():
+                _, _, z_i, _= model(x_i.to(device),x_i.to(device))  
 
         # print(f'Shape of z_i {z_i.shape} inside the create_dummy_db function')
-        fp.append(z_i.detach().cpu().numpy())
+            fp.append(z_i.detach().cpu().numpy())
         
         if verbose and idx % 100 == 0:
             print(f"Step [{idx}/{len(dataloader)}]\t shape: {z_i.shape}")
@@ -170,9 +176,9 @@ def main():
     random_seed = 42
     shuffle_dataset =True
 
-    ################## kNN experimental setup ##################
-    if list(test_cfg.keys())[0] == 'tck':
-        test_cfg = { f'tck{args.k}' : ['best']}
+    ############# ablation experimental setup #################
+    if args.model is not None:
+        test_cfg = {args.model: test_cfg[args.model]}
     ###########################################################
 
     print("Creating new model...")
