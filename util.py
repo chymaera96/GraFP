@@ -296,48 +296,13 @@ def get_test_index(data_dir):
     
 def main():
 
-    path = '/import/c4dm-datasets-ext/fma/fma/data/fma_small'
+    path = 'data/scratch/acw723/fma_large'
     cfg = load_config('config/grafp.yaml')
-    # train_json_path = os.path.join('data', path.split('/')[-1] + "_train.json")
-    # train_idx = load_index(cfg, data_dir=train_json_path, mode='train')
-    # print("Train index length: ", len(train_idx))
-    # all_file_list = os.listdir(path)
-    
-    # print(f'Number of files in {path}: {len(all_file_list)}')
-    # test_idx_path = os.path.join('data', path.split('/')[-1] + "_test.json")
-    # test_idx = {}
-    # print("Creating test index...")
-    # ix = 0
-    # for i, fpath in enumerate(all_file_list):
-    #     fpath = os.path.join(path, fpath)
-    #     if i % 200 == 0:
-    #         print(f"Processed {i}/{len(all_file_list)} files")
-    #     if fpath not in train_idx.values() and fpath.endswith('mp3'):
-    #         test_idx[str(ix)] = fpath
-    #         ix += 1
-
-    # with open(test_idx_path, 'w') as fp:
-    #     json.dump(test_idx, fp)
-    # print("Test index length: ", len(test_idx))
-
-    # Create a index file containing all the files in the directory
-    all_file_list = os.listdir(path)
-    print(f'Number of files in {path}: {len(all_file_list)}')
-    all_idx_path = os.path.join('data', path.split('/')[-1] + "_all.json")
-    all_idx = {}
-    print("Creating all index...")
-    ix = 0
-    for i, fpath in enumerate(all_file_list):
-        fpath = os.path.join(path, fpath)
-        if i % 200 == 0:
-            print(f"Processed {i}/{len(all_file_list)} files")
-        if fpath.endswith('mp3'):
-            all_idx[str(ix)] = fpath
-            ix += 1
-
-    with open(all_idx_path, 'w') as fp:
-        json.dump(all_idx, fp)
-    print("All index length: ", len(all_idx))
+    data = load_index(cfg, path)
+    # Check if all paths are valid
+    for idx, fpath in data.items():
+        if not os.path.exists(fpath):
+            print(f"File {fpath} not found")
     
 if __name__ == '__main__':
     main()
