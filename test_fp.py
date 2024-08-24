@@ -129,18 +129,15 @@ def create_dummy_db(dataloader, augment, model, output_root_dir, fname='dummy_db
     fp = []
     print("=> Creating dummy fingerprints...")
     for idx, audio in enumerate(dataloader):
-        # Split batch to half to deal with large batch sizes
-        audio1 = audio[:audio.shape[0]//2]
-        audio2 = audio[audio.shape[0]//2:]
-        for audio in [audio1, audio2]:
-
-            audio = audio.to(device)
-            x_i, _ = augment(audio, None)
-            # x_i = torch.unsqueeze(db[0],1)
+        audio = audio.to(device)
+        x_i, _ = augment(audio, None)
+        # Split x_i into [B/2, F, T] and [B/2, F, T]
+        x_1, x_2 = torch.chunk(x_i, 2, dim=0)   
+        for x_i in [x_1, x_2]:
             with torch.no_grad():
                 _, _, z_i, _= model(x_i.to(device),x_i.to(device))  
 
-        # print(f'Shape of z_i {z_i.shape} inside the create_dummy_db function')
+            # print(f'Shape of z_i {z_i.shape} inside the create_dummy_db function')
             fp.append(z_i.detach().cpu().numpy())
         
         if verbose and idx % 100 == 0:
@@ -166,7 +163,7 @@ def main():
     cfg = load_config(args.config)
     if args.test_snr is not None:
         cfg['val_snr'] = [int(args.test_snr), int(args.test_snr)]
-        
+
     if args.test_dir == 'data/fma_medium.json':
         cfg['val_sz'] = 25000
     else:
