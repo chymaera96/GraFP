@@ -296,7 +296,7 @@ def get_test_index(data_dir):
     
 def main():
 
-    path = 'data/scratch/acw723/fma_large'
+    path = '/data/scratch/acw723/fma_large'
     cfg = load_config('config/grafp.yaml')
     data = load_index(cfg, path)
     # Check if all paths are valid
