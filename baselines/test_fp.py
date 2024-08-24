@@ -172,6 +172,11 @@ def main():
     random_seed = 42
     shuffle_dataset =True
 
+    #     ################## ablation experimental setup ##################
+    # if list(test_cfg.keys())[0] == 'tck':
+    #     test_cfg = { f'tck{args.k}' : ['best']}
+    # ###########################################################
+
     print("Creating new model...")
     if args.encoder == 'nafp':
         model = SimCLR(cfg, encoder=NAFPEncoder()).to(device)
