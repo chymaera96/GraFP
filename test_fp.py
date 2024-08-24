@@ -166,6 +166,12 @@ def main():
     cfg = load_config(args.config)
     if args.test_snr is not None:
         cfg['val_snr'] = [int(args.test_snr), int(args.test_snr)]
+        
+    if args.test_dir == 'data/fma_medium.json':
+        cfg['val_sz'] = 25000
+    else:
+        cfg['val_sz'] = 106574
+
     test_cfg = load_config(args.test_config)
     ir_dir = cfg['ir_dir']
     noise_dir = cfg['noise_dir']
