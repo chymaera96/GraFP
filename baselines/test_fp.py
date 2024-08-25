@@ -182,6 +182,18 @@ def main():
     ############# ablation experimental setup #################
     if args.model is not None:
         test_cfg = {args.model: test_cfg[args.model]}
+        if args.model == 'tc9':
+            cfg['offset'] = 0.2
+            cfg['overlap'] = 0.5
+        elif args.model == 'tc10':
+            cfg['offset'] = 0.05
+            cfg['overlap'] = 0.9
+        elif args.model == 'tc11':
+            cfg['offset'] = 0.1
+            cfg['overlap'] = 0.8
+        elif args.model == 'tc12':
+            cfg['offset'] = 0.125
+            cfg['overlap'] = 0.75
     ###########################################################
 
     print("Creating new model...")
