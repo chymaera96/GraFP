@@ -110,7 +110,7 @@ def get_index(index_type,
             100. * max_nitem_train / len(train_data)))
         # shuffle and reduce training data
         sel_tr_idx = np.random.permutation(len(train_data))
-        sel_tr_idx = sel_tr_idx[:max_nitem_train]
+        sel_tr_idx = sel_tr_idx[:int(max_nitem_train)]
         index.train(train_data[sel_tr_idx,:])
     else:
         print('Training index...')
