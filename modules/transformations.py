@@ -7,7 +7,7 @@ import warnings
 
 
 class GPUTransformNeuralfp(nn.Module):
-    def __init__(self, cfg, ir_dir, noise_dir, train=True, cpu=False):
+    def __init__(self, cfg, ir_dir, noise_dir, train=True, cpu=False, abl=False):
         super(GPUTransformNeuralfp, self).__init__()
         self.sample_rate = cfg['fs']
         self.ir_dir = ir_dir
@@ -18,6 +18,7 @@ class GPUTransformNeuralfp(nn.Module):
         self.train = train
         self.cpu = cpu
         self.cfg = cfg
+        self.abl = abl
 
         self.train_transform = Compose([
             ApplyImpulseResponse(ir_paths=self.ir_dir, p=cfg['ir_prob']),
@@ -34,6 +35,14 @@ class GPUTransformNeuralfp(nn.Module):
                                max_snr_in_db=cfg['val_snr'][1], 
                                p=1),
 
+            ])
+        
+        self.ablation = Compose([
+            ApplyImpulseResponse(ir_paths=self.ir_dir, p=0),
+            AddBackgroundNoise(background_paths=self.noise_dir, 
+                               min_snr_in_db=cfg['val_snr'][0], 
+                               max_snr_in_db=cfg['val_snr'][1], 
+                               p=1),
             ])
                 
         self.logmelspec = nn.Sequential(
@@ -82,11 +91,20 @@ class GPUTransformNeuralfp(nn.Module):
             if x_j is None:
                 # Dummy db does not need augmentation
                 return X_i, X_i
-            try:
-                x_j = self.val_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
-            except ValueError:
-                print("Error loading noise file. Retrying...")
-                x_j = self.val_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
+            
+            if self.abl:
+                try:
+                    x_j = self.ablation(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
+                except ValueError:
+                    print("Error loading noise file. Retrying...")
+                    x_j = self.ablation(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
+
+            else:        
+                try:
+                    x_j = self.val_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
+                except ValueError:
+                    print("Error loading noise file. Retrying...")
+                    x_j = self.val_transform(x_j.view(1,1,x_j.shape[-1]), sample_rate=self.sample_rate)
 
             X_j = self.logmelspec(x_j.flatten()).transpose(1,0)
             # print(f"Intermediate X_j shape {X_j.shape}")

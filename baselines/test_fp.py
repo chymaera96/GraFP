@@ -221,9 +221,15 @@ def main():
     else:
         noise_test_idx = load_augmentation_index(noise_dir, splits=0.8)["test"]
     ir_test_idx = load_augmentation_index(ir_dir, splits=0.8)["test"]
-    test_augment = GPUTransformNeuralfp(cfg=cfg, ir_dir=ir_test_idx, 
+    if "sanir" in args.text:
+        print("Queries without IR augmentation!")
+        test_augment = GPUTransformNeuralfp(cfg=cfg, ir_dir=ir_test_idx, 
                                         noise_dir=noise_test_idx, 
-                                        train=False).to(device)
+                                        train=False, abl=True).to(device)
+    else:
+        test_augment = GPUTransformNeuralfp(cfg=cfg, ir_dir=ir_test_idx, 
+                                        noise_dir=noise_test_idx, 
+                                        train=False, abl=False).to(device)
 
     dataset = NeuralfpDataset(cfg, path=args.test_dir, train=False)
 
