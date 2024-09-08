@@ -4,6 +4,7 @@ import faiss
 import time
 import numpy as np
 import os
+import uuid
 
 def get_index(index_type,
               train_data,
@@ -310,14 +311,18 @@ def eval_faiss(emb_dir,
     hit_rates = np.stack([top1_exact_rate, top1_near_rate, top3_exact_rate, top10_exact_rate])
     del fake_recon_index, query, db
 
-    # print(hit_rates)
-    np.save(f'{emb_dir}/hit_rates.npy', hit_rates)
+    # Create random named directory for saving results
+    result_dir = emb_dir + f'/{uuid.uuid4().hex}'
+    os.makedirs(result_dir, exist_ok=True)
 
-    np.save(f'{emb_dir}/raw_score.npy',
+
+    np.save(f'{result_dir}/hit_rates.npy', hit_rates)
+
+    np.save(f'{result_dir}/raw_score.npy',
             np.concatenate(
                 (top1_exact, top1_near, top3_exact, top10_exact), axis=1))
-    np.save(f'{emb_dir}/test_ids.npy', test_ids)
-    print(f'Saved test_ids, hit-rates and raw score to {emb_dir}.')
+    np.save(f'{result_dir}/test_ids.npy', test_ids)
+    print(f'Saved test_ids, hit-rates and raw score to {result_dir}.')
 
     return hit_rates
 

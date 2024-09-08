@@ -242,9 +242,16 @@ def main():
     split2 = args.n_query_db
     if split1 is None:
         split1 = len(dataset) - split2
-    if shuffle_dataset :
+        
+    test_dir_name = args.test_dir.split('/')[-1].split('.')[0]
+    if shuffle_dataset:
         np.random.seed(random_seed)
         np.random.shuffle(indices)
+        # Save shuffled indices
+        np.save(f'{args.data_dir}/{test_dir_name}_indices.npy', indices)
+    else:
+        indices = np.load(f'{args.data_dir}/{test_dir_name}_indices.npy')
+
     dummy_indices, query_db_indices = indices[:split1], indices[split1: split1 + split2]
 
     print(f"Creating dummy db with {len(dummy_indices)} samples and query db with {len(query_db_indices)} samples")

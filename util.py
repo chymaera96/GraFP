@@ -192,14 +192,36 @@ def load_config(config_path):
 def override(config_val, arg):
     return arg if arg is not None else config_val 
 
+# def create_fp_dir(resume=None, ckp=None, epoch=1, train=True, large=False):
+
+#     if train:
+#         parent_dir = 'logs/emb/valid'
+#     else:
+#         if large:
+#             parent_dir = '/data/scratch/acw723/logs/emb/test'
+#         else:
+#             parent_dir = 'logs/emb/test'
+
+#     if not os.path.exists(parent_dir):
+#         os.makedirs(parent_dir)
+#     if resume is not None:
+#         ckp_name = resume.split('/')[-1].split('.pt')[0]
+#     else:
+#         ckp_name = f'model_{ckp}_epoch_{epoch}'
+#     fp_dir = os.path.join(parent_dir, ckp_name)
+#     if not os.path.exists(fp_dir):
+#         os.mkdir(fp_dir)
+#     return fp_dir
+
 def create_fp_dir(resume=None, ckp=None, epoch=1, train=True, large=False):
+
     if train:
-        parent_dir = 'logs/emb/valid'
+        parent_dir = 'logs/store/valid'
     else:
         if large:
-            parent_dir = '/data/scratch/acw723/logs/emb/test'
+            parent_dir = '/data/scratch/acw723/logs/store/test'
         else:
-            parent_dir = 'logs/emb/test'
+            parent_dir = 'logs/store/test'
 
     if not os.path.exists(parent_dir):
         os.makedirs(parent_dir)
