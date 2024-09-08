@@ -246,9 +246,9 @@ def main():
         np.random.seed(random_seed)
         np.random.shuffle(indices)
         # Save shuffled indices
-        np.save(f'{args.data_dir}/{test_dir_name}_indices.npy', indices)
+        np.save(f'{cfg['data_dir']}/{test_dir_name}_indices.npy', indices)
     else:
-        indices = np.load(f'{args.data_dir}/{test_dir_name}_indices.npy')
+        indices = np.load(f'{cfg['data_dir']}/{test_dir_name}_indices.npy')
         
     dummy_indices, query_db_indices = indices[:split1], indices[split1: split1 + split2]
 
