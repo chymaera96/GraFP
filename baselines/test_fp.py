@@ -56,6 +56,7 @@ parser.add_argument('--recompute', action='store_true', default=False)
 parser.add_argument('--k', default=3, type=int)
 parser.add_argument('--model', default=None, type=str)
 parser.add_argument('--test_ids', default='1000', type=str)
+parser.add_argument('--shuffle', action='store_true', default=False)
 
 device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
 
@@ -178,7 +179,7 @@ def main():
     assert args.small_test is False
     # Hyperparameters
     random_seed = 42
-    shuffle_dataset =True
+    shuffle_dataset = args.shuffle
 
     ############# ablation experimental setup #################
     if args.model is not None:

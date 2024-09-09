@@ -312,8 +312,13 @@ def eval_faiss(emb_dir,
     del fake_recon_index, query, db
 
     # Create random named directory for saving results
-    result_dir = emb_dir + f'/{uuid.uuid4().hex}'
-    os.makedirs(result_dir, exist_ok=True)
+    result_dir = emb_dir + f'/{str(uuid.uuid4().hex)[:8]}'
+
+    try:
+        os.makedirs(result_dir, exist_ok=True)
+    except OSError:
+        print(f'Failed to create directory {result_dir}.')
+        result_dir = emb_dir + f'/{str(uuid.uuid4().hex)[:16]}'
 
 
     np.save(f'{result_dir}/hit_rates.npy', hit_rates)
@@ -321,7 +326,7 @@ def eval_faiss(emb_dir,
     np.save(f'{result_dir}/raw_score.npy',
             np.concatenate(
                 (top1_exact, top1_near, top3_exact, top10_exact), axis=1))
-    np.save(f'{result_dir}/test_ids.npy', test_ids)
+    np.save(f'{emb_dir}/test_ids.npy', test_ids)
     print(f'Saved test_ids, hit-rates and raw score to {result_dir}.')
 
     return hit_rates
