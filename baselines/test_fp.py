@@ -180,6 +180,7 @@ def main():
     # Hyperparameters
     random_seed = 42
     shuffle_dataset = args.shuffle
+    assert shuffle_dataset is False
 
     ############# ablation experimental setup #################
     if args.model is not None:
