@@ -9,5 +9,3 @@ PyYAML
 prettytable
 timm
 torchvision
-torchmetrics
-torchlars
