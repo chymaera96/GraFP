@@ -133,9 +133,9 @@ def create_dummy_db(dataloader, augment, model, output_root_dir, fname='dummy_db
         audio = audio.to(device)
         x_i, _ = augment(audio, None)
         assert x_i.size(1) == 64 and len(x_i.size()) == 3, f"Shape of x_i: {x_i.shape}"
-        if x_i.size(0) < 2:
+        if x_i.size(0) < 256:
             x_list = [x_i]
-        elif x_i.size(0) > 256:
+        else:
             x_1, x_2 = torch.chunk(x_i, 2, dim=0)
             x_list = [x_1, x_2]
         for x_i in x_list:
