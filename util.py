@@ -158,7 +158,7 @@ def update_index(data_dir, idx_path, ext=['wav','mp3']):
         index = json.load(fp)
     dir_name = idx_path.split('/')[-1].split('.')[0]
     for key, value in index.items():
-        rel_path = value.split(dir_name)[-1]
+        rel_path = value.split(dir_name)[-1][:1]
         new_index[key] = os.path.join(data_dir, dir_name, rel_path)
 
     return new_index
