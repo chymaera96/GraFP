@@ -158,7 +158,7 @@ def update_index(data_dir, idx_path):
         index = json.load(fp)
     dir_name = idx_path.split('/')[-1].split('.')[0]
 
-    if type(list(index.values())[0]) == dict:
+    if type(list(index.values())[0]) == list:
         for key, value in index.items():
             new_index[key] = {}
             for k, v in value.items():
