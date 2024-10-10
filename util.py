@@ -130,15 +130,15 @@ def override(config_val, arg):
     return arg if arg is not None else config_val 
 
 
-def create_fp_dir(resume=None, ckp=None, epoch=1, train=True, large=False):
+def create_fp_dir(resume=None, ckp=None, epoch=1, train=True, large=False, parent_dir=None):
 
     if train:
         parent_dir = 'logs/store/valid'
     else:
         if large:
-            parent_dir = '/data/scratch/acw723/logs/store/test'
-        else:
-            parent_dir = 'logs/store/test'
+            parent_dir = 'logs/store/large'
+        elif not large and parent_dir is None:
+            parent_dir = 'logs/store/medium'
 
     if not os.path.exists(parent_dir):
         os.makedirs(parent_dir)
@@ -151,17 +151,28 @@ def create_fp_dir(resume=None, ckp=None, epoch=1, train=True, large=False):
         os.mkdir(fp_dir)
     return fp_dir
 
-def update_index(data_dir, idx_path, ext=['wav','mp3']):
-    # Update paths with new parent directory
+def update_index(data_dir, idx_path):
+    # Update index paths with new parent directory
     new_index = {}
     with open(idx_path, 'r') as fp:
         index = json.load(fp)
     dir_name = idx_path.split('/')[-1].split('.')[0]
-    for key, value in index.items():
-        rel_path = value.split(dir_name)[-1][1:]
-        new_index[key] = os.path.join(data_dir, dir_name, rel_path)
 
-    return new_index
+    if type(list(index.values())[0]) == dict:
+        for key, value in index.items():
+            new_index[key] = {}
+            for k, v in value.items():
+                rel_path = v.split(dir_name)[-1][1:]
+                new_index[key][k] = os.path.join(data_dir, dir_name, rel_path)
+    else:
+        for key, value in index.items():
+            rel_path = value.split(dir_name)[-1][1:]
+            new_index[key] = os.path.join(data_dir, dir_name, rel_path)
+
+    with open(idx_path, 'w') as fp:
+        json.dump(new_index, fp)
+
+    return idx_path
 
 def count_parameters(model, encoder):
     table = PrettyTable(["Modules", "Parameters"])
@@ -179,10 +190,3 @@ def count_parameters(model, encoder):
         f.write(str(table))
     return total_params
 
-def calculate_output_sparsity(output):
-    total_elements = torch.numel(output)
-    zero_elements = torch.sum((output == 0).int()).item()
-
-    sparsity = zero_elements / total_elements * 100
-    return sparsity
-    
