@@ -160,10 +160,10 @@ def update_index(data_dir, idx_path):
 
     if type(list(index.values())[0]) == list:
         for key, value in index.items():
-            new_index[key] = {}
-            for k, v in value.items():
+            new_index[key] = []
+            for ix, v in (enumerate(value)):
                 rel_path = v.split(dir_name)[-1][1:]
-                new_index[key][k] = os.path.join(data_dir, dir_name, rel_path)
+                new_index[key][ix] = os.path.join(data_dir, dir_name, rel_path)
     else:
         for key, value in index.items():
             rel_path = value.split(dir_name)[-1][1:]
