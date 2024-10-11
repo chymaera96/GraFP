@@ -54,10 +54,9 @@ parser.add_argument('--n_query_db', default=None, type=int)
 
 
 
-def train(cfg, train_loader, model, optimizer, scaler, ir_idx, noise_idx, augment=None):
+def train(cfg, train_loader, model, optimizer, scaler, augment=None):
     model.train()
     loss_epoch = 0
-    # return loss_epoch
 
     for idx, (x_i, x_j) in enumerate(train_loader):
 
@@ -68,9 +67,8 @@ def train(cfg, train_loader, model, optimizer, scaler, ir_idx, noise_idx, augmen
         # with torch.autocast(device_type='cuda', dtype=torch.float16, enabled=True):
         with torch.no_grad():
             x_i, x_j = augment(x_i, x_j)
-        assert x_i.device == torch.device('cuda:0'), f"[IN TRAINING] x_i device: {x_i.device}"
         _, _, z_i, z_j = model(x_i, x_j)
-        # assert loss is being computed for the whole batch
+        assert z_i.shape[0] == cfg['bsz_train'], f"Batch size mismatch: {z_i.shape[0]} != {cfg['bsz_train']}"
         loss = ntxent_loss(z_i, z_j, cfg)
 
         scaler.scale(loss).backward()
@@ -78,7 +76,7 @@ def train(cfg, train_loader, model, optimizer, scaler, ir_idx, noise_idx, augmen
         scaler.update()
 
         if idx % 10 == 0:
-            print(f"Step [{idx}/{len(train_loader)}]\t Loss: {loss.item()}")
+            print(f"Step [{idx}/{len(train_loader)}]\t Net Loss: {loss.item()}")
 
         loss_epoch += loss.item()
 
@@ -170,7 +168,6 @@ def main():
     
     if torch.cuda.device_count() > 1:
         print("Using", torch.cuda.device_count(), "GPUs!")
-        # model = DataParallel(model).to(device)
         model = model.to(device)
         model = torch.nn.DataParallel(model)
     else:
@@ -205,7 +202,7 @@ def main():
 
     for epoch in range(start_epoch+1, num_epochs+1):
         print("#######Epoch {}#######".format(epoch))
-        loss_epoch = train(cfg, train_loader, model, optimizer, scaler, ir_train_idx, noise_train_idx, gpu_augment)
+        loss_epoch = train(cfg, train_loader, model, optimizer, scaler, gpu_augment)
         writer.add_scalar("Loss/train", loss_epoch, epoch)
         loss_log.append(loss_epoch)
         output_root_dir = create_fp_dir(ckp=args.ckp, epoch=epoch)

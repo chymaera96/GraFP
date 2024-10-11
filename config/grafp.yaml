@@ -1,24 +1,16 @@
 # Dataset directories
 data_dir: 'data'
-train_dir: '/data/home/acw723/datasets/fma/fma_small'
-# train_dir: 'data/fma_small_all.json'
-val_dir: '/data/home/acw723/datasets/fma/fma_medium'
-# val_dir: '/data/scratch/acw723/fma_large'
-# val_dir: 'data/fma_medium_all.json'
-ir_dir: '/data/home/acw723/datasets/ir'
-noise_dir: '/data/home/acw723/datasets/musan/noise/'
-
-# train_dir: 'data/fma_small_all.json'
-# val_dir: 'data/fma_medium_all.json'
-# ir_dir: '/import/research_c4dm/ss380/AIR_1_4' # To-do: Change this
-# noise_dir: '/import/c4dm-datasets/musan'
+train_dir: 'PATH/TO/TRAINING/DATA'
+val_dir: 'PATH/TO/VALIDATION/DATA'
+ir_dir: 'PATH/TO/IR/DATA'
+noise_dir: 'PATH/TO/NOISE/DATA'
 
 
 # Model input parameters
 arch: 'grafp'
 fs: 16000
 dur: 1.0
-offset: 0.125
+offset: 0.05
 norm: 0.95
 win_len: 1024
 hop_len: 512
@@ -45,7 +37,7 @@ error_threshold: 5
 
 # Augmentation hyperparameters
 n_frames: 32 # depends on the spectrogram parameters
-overlap: 0.75
+overlap: 0.9
 tr_snr: [0, 20]
 val_snr: [0, 10]
 test_snr: [19, 21]

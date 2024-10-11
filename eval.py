@@ -219,7 +219,7 @@ def eval_faiss(emb_dir,
     We need to prepare a merged {dummy_db + db} memmap:
     • Calcuation of sequence-level matching score requires reconstruction of
       vectors from FAISS index.
-    • Unforunately, current faiss.index.reconstruct_n(id_start, id_stop)
+    • Unfortunately, current faiss.index.reconstruct_n(id_start, id_stop)
       supports only CPU index.
     • We prepare a fake_recon_index thourgh the on-disk method.
     ---------------------------------------------------------------------- """

@@ -412,6 +412,5 @@ class ASTEncoder(nn.Module):
 
         cls_token_final = x[:, 0]  # (n_samples, embed_dim)
         x = self.head(cls_token_final)  # (n_samples, n_classes)
-        # x = cls_token_final
 
         return x

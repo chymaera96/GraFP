@@ -96,13 +96,11 @@ def create_fp_db(dataloader, augment, model, output_root_dir, verbose=True):
         with torch.no_grad():
             _, _, z_i, z_j= model(x_i.to(device),x_j.to(device))        
 
-        # print(f'Shape of z_i {z_i.shape} inside the create_fp_db function')
         fp_db.append(z_i.detach().cpu().numpy())
         fp_q.append(z_j.detach().cpu().numpy())
 
         if verbose and idx % 10 == 0:
             print(f"Step [{idx}/{len(dataloader)}]\t shape: {z_i.shape}")
-        # fp = torch.cat(fp)
     
     fp_db = np.concatenate(fp_db)
     fp_q = np.concatenate(fp_q)
@@ -287,7 +285,7 @@ def main():
 
     for ckp_name, epochs in test_cfg.items():
         if not type(epochs) == list:
-            epochs = [epochs]   # Hack to handle case where only best ckp is to be tested
+            epochs = [epochs]
         writer = SummaryWriter(f'runs/{ckp_name}')
 
         for epoch in epochs:
@@ -303,7 +301,7 @@ def main():
                 print("=> no checkpoint found at '{}'".format(ckp))
                 continue
             
-            if dataset_size > 50000:
+            if args.test_dir == 'data/fma_large.json':
                 fp_dir = create_fp_dir(resume=ckp, train=False, large=True)
             else:
                 fp_dir = create_fp_dir(resume=ckp, train=False, large=False)

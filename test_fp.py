@@ -46,14 +46,14 @@ parser.add_argument('--fp_dir', default='fingerprints', type=str)
 parser.add_argument('--query_lens', default=None, type=str)
 parser.add_argument('--encoder', default='grafp', type=str)
 parser.add_argument('--n_dummy_db', default=None, type=int)
-parser.add_argument('--n_query_db', default=350, type=int)
+parser.add_argument('--n_query_db', default=500, type=int)
 parser.add_argument('--small_test', action='store_true', default=False)
 parser.add_argument('--text', default='test', type=str)
 parser.add_argument('--test_snr', default=None, type=int)
 parser.add_argument('--recompute', action='store_true', default=False)
 parser.add_argument('--k', default=3, type=int)
 parser.add_argument('--model', default=None, type=str)
-parser.add_argument('--test_ids', default='1000', type=str)
+parser.add_argument('--test_ids', default='2000', type=str)
 parser.add_argument('--shuffle', action='store_true', default=False)
 
 device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
@@ -94,13 +94,11 @@ def create_fp_db(dataloader, augment, model, output_root_dir, verbose=True):
         with torch.no_grad():
             _, _, z_i, z_j= model(x_i.to(device),x_j.to(device))        
 
-        # print(f'Shape of z_i {z_i.shape} inside the create_fp_db function')
         fp_db.append(z_i.detach().cpu().numpy())
         fp_q.append(z_j.detach().cpu().numpy())
 
         if verbose and idx % 10 == 0:
             print(f"Step [{idx}/{len(dataloader)}]\t shape: {z_i.shape}")
-        # fp = torch.cat(fp)
     
     fp_db = np.concatenate(fp_db)
     fp_q = np.concatenate(fp_q)
@@ -142,12 +140,10 @@ def create_dummy_db(dataloader, augment, model, output_root_dir, fname='dummy_db
             with torch.no_grad():
                 _, _, z_i, _= model(x_i.to(device),x_i.to(device))  
 
-            # print(f'Shape of z_i {z_i.shape} inside the create_dummy_db function')
             fp.append(z_i.detach().cpu().numpy())
         
         if verbose and idx % 100 == 0:
             print(f"Step [{idx}/{len(dataloader)}]\t shape: {z_i.shape}")
-        # fp = torch.cat(fp)
     
     fp = np.concatenate(fp)
     arr_shape = (len(fp), z_i.shape[-1])
@@ -178,9 +174,7 @@ def main():
     test_cfg = load_config(args.test_config)
     ir_dir = cfg['ir_dir']
     noise_dir = cfg['noise_dir']
-    # args.recompute = False
-    # assert args.recompute is False
-    assert args.small_test is False
+
     # Hyperparameters
     random_seed = 42
     shuffle_dataset = args.shuffle
@@ -289,7 +283,7 @@ def main():
 
     for ckp_name, epochs in test_cfg.items():
         if not type(epochs) == list:
-            epochs = [epochs]   # Hack to handle case where only best ckp is to be tested
+            epochs = [epochs]
         writer = SummaryWriter(f'runs/{ckp_name}')
 
         for epoch in epochs:
@@ -305,7 +299,7 @@ def main():
                 print("=> no checkpoint found at '{}'".format(ckp))
                 continue
             
-            if dataset_size > 50000:
+            if args.test_dir == 'data/fma_large.json':
                 fp_dir = create_fp_dir(resume=ckp, train=False, large=True)
             else:
                 fp_dir = create_fp_dir(resume=ckp, train=False, large=False)
