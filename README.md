@@ -30,7 +30,7 @@ As per our experiments, we recommend using the `fma-small` subset of the [Free M
 
 ## Generate Fingerprints
 
-We provide a helper code for generating audio fingerprints for a given audio dataset. The pre-trained models are available [here](link_to_pretrained_model). The primary evaluation benchmarks have been computed using `model_tc_29_best.pth`.
+We provide a helper code for generating audio fingerprints for a given audio dataset. The pre-trained models are available [here](https://huggingface.co/chymaera96/grafp_db/resolve/main/checkpoint.zip). The primary evaluation benchmarks have been computed using `model_tc_29_best.pth`.
 
 ```bash
 python generate.py --test_dir /PATH/TO/TEST/DATA --ckp /PATH/TO/MODEL
@@ -38,7 +38,7 @@ python generate.py --test_dir /PATH/TO/TEST/DATA --ckp /PATH/TO/MODEL
 
 ## Evaluation setup
 
-For reproducibility, we have made the pre-trained models and fingerprint database available [here](link_to_pretrained_model). The fingerprint retrieval pipeline utilizes the [FAISS](https://github.com/facebookresearch/faiss) library for the approximate nearest-neighbour (ANN) search in the fingerprint embedding space. Further details about the ANN implementation is available in our pre-print document. The `icassp.sh` script can be used to run the evaluation pipeline for reproducing the published results. 
+For reproducibility, we have made the dummy fingerprint database available [here](https://huggingface.co/chymaera96/grafp_db/resolve/main/databases.zip). The fingerprint retrieval pipeline utilizes the [FAISS](https://github.com/facebookresearch/faiss) library for the approximate nearest-neighbour (ANN) search in the fingerprint embedding space. Further details about the ANN implementation is available in our pre-print document. The `icassp.sh` script can be used to run the evaluation pipeline for reproducing the published results. 
 
 1. Download and extract the test dataset. The script supports evaluation on both the `fma-medium` and `fma-large` datasets. Note that extracting the compressed `fma_large.zip` can take a while. For quicker evaluation runs, we recommend extracting the `fma_medium.zip`.
 2. Download and extract the augmentation dataset. Queries are created using subset of the background noise and impulse response datasets. They can be downloaded [here](https://huggingface.co/chymaera96/grafp_db/resolve/main/aug.zip).
