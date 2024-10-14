@@ -50,4 +50,4 @@ Note that the evaluation dataset path provided in the above script should be the
 
 ## Citation
 
-If you use this code in repository, please cite our paper:
+If you use this code in repository, please cite our paper. Citation details will be made available soon!
