@@ -1,6 +1,6 @@
 # GraFPrint: A GNN-Based Approach for Audio Identification
 
-This is the official repository for our state-of-the-art audio identification framework based on graph neural networks. We demonstrate the code usage for training, audio fingerprint generation and evaluation. For more details, refer to the pre-print version of our ICASSP 2025 submission.
+This is the official repository for our state-of-the-art audio identification framework based on graph neural networks. We demonstrate the code usage for training, audio fingerprint generation and evaluation. For more details, refer to the [pre-print](https://arxiv.org/abs/2410.10994) version of our ICASSP 2025 submission.
 
 ## Installation Guide
 
@@ -50,4 +50,16 @@ Note that the evaluation dataset path provided in the above script should be the
 
 ## Citation
 
-If you use this code in repository, please cite our paper. Citation details will be made available soon!
+If you use this code in repository, please cite our paper:
+```bibtex
+@misc{bhattacharjee2024grafprint,
+      title={GraFPrint: A GNN-Based Approach for Audio Identification}, 
+      author={Aditya Bhattacharjee and Shubhr Singh and Emmanouil Benetos},
+      year={2024},
+      eprint={2410.10994},
+      archivePrefix={arXiv},
+      primaryClass={cs.SD},
+      url={https://arxiv.org/abs/2410.10994}, 
+}
+
+```
