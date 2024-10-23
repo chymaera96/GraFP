@@ -52,14 +52,11 @@ Note that the evaluation dataset path provided in the above script should be the
 
 If you use this code in repository, please cite our paper:
 ```bibtex
-@misc{bhattacharjee2024grafprint,
-      title={GraFPrint: A GNN-Based Approach for Audio Identification}, 
-      author={Aditya Bhattacharjee and Shubhr Singh and Emmanouil Benetos},
-      year={2024},
-      eprint={2410.10994},
-      archivePrefix={arXiv},
-      primaryClass={cs.SD},
-      url={https://arxiv.org/abs/2410.10994}, 
+@article{bhattacharjee2024grafprint,
+  title={GraFPrint: A GNN-Based Approach for Audio Identification},
+  author={Bhattacharjee, Aditya and Singh, Shubhr and Benetos, Emmanouil},
+  journal={arXiv preprint arXiv:2410.10994},
+  year={2024}
 }
 
 ```
