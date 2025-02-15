@@ -47,7 +47,7 @@ def create_db(dataloader, model, augment, output_dir, concat=True, max_size=128)
 
         fp.append(z_i.detach().cpu().numpy())
 
-        if idx % 100 == 0:
+        if idx % 10 == 0:
             print(f"Step [{idx}/{len(dataloader)}]\t shape: {z_i.shape}")
 
     # Concatenate fingerprints to remove song-level separation
