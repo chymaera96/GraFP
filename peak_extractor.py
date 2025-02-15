@@ -69,11 +69,13 @@ class GPUPeakExtractorv2(nn.Module):
             tensor = torch.cat((self.T_tensor.unsqueeze(1), self.F_tensor.unsqueeze(1), peaks), dim=1)
         except RuntimeError as e:
             # Validation case
-            T_tensor = torch.linspace(0, 1, steps=spec_tensor.shape[2], device=spec_tensor.device)
-            T_tensor = T_tensor.unsqueeze(0).unsqueeze(1).repeat(spec_tensor.shape[0], spec_tensor.shape[1], 1)
-            F_tensor = torch.linspace(0, 1, steps=spec_tensor.shape[1], device=spec_tensor.device)
-            F_tensor = F_tensor.unsqueeze(0).unsqueeze(2).repeat(spec_tensor.shape[0], 1, spec_tensor.shape[2])
-            tensor = torch.cat((T_tensor.unsqueeze(1), F_tensor.unsqueeze(1), peaks), dim=1)
+            tensor = torch.cat((self.T_tensor.unsqueeze(1), self.F_tensor.unsqueeze(1), peaks), dim=1)
+
+            # T_tensor = torch.linspace(0, 1, steps=spec_tensor.shape[2], device=spec_tensor.device)
+            # T_tensor = T_tensor.unsqueeze(0).unsqueeze(1).repeat(spec_tensor.shape[0], spec_tensor.shape[1], 1)
+            # F_tensor = torch.linspace(0, 1, steps=spec_tensor.shape[1], device=spec_tensor.device)
+            # F_tensor = F_tensor.unsqueeze(0).unsqueeze(2).repeat(spec_tensor.shape[0], 1, spec_tensor.shape[2])
+            # tensor = torch.cat((T_tensor.unsqueeze(1), F_tensor.unsqueeze(1), peaks), dim=1)
 
         feature = self.convs(tensor)
 
