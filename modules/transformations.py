@@ -39,13 +39,13 @@ class GPUTransformNeuralfp(nn.Module):
                             p=1) if self.noise_dir else nn.Identity(),
         ])
         
-        # self.ablation = Compose([
-        #     ApplyImpulseResponse(ir_paths=self.ir_dir, p=0),
-        #     AddBackgroundNoise(background_paths=self.noise_dir, 
-        #                        min_snr_in_db=cfg['val_snr'][0], 
-        #                        max_snr_in_db=cfg['val_snr'][1], 
-        #                        p=1),
-        #     ])
+        self.ablation = Compose([
+            ApplyImpulseResponse(ir_paths=self.ir_dir, p=0) if self.ir_dir else nn.Identity(),
+            AddBackgroundNoise(background_paths=self.noise_dir, 
+                               min_snr_in_db=cfg['val_snr'][0], 
+                               max_snr_in_db=cfg['val_snr'][1], 
+                               p=1) if self.noise_dir else nn.Identity(),
+            ])
                 
         self.logmelspec = nn.Sequential(
             MelSpectrogram(sample_rate=self.sample_rate, 
