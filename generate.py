@@ -37,7 +37,7 @@ def create_db(dataloader, model, augment, output_dir, concat=True, max_size=128)
     for idx, audio in enumerate(dataloader):
         audio = audio.to(device)
         x_i, _ = augment(audio, None)
-        
+        x_i = torch.rand(2317, 64, 32)
         # Determining mini-batches for large audio files
         x_list = torch.split(x_i, max_size, dim=0)  
 
