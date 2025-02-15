@@ -20,22 +20,25 @@ class GPUTransformNeuralfp(nn.Module):
         self.cfg = cfg
         self.abl = abl
 
-        self.train_transform = Compose([
-            ApplyImpulseResponse(ir_paths=self.ir_dir, p=cfg['ir_prob']),
-            AddBackgroundNoise(background_paths=self.noise_dir, 
-                               min_snr_in_db=cfg['tr_snr'][0],
-                               max_snr_in_db=cfg['tr_snr'][1], 
-                               p=cfg['noise_prob']),
-            ])
-        
-        self.val_transform = Compose([
-            ApplyImpulseResponse(ir_paths=self.ir_dir, p=1),
-            AddBackgroundNoise(background_paths=self.noise_dir, 
-                               min_snr_in_db=cfg['val_snr'][0], 
-                               max_snr_in_db=cfg['val_snr'][1], 
-                               p=1),
+# from some_module import Identity  # Import the Identity transformation
 
-            ])
+        # Define the train_transform
+        self.train_transform = Compose([
+            ApplyImpulseResponse(ir_paths=self.ir_dir, p=cfg['ir_prob']) if self.ir_dir else nn.Identity(),
+            AddBackgroundNoise(background_paths=self.noise_dir, 
+                            min_snr_in_db=cfg['tr_snr'][0],
+                            max_snr_in_db=cfg['tr_snr'][1], 
+                            p=cfg['noise_prob']) if self.noise_dir else nn.Identity(),
+        ])
+
+        # Define the val_transform
+        self.val_transform = Compose([
+            ApplyImpulseResponse(ir_paths=self.ir_dir, p=1) if self.ir_dir else nn.Identity(),
+            AddBackgroundNoise(background_paths=self.noise_dir, 
+                            min_snr_in_db=cfg['val_snr'][0], 
+                            max_snr_in_db=cfg['val_snr'][1], 
+                            p=1) if self.noise_dir else nn.Identity(),
+        ])
         
         self.ablation = Compose([
             ApplyImpulseResponse(ir_paths=self.ir_dir, p=0),
