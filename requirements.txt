@@ -5,7 +5,7 @@ torch-audiomentations==0.11.1
 audiomentations==0.37.0
 soundfile==0.12.1
 faiss-gpu==1.7.2
-tensorboard==2.16.2
+tensorboard
 PyYAML==6.0.1
 prettytable==3.10.0
 timm==0.9.16

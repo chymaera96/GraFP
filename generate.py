@@ -37,7 +37,6 @@ def create_db(dataloader, model, augment, output_dir, concat=True, max_size=128)
     for idx, audio in enumerate(dataloader):
         audio = audio.to(device)
         x_i, _ = augment(audio, None)
-        x_i = torch.rand(2317, 64, 32)
         # Determining mini-batches for large audio files
         x_list = torch.split(x_i, max_size, dim=0)  
 
@@ -45,7 +44,7 @@ def create_db(dataloader, model, augment, output_dir, concat=True, max_size=128)
             with torch.no_grad():
                 _, _, z_i, _ = model(x_i.to(device), x_i.to(device))  
 
-        fp.append(z_i.detach().cpu().numpy())
+            fp.append(z_i.detach().cpu().numpy())
 
         if idx % 10 == 0:
             print(f"Step [{idx}/{len(dataloader)}]\t shape: {z_i.shape}")
