@@ -55,6 +55,8 @@ parser.add_argument('--k', default=3, type=int)
 parser.add_argument('--model', default=None, type=str)
 parser.add_argument('--test_ids', default='2000', type=str)
 parser.add_argument('--shuffle', action='store_true', default=False)
+parser.add_argument('--dummy_dir', default=None,
+                    help='Custom dummy db path')
 
 device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
 
@@ -304,7 +306,7 @@ def main():
             else:
                 fp_dir = create_fp_dir(resume=ckp, train=False, large=False)
 
-            if args.recompute or os.path.isfile(f'{fp_dir}/db.mm') is False:
+            if args.recompute or (os.path.isfile(f'{fp_dir}/dummy_db.mm') is False and args.dummy_dir is None):
                 print("=> Computing dummy fingerprints...")
                 create_dummy_db(dummy_db_loader, augment=test_augment,
                                 model=model, output_root_dir=fp_dir, verbose=False)
@@ -321,6 +323,7 @@ def main():
 
             if args.query_lens is not None:
                 hit_rates = eval_faiss(emb_dir=fp_dir,
+                                    emb_dummy_dir=args.dummy_dir,
                                     test_ids=args.test_ids, 
                                     test_seq_len=test_seq_len, 
                                     index_type=index_type,
@@ -333,7 +336,8 @@ def main():
                                 label)
   
             else:
-                hit_rates = eval_faiss(emb_dir=fp_dir, 
+                hit_rates = eval_faiss(emb_dir=fp_dir,
+                                    emb_dummy_dir=args.dummy_dir, 
                                     test_ids=args.test_ids, 
                                     index_type=index_type,
                                     nogpu=True)

@@ -188,6 +188,8 @@ def eval_faiss(emb_dir,
     db, db_shape = load_memmap_data(emb_dir, 'db')
     if emb_dummy_dir is None:
         emb_dummy_dir = emb_dir
+    else:
+        print(f'Using \033[93m{emb_dummy_dir}\033[0m as dummy embedding directory...')
     dummy_db, dummy_db_shape = load_memmap_data(emb_dummy_dir, 'dummy_db')
     """ ----------------------------------------------------------------------
     FAISS index setup
