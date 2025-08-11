@@ -154,8 +154,11 @@ def create_fp_dir(resume=None, ckp=None, epoch=1, train=True, large=False, paren
 def update_index(data_dir, idx_path):
     # Update index paths with new parent directory
     new_index = {}
-    with open(idx_path, 'r') as fp:
-        index = json.load(fp)
+    if not os.path.exists(idx_path):
+        index = load_augmentation_index(data_dir, splits=0.8)
+    else:
+        with open(idx_path, 'r') as fp:
+            index = json.load(fp)
     dir_name = idx_path.split('/')[-1].split('.')[0]
 
     if type(list(index.values())[0]) == list:
