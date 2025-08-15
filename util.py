@@ -157,7 +157,7 @@ def update_index(data_dir, idx_path):
     if not os.path.exists(idx_path):
         index = load_augmentation_index(data_dir, splits=0.8)
         idx_path = os.path.join(data_dir, data_dir.split('/')[-1] + ".json")
-        return idx_path
+        # return idx_path
     else:
         with open(idx_path, 'r') as fp:
             index = json.load(fp)
