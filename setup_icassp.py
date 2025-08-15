@@ -30,8 +30,8 @@ def main():
         os.mkdir('runs')
 
     # Update index files with new parent directory
-    _ = update_index(args.test_dir, f'data/{args.eval_type}.json')
-    _ = update_index(args.ir_dir, f'data/aug/ir/ir.json')
+    # _ = update_index(args.test_dir, f'data/{args.eval_type}.json')
+    # _ = update_index(args.ir_dir, f'data/aug/ir/ir.json')
     _ = update_index(args.noise_dir, f'data/aug/noise/noise.json')
 
 
