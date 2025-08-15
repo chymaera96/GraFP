@@ -171,7 +171,7 @@ def update_index(data_dir, idx_path):
                 new_index[key].append(os.path.join(data_dir, rel_path))
     else:
         for key, value in index.items():
-            rel_path = value.split(dir_name)[-1][1:]
+            rel_path = value.split(f"{dir_name}/")[-1][1:]
             new_index[key] = os.path.join(data_dir, rel_path)
 
     with open(idx_path, 'w') as fp:
