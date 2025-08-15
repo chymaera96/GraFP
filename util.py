@@ -162,7 +162,7 @@ def update_index(data_dir, idx_path):
         with open(idx_path, 'r') as fp:
             index = json.load(fp)
     dir_name = idx_path.split('/')[-1].split('.')[0]
-    print(f"dir_name: {dir_name}")
+    # print(f"dir_name: {dir_name}")
 
     if isinstance(list(index.values())[0], list):
         for key, value in index.items():
