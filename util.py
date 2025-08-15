@@ -157,24 +157,22 @@ def update_index(data_dir, idx_path):
     if not os.path.exists(idx_path):
         index = load_augmentation_index(data_dir, splits=0.8)
         idx_path = os.path.join(data_dir, data_dir.split('/')[-1] + ".json")
-        # return idx_path
+        return idx_path
     else:
         with open(idx_path, 'r') as fp:
             index = json.load(fp)
-    dir_name = os.path.basename(idx_path).split('.')[0]  # Get the base name without extension
+    dir_name = idx_path.split('/')[-1].split('.')[0]
 
-    if isinstance(list(index.values())[0], list):  # Check if values are lists
+    if type(list(index.values())[0]) == list:
         for key, value in index.items():
             new_index[key] = []
-            for v in value:
-                # Use os.path.relpath to compute the relative path
-                rel_path = os.path.relpath(v, start=os.path.join(data_dir, dir_name))
-                new_index[key].append(os.path.join(data_dir, dir_name, rel_path))
+            for ix, v in (enumerate(value)):
+                rel_path = v.split(dir_name)[-1][1:]
+                new_index[key].append(os.path.join(data_dir, rel_path))
     else:
         for key, value in index.items():
-            # Use os.path.relpath to compute the relative path
-            rel_path = os.path.relpath(value, start=os.path.join(data_dir, dir_name))
-            new_index[key] = os.path.join(data_dir, dir_name, rel_path)
+            rel_path = value.split(dir_name)[-1][1:]
+            new_index[key] = os.path.join(data_dir, rel_path)
 
     with open(idx_path, 'w') as fp:
         json.dump(new_index, fp)
