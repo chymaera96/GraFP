@@ -163,15 +163,15 @@ def update_index(data_dir, idx_path):
             index = json.load(fp)
     dir_name = idx_path.split('/')[-1].split('.')[0]
 
-    if type(list(index.values())[0]) == list:
+    if isinstance(list(index.values())[0], list):
         for key, value in index.items():
             new_index[key] = []
             for ix, v in (enumerate(value)):
-                rel_path = v.split(f"/{dir_name}")[-1][1:]
+                rel_path = v.split(f"/{dir_name}/")[-1][1:]
                 new_index[key].append(os.path.join(data_dir, rel_path))
     else:
         for key, value in index.items():
-            rel_path = value.split(f"/{dir_name}")[-1][1:]
+            rel_path = value.split(f"/{dir_name}/")[-1][1:]
             new_index[key] = os.path.join(data_dir, rel_path)
 
     with open(idx_path, 'w') as fp:
