@@ -11,7 +11,7 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.tensorboard import SummaryWriter
 from torch.nn.parallel import DataParallel
 import torchaudio
-# torchaudio.set_audio_backend("soundfile")
+torchaudio.set_audio_backend("soundfile")
 
 
 
@@ -314,7 +314,7 @@ def main():
                 print("=> Skipping dummy db creation...")
 
             create_fp_db(query_db_loader, augment=test_augment, 
-                         model=model, output_root_dir=fp_dir, verbose=False)
+                         model=model, output_root_dir=fp_dir, verbose=True)
             
             
             text = f'{args.text}_{str(epoch)}'
