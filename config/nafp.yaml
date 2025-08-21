@@ -1,5 +1,5 @@
 # Dataset directories
-data_dir: 'data'
+data_dir: '../data'
 train_dir: '/data/EECS-Studiosync/fma_small'
 val_dir: '/data/EECS-Studiosync/datasets/fma_medium/'
 ir_dir: '../data/aug/noise'
