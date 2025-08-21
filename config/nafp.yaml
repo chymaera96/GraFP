@@ -1,9 +1,9 @@
 # Dataset directories
 data_dir: 'data'
-train_dir: 'PATH/TO/TRAINING/DATA'
-val_dir: 'PATH/TO/VALIDATION/DATA'
-ir_dir: 'PATH/TO/IR/DATA'
-noise_dir: 'PATH/TO/NOISE/DATA'
+train_dir: '/data/EECS-Studiosync/fma_small'
+val_dir: '/data/EECS-Studiosync/datasets/fma_medium/'
+ir_dir: '../data/aug/noise'
+noise_dir: '../data/aug/ir'
 
 # Model input parameters
 arch: 'nafp'
