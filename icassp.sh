@@ -18,17 +18,31 @@ mv data/databases/large logs/store/
 rm -r data/databases
 rm databases.zip
 
+# Remove trailing slashes from $1 and $2
 if [[ $1 == */ ]]; then
-    1=${1::-1}
+    arg1=${1::-1}
+else
+    arg1=$1
 fi
+
 if [[ $2 == */ ]]; then
-    2=${2::-1}
+    arg2=${2::-1}
+else
+    arg2=$2
+fi
+
+# If arg1 and arg2 are relative paths, convert them to absolute paths
+if [[ ! $arg1 = /* ]]; then
+    arg1=$(pwd)/$arg1
+fi
+if [[ ! $arg2 = /* ]]; then
+    arg2=$(pwd)/$arg2
 fi
 
 # Setup
-python setup_config.py --noise_dir=$2/noise --ir_dir=$2/ir
-eval=$(basename $1)
-python setup_icassp.py --test_dir=$1 --noise_dir=$2/noise --ir_dir=$2/ir --eval_type=$eval
+python setup_config.py --noise_dir=$arg2/noise --ir_dir=$arg2/ir
+eval=$(basename $arg1)
+python setup_icassp.py --test_dir=$arg1 --noise_dir=$arg2/noise --ir_dir=$arg2/ir --eval_type=$eval
 
 # Evaluation runs
 echo "########## Evaluating with without IR corruption ##########"
