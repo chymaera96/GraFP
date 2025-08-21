@@ -2,8 +2,8 @@
 data_dir: '../data'
 train_dir: '/data/EECS-Studiosync/fma_small'
 val_dir: '/data/EECS-Studiosync/datasets/fma_medium/'
-ir_dir: '../data/aug/noise/noise.json'
-noise_dir: '../data/aug/ir/ir.json'
+ir_dir: '../data/aug/noise'
+noise_dir: '../data/aug/ir'
 
 # Model input parameters
 arch: 'nafp'
