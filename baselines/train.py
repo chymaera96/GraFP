@@ -160,7 +160,6 @@ def main():
     print("Creating new model...")
     if args.encoder == 'nafp':
         model = SimCLR(cfg, encoder=NAFPEncoder()).to(device)
-        # raise NotImplementedError
     elif args.encoder == 'ast':
         model = SimCLR(cfg, encoder=ASTEncoder()).to(device)
     else:

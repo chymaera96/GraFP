@@ -46,15 +46,27 @@ class GPUTransformNeuralfp(nn.Module):
                                max_snr_in_db=cfg['val_snr'][1], 
                                p=1) if self.noise_dir else nn.Identity(),
             ])
-                
-        self.logmelspec = nn.Sequential(
-            MelSpectrogram(sample_rate=self.sample_rate, 
-                           win_length=cfg['win_len'], 
-                           hop_length=cfg['hop_len'], 
-                           n_fft=cfg['n_fft'], 
-                           n_mels=cfg['n_mels']),
-            AmplitudeToDB()
-        ) 
+
+        if  self.arch == 'nafp':        
+            self.logmelspec = nn.Sequential(
+                MelSpectrogram(sample_rate=self.sample_rate, 
+                            win_length=cfg['win_len'], 
+                            hop_length=cfg['hop_len'], 
+                            n_fft=cfg['n_fft'], 
+                            n_mels=cfg['n_mels'],
+                            f_min=300,
+                            f_max=4000),
+                AmplitudeToDB()
+            ) 
+        else:
+            self.logmelspec = nn.Sequential(
+                MelSpectrogram(sample_rate=self.sample_rate, 
+                            win_length=cfg['win_len'], 
+                            hop_length=cfg['hop_len'], 
+                            n_fft=cfg['n_fft'], 
+                            n_mels=cfg['n_mels']),
+                AmplitudeToDB()
+            )
 
         self.spec_aug = nn.Sequential(
             TimeMasking(cfg['time_mask'], True),

@@ -1,0 +1,54 @@
+# Dataset directories
+data_dir: 'data'
+train_dir: 'PATH/TO/TRAINING/DATA'
+val_dir: 'PATH/TO/VALIDATION/DATA'
+ir_dir: 'PATH/TO/IR/DATA'
+noise_dir: 'PATH/TO/NOISE/DATA'
+
+# Model input parameters
+arch: 'nafp'
+fs: 8000
+dur: 1.0
+offset: 0.5
+norm: 0.95
+win_len: 1024
+hop_len: 256
+n_mels: 256
+n_fft: 1024
+silence: 0.0005  # silence threshold
+
+
+# Dataset and Model hyperparameters
+train_sz: 8000
+# val_sz: 25000
+val_sz: 106574
+bsz_train: 128
+tau: 0.05
+lr: 1.0e-4
+min_lr: 1.0e-6
+n_epochs: 100
+T_max: 120
+error_threshold: 5
+
+# Augmentation hyperparameters
+n_frames: 32 # depends on the spectrogram parameters
+overlap: 0.5
+tr_snr: [0, 10]
+val_snr: [0, 10]
+test_snr: [19, 21]
+time_mask: 16
+freq_mask: 128
+noise_prob: 0.5
+ir_prob: 0.5
+
+# Model architecture
+d: 128
+h: 1024
+u: 32
+
+# Database sizes (validation)
+n_dummy: 100
+n_query: 20
+
+
+  

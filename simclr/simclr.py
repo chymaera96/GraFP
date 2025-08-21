@@ -4,6 +4,22 @@ import torch.nn.functional as F
 from peak_extractor import GPUPeakExtractorv2
 
 
+class DivEnc(nn.Module):
+    def __init__(self, d, h, u):
+        super(DivEnc, self).__init__()
+        self.block = nn.Sequential(
+                        nn.Conv1d(h, d * u, kernel_size=1, groups=d, bias=True),
+                        nn.ELU(),
+                        nn.Conv1d(d * u, d, kernel_size=1, groups=d, bias=True),
+        )
+        self.h = h
+
+    def forward(self, x_flat):                      # (B, h)
+        y = x_flat.view(x_flat.size(0), self.h, 1)  # Reshape to (B, h, 1)
+        z = self.block(y).unsqueeze(-1)             # (B, d)
+        return z
+
+
 class SimCLR(nn.Module):
     def __init__(self, cfg, encoder):
         super(SimCLR, self).__init__()
@@ -21,10 +37,13 @@ class SimCLR(nn.Module):
         else:
             self.peak_extractor = None
 
-        self.projector = nn.Sequential(nn.Linear(h, d*u),
-                                       nn.ELU(),
-                                       nn.Linear(d*u, d)
-                               )
+        if cfg['arch'] == 'nafp':
+            self.projector = DivEnc(d, h, u)
+        else:
+            self.projector = nn.Sequential(nn.Linear(h, d*u),
+                                        nn.ELU(),
+                                        nn.Linear(d*u, d)
+                                )
 
     def forward(self, x_i, x_j):
         
