@@ -38,5 +38,6 @@ class NAFPEncoder(nn.Module):
         self.flatten = nn.Flatten()
 
     def forward(self, x):
+        x = x.unsqueeze(1)  # (B, 1, F, T)
         x = self.conv(x)      # (B, C, F, T)
         return self.flatten(x)
