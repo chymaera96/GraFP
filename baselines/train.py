@@ -10,7 +10,7 @@ from torch.utils.tensorboard import SummaryWriter
 from torch.nn.parallel import DataParallel
 from torch.cuda.amp import GradScaler
 import torchaudio
-torchaudio.set_audio_backend("soundfile")
+# torchaudio.set_audio_backend("soundfile")
 
 # Directories
 root = os.path.dirname(__file__)
