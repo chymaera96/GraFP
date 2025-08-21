@@ -63,10 +63,10 @@ def train(cfg, train_loader, model, optimizer, scaler, augment=None):
         optimizer.zero_grad()
         x_i = x_i.to(device)
         x_j = x_j.to(device)
-        assert len(x_i.shape) == 4, f"Input shape mismatch: {x_i.shape} != 4D tensor"
         # with torch.autocast(device_type='cuda', dtype=torch.float16, enabled=True):
         with torch.no_grad():
             x_i, x_j = augment(x_i, x_j)
+        assert len(x_i.shape) == 4, f"Input shape mismatch: {x_i.shape} != 4D tensor"
         _, _, z_i, z_j = model(x_i, x_j)
         assert z_i.shape[0] == cfg['bsz_train'], f"Batch size mismatch: {z_i.shape[0]} != {cfg['bsz_train']}"
         loss = ntxent_loss(z_i, z_j, cfg)
