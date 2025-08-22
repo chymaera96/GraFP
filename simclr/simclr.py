@@ -61,6 +61,7 @@ class SimCLR(nn.Module):
             x_j = self.peak_extractor(x_j)
         h_j = self.encoder(x_j)
         z_j = self.projector(h_j)
+        assert len(z_j.shape) == 2, f"z_j shape: {z_j.shape}"
         z_j = F.normalize(z_j, p=2)
 
 
