@@ -200,9 +200,9 @@ def main():
 
     for epoch in range(start_epoch+1, num_epochs+1):
         print("#######Epoch {}#######".format(epoch))
-        loss_epoch = train(cfg, train_loader, model, optimizer, scaler, gpu_augment)
-        writer.add_scalar("Loss/train", loss_epoch, epoch)
-        loss_log.append(loss_epoch)
+        # loss_epoch = train(cfg, train_loader, model, optimizer, scaler, gpu_augment)
+        # writer.add_scalar("Loss/train", loss_epoch, epoch)
+        # loss_log.append(loss_epoch)
         output_root_dir = create_fp_dir(ckp=args.ckp, epoch=epoch)
         hit_rates = validate(epoch, query_loader, dummy_loader, val_augment, model, output_root_dir)
         hit_rate_log.append(hit_rates[0] if hit_rates is not None else hit_rate_log[-1])
