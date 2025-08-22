@@ -16,7 +16,7 @@ class DivEnc(nn.Module):
 
     def forward(self, x_flat):                      # (B, h)
         y = x_flat.view(x_flat.size(0), self.h, 1)  # Reshape to (B, h, 1)
-        z = self.block(y).unsqueeze(-1)             # (B, d)
+        z = self.block(y).squeeze(-1)             # (B, d)
         return z
 
 
@@ -49,19 +49,15 @@ class SimCLR(nn.Module):
         
         if self.cfg['arch'] == 'grafp':
             x_i = self.peak_extractor(x_i)
-        # print(f'Shape of x_i {x_i.shape} inside the SimCLR forward function')
-        # print(f'Shape of x_j {x_j.shape} inside the SimCLR forward function')
+
         h_i = self.encoder(x_i)
-        # print(f'Shape of h_i {h_i.shape} inside the SimCLR forward function')
         z_i = self.projector(h_i)
-        # print(f'Shape of z_i {z_i.shape} inside the SimCLR forward function')
         z_i = F.normalize(z_i, p=2)
 
         if self.cfg['arch'] == 'grafp':
             x_j = self.peak_extractor(x_j)
         h_j = self.encoder(x_j)
         z_j = self.projector(h_j)
-        assert len(z_j.shape) == 2, f"z_j shape: {z_j.shape}"
         z_j = F.normalize(z_j, p=2)
 
 

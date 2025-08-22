@@ -142,10 +142,10 @@ def create_dummy_db(dataloader, augment, model, output_root_dir, fname='dummy_db
             with torch.no_grad():
                 _, _, z_i, _= model(x_i.to(device),x_i.to(device))  
 
-            print(f"Shape of z_i: {z_i.shape}")
+            # print(f"Shape of z_i: {z_i.shape}")
             fp.append(z_i.detach().cpu().numpy())
 
-        print(f"Shape of fp: len(fp): {len(fp)}, shape: {fp[-1].shape}")
+        # print(f"Shape of fp: len(fp): {len(fp)}, shape: {fp[-1].shape}")
         
         if verbose and idx % 100 == 0:
             print(f"Step [{idx}/{len(dataloader)}]\t shape: {z_i.shape}")
