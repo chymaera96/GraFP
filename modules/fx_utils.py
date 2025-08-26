@@ -77,7 +77,7 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         self.convolve_mode = convolve_mode
         self.compensate_for_propagation_delay = compensate_for_propagation_delay
 
-    def _trim_samples(self, sr: int, trim_ms: int = 75) -> int:
+    def _trim_samples(self, sr: int, trim_ms: int = 10) -> int:
         """Calculate number of samples to trim based on sample rate and trim duration in ms."""
         # At least 1 sample to avoid empty tensors
         return max(1, int(round(trim_ms * sr / 1000)))
