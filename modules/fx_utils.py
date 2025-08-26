@@ -12,7 +12,6 @@ from torch_audiomentations.utils.io import Audio
 from torch_audiomentations.utils.object_dict import ObjectDict
 
 
-
 class ApplyImpulseResponse(BaseWaveformTransform):
     """
     Convolve the given audio with impulse responses.
@@ -43,17 +42,18 @@ class ApplyImpulseResponse(BaseWaveformTransform):
     ):
         """
         :param ir_paths: Either a path to a folder with audio files or a list of paths to audio files.
-        :param convolve_mode:
+        :param convolve_mode: Convolution mode for the operation.
         :param compensate_for_propagation_delay: Convolving audio with a RIR normally
             introduces a bit of delay, especially when the peak absolute amplitude in the
             RIR is not in the very beginning. When compensate_for_propagation_delay is
             set to True, the returned slices of audio will be offset to compensate for
             this delay.
-        :param mode:
-        :param p:
-        :param p_mode:
-        :param sample_rate:
-        :param target_rate:
+        :param mode: Transform mode.
+        :param p: Probability of applying the transform.
+        :param p_mode: Probability mode.
+        :param sample_rate: Sample rate of the audio.
+        :param target_rate: Target sample rate.
+        :param output_type: Output type specification.
         """
 
         super().__init__(
@@ -78,9 +78,9 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         self.compensate_for_propagation_delay = compensate_for_propagation_delay
 
     def _trim_samples(self, sr: int, trim_ms: int = 75) -> int:
-        
+        """Calculate number of samples to trim based on sample rate and trim duration in ms."""
         # At least 1 sample to avoid empty tensors
-        return max(1, int(round(trim_ms * sr)))
+        return max(1, int(round(trim_ms * sr / 1000)))
 
     def randomize_parameters(
         self,
@@ -145,7 +145,7 @@ class ApplyImpulseResponse(BaseWaveformTransform):
             return ObjectDict(
                 samples=convolved_samples,
                 sample_rate=sample_rate,
-                targets=targets,  # FIXME compensate targets as well?
+                targets=targets,  # FIXME: compensate targets as well?
                 target_rate=target_rate,
             )
 
@@ -153,6 +153,6 @@ class ApplyImpulseResponse(BaseWaveformTransform):
             return ObjectDict(
                 samples=convolved_samples[..., :num_samples],
                 sample_rate=sample_rate,
-                targets=targets,  # FIXME crop targets as well?
+                targets=targets,  # FIXME: crop targets as well?
                 target_rate=target_rate,
             )
