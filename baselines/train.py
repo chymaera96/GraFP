@@ -83,7 +83,7 @@ def train(cfg, train_loader, model, optimizer, scaler, augment=None):
 
 def validate(epoch, query_loader, dummy_loader, augment, model, output_root_dir):
     model.eval()
-    if epoch==1 or epoch % 25 == 0:
+    if epoch==1 or epoch % 10 == 0:
         create_dummy_db(dummy_loader, augment=augment, model=model, output_root_dir=output_root_dir, verbose=False)
         create_fp_db(query_loader, augment=augment, model=model, output_root_dir=output_root_dir, verbose=False)
         hit_rates = eval_faiss(emb_dir=output_root_dir, test_ids='all', index_type='l2', n_centroids=32, nogpu=True)
