@@ -1,12 +1,15 @@
+# fx_utils.py
+
 import random
 from pathlib import Path
 from typing import Union, List, Optional
 import torch
 from torch import Tensor
 from torch.nn.utils.rnn import pad_sequence
+import torch.nn.functional as F  # NEW: for simple resampling
 
 from torch_audiomentations.core.transforms_interface import BaseWaveformTransform, EmptyPathException
-from torch_audiomentations.utils.convolution import convolve
+# from torch_audiomentations.utils.convolution import convolve  # no longer used
 from torch_audiomentations.utils.file import find_audio_files_in_paths
 from torch_audiomentations.utils.io import Audio
 from torch_audiomentations.utils.object_dict import ObjectDict
@@ -14,48 +17,33 @@ from torch_audiomentations.utils.object_dict import ObjectDict
 
 class ApplyImpulseResponse(BaseWaveformTransform):
     """
-    Convolve the given audio with impulse responses.
-    This version trims each IR before use.
+    Apply circular convolution with impulse responses (IRs).
+    - IRs are read at 8 kHz, trimmed there (time-accurate), then resampled to the working SR.
+    - Output is max-normalized per example (across channels).
     """
 
     supported_modes = {"per_batch", "per_example", "per_channel"}
 
-    # Note: This transform has only partial support for multichannel audio. IRs that are not
-    # mono get mixed down to mono before they are convolved with all channels in the input.
+    # IRs are mixed to mono and applied to all channels
     supports_multichannel = True
     requires_sample_rate = True
 
-    supports_target = False  # FIXME: some work is needed to support targets (see FIXMEs in apply_transform)
+    supports_target = False
     requires_target = False
 
     def __init__(
         self,
         ir_paths: Union[List[Path], List[str], Path, str],
-        convolve_mode: str = "full",
-        compensate_for_propagation_delay: bool = False,
+        convolve_mode: str = "full",  # kept for backward-compat; ignored (we always do circular)
+        compensate_for_propagation_delay: bool = False,  # kept for API; ignored in circular mode
         mode: str = "per_example",
         p: float = 0.5,
         p_mode: str = None,
         sample_rate: int = None,
         target_rate: int = None,
         output_type: Optional[str] = None,
+        trim_ms: int = 75,  # default trim window
     ):
-        """
-        :param ir_paths: Either a path to a folder with audio files or a list of paths to audio files.
-        :param convolve_mode: Convolution mode for the operation.
-        :param compensate_for_propagation_delay: Convolving audio with a RIR normally
-            introduces a bit of delay, especially when the peak absolute amplitude in the
-            RIR is not in the very beginning. When compensate_for_propagation_delay is
-            set to True, the returned slices of audio will be offset to compensate for
-            this delay.
-        :param mode: Transform mode.
-        :param p: Probability of applying the transform.
-        :param p_mode: Probability mode.
-        :param sample_rate: Sample rate of the audio.
-        :param target_rate: Target sample rate.
-        :param output_type: Output type specification.
-        """
-
         super().__init__(
             mode=mode,
             p=p,
@@ -66,21 +54,56 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         )
 
         self.ir_paths = find_audio_files_in_paths(ir_paths)
-
-        if sample_rate is not None:
-            # Ensure mono to match original behavior (downmix if needed)
-            self.audio = Audio(sample_rate=sample_rate, mono=True)
-
         if len(self.ir_paths) == 0:
             raise EmptyPathException("There are no supported audio files found.")
 
+        # Working audio loader (downmix to mono to match original behavior)
+        if sample_rate is not None:
+            self.audio = Audio(sample_rate=sample_rate, mono=True)
+
+        # NEW: IRs are always preprocessed at 8 kHz before trimming
+        self.ir_preprocess_rate = 8000
+        self.ir_audio_8k = Audio(sample_rate=self.ir_preprocess_rate, mono=True)
+
+        self.trim_ms = trim_ms
         self.convolve_mode = convolve_mode
         self.compensate_for_propagation_delay = compensate_for_propagation_delay
 
-    def _trim_samples(self, sr: int, trim_ms: int = 10) -> int:
-        """Calculate number of samples to trim based on sample rate and trim duration in ms."""
-        # At least 1 sample to avoid empty tensors
-        return max(1, int(round(trim_ms * sr / 1000)))
+    def _trim_samples(self, sr: int) -> int:
+        """Number of samples to keep for a given sr and configured trim_ms."""
+        return max(1, int(round(self.trim_ms * sr / 1000)))
+
+    @staticmethod
+    def _resample_1d(wave_ct: Tensor, src_sr: int, dst_sr: int) -> Tensor:
+        """
+        Very lightweight resampler using linear interpolation.
+        Input: (channels, time). Output: (channels, time_resampled)
+        """
+        if src_sr == dst_sr:
+            return wave_ct
+        c, t = wave_ct.shape
+        t_dst = max(1, int(round(t * float(dst_sr) / float(src_sr))))
+        wave_ct = wave_ct.unsqueeze(0)  # (1, C, T)
+        wave_ct = F.interpolate(wave_ct, size=t_dst, mode="linear", align_corners=False)
+        return wave_ct.squeeze(0)
+
+    @staticmethod
+    def _wrap_to_length(h: Tensor, N: int) -> Tensor:
+        """
+        Wrap IR h (B, M) into length N by modulo addition (circular kernel).
+        """
+        B, M = h.shape
+        if M == N:
+            return h
+        wrapped = torch.zeros(B, N, device=h.device, dtype=h.dtype)
+        # Add chunks of length N
+        start = 0
+        while start < M:
+            end = min(start + N, M)
+            seg_len = end - start
+            wrapped[:, :seg_len] += h[:, start:end]
+            start += N
+        return wrapped
 
     def randomize_parameters(
         self,
@@ -91,23 +114,32 @@ class ApplyImpulseResponse(BaseWaveformTransform):
     ):
         batch_size, _, _ = samples.shape
 
+        # Working SR for the forward pass
         audio = self.audio if hasattr(self, "audio") else Audio(sample_rate, mono=True)
-        max_len = self._trim_samples(audio.sample_rate)
+        max_len_8k = self._trim_samples(self.ir_preprocess_rate)
 
         random_ir_paths = random.choices(self.ir_paths, k=batch_size)
-        trimmed_irs_tc = []
-        for ir_path in random_ir_paths:
-            ir_ct = audio(ir_path)  
-            ir_ct = ir_ct[..., :max_len]
-            # Fallback: if a weird file is shorter than 1 sample after read (shouldn't happen), ensure at least one zero
-            if ir_ct.shape[-1] == 0:
-                ir_ct = torch.zeros((ir_ct.shape[0], 1), dtype=ir_ct.dtype, device=ir_ct.device)
-            trimmed_irs_tc.append(ir_ct.transpose(0, 1))  # (time, channels)
+        trimmed_resampled_irs_tc = []
 
+        for ir_path in random_ir_paths:
+            # 1) Load at 8kHz and TRIM there (time-accurate per your requirement)
+            ir_ct_8k = self.ir_audio_8k(ir_path)  # (C, T_8k)
+            ir_ct_8k = ir_ct_8k[..., :max_len_8k]
+
+            # Safety: ensure at least one sample
+            if ir_ct_8k.shape[-1] == 0:
+                ir_ct_8k = torch.zeros((ir_ct_8k.shape[0], 1), dtype=samples.dtype, device=samples.device)
+
+            # 2) Resample the trimmed IR back to working SR for convolution
+            ir_ct = self._resample_1d(ir_ct_8k.to(samples.device, dtype=samples.dtype),
+                                      self.ir_preprocess_rate, audio.sample_rate)
+
+            # (time, channels) for pad_sequence
+            trimmed_resampled_irs_tc.append(ir_ct.transpose(0, 1))
+
+        # (B, 1, M_max) after pad + transpose back to (B, C, T)
         self.transform_parameters["ir"] = pad_sequence(
-            trimmed_irs_tc,
-            batch_first=True,
-            padding_value=0.0,
+            trimmed_resampled_irs_tc, batch_first=True, padding_value=0.0
         ).transpose(1, 2)
 
         self.transform_parameters["ir_paths"] = random_ir_paths
@@ -119,40 +151,34 @@ class ApplyImpulseResponse(BaseWaveformTransform):
         targets: Optional[Tensor] = None,
         target_rate: Optional[int] = None,
     ) -> ObjectDict:
-        batch_size, num_channels, num_samples = samples.shape
+        """
+        Circular convolution:
+          y[n] = sum_k x[(n-k) mod N] * h[k]
+        Implemented via FFT with kernel wrapped to length N, per batch; then max-normalized.
+        """
+        B, C, N = samples.shape
+        device = samples.device
+        dtype = samples.dtype
 
-        # (batch_size, 1, max_ir_length) — stays mono IR applied to all channels
-        ir = self.transform_parameters["ir"].to(samples.device)
+        # (B, 1, M_max) -> (B, M_max)
+        ir_padded = self.transform_parameters["ir"].to(device=device, dtype=dtype).squeeze(1)
 
-        convolved_samples = convolve(
-            samples, ir.expand(-1, num_channels, -1), mode=self.convolve_mode
+        # Wrap IR to signal length (circular kernel)
+        h_wrapped = self._wrap_to_length(ir_padded, N)  # (B, N)
+
+        # FFT-based circular convolution for all channels
+        X = torch.fft.rfft(samples, n=N, dim=2)           # (B, C, Nf)
+        H = torch.fft.rfft(h_wrapped, n=N, dim=1)         # (B, Nf)
+        Y = torch.fft.irfft(X * H.unsqueeze(1), n=N, dim=2)  # (B, C, N)
+
+        # Max-normalize per example across channels and time
+        max_val = Y.abs().amax(dim=(1, 2), keepdim=True)
+        Y = torch.where(max_val > 0, Y / max_val, Y)
+
+        # Note: delay compensation is not meaningful in circular mode; ignored.
+        return ObjectDict(
+            samples=Y,
+            sample_rate=sample_rate,
+            targets=targets,
+            target_rate=target_rate,
         )
-
-        if self.compensate_for_propagation_delay:
-            propagation_delays = ir.abs().argmax(dim=2, keepdim=False)[:, 0]
-            convolved_samples = torch.stack(
-                [
-                    convolved_sample[
-                        :, propagation_delay : propagation_delay + num_samples
-                    ]
-                    for convolved_sample, propagation_delay in zip(
-                        convolved_samples, propagation_delays
-                    )
-                ],
-                dim=0,
-            )
-
-            return ObjectDict(
-                samples=convolved_samples,
-                sample_rate=sample_rate,
-                targets=targets,  # FIXME: compensate targets as well?
-                target_rate=target_rate,
-            )
-
-        else:
-            return ObjectDict(
-                samples=convolved_samples[..., :num_samples],
-                sample_rate=sample_rate,
-                targets=targets,  # FIXME: crop targets as well?
-                target_rate=target_rate,
-            )
