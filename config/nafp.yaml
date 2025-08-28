@@ -9,7 +9,7 @@ noise_dir: '../data/aug/ir'
 arch: 'nafp'
 fs: 8000
 dur: 1.0
-offset: 0.5
+offset: 0.2
 norm: 0.95
 win_len: 1024
 hop_len: 256

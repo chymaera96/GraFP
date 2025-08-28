@@ -197,6 +197,10 @@ def main():
         elif args.model == 'tc12':
             cfg['offset'] = 0.125
             cfg['overlap'] = 0.75
+
+        elif args.model.startswith('nafp'):
+            cfg['offset'] = 0.2
+            cfg['overlap'] = 0.5
     else:
         raise NotImplementedError("Please specify a model to test in the config file or via --model argument.")
     ###########################################################
