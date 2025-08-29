@@ -136,9 +136,11 @@ def create_fp_dir(resume=None, ckp=None, epoch=1, train=True, large=False, paren
         parent_dir = 'logs/store/valid'
     else:
         if large:
-            parent_dir = 'logs/store/large'
+            # parent_dir = 'logs/store/large'
+            parent_dir = '/data/scratch/acw723/logs/emb/large'
         elif not large and parent_dir is None:
-            parent_dir = 'logs/store/medium'
+            # parent_dir = 'logs/store/medium'
+            parent_dir = '/data/scratch/acw723/logs/emb/medium'
 
     if not os.path.exists(parent_dir):
         os.makedirs(parent_dir)
