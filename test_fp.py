@@ -126,29 +126,32 @@ def create_fp_db(dataloader, augment, model, output_root_dir, verbose=True):
 
     np.save(f'{output_root_dir}/db_shape.npy', arr_shape)
 
-def create_dummy_db(dataloader, augment, model, output_root_dir, fname='dummy_db', verbose=True):
+def create_dummy_db(dataloader, augment, model, output_root_dir, fname='dummy_db', verbose=True, max_size=128):
     fp = []
     print("=> Creating dummy fingerprints...")
     for idx, audio in enumerate(dataloader):
         audio = audio.to(device)
         x_i, _ = augment(audio, None)
-        # assert x_i.size(1) == 64 and len(x_i.size()) == 3, f"Shape of x_i: {x_i.shape}"
-        if x_i.size(0) < 256:
-            x_list = [x_i]
-        else:
-            x_1, x_2 = torch.chunk(x_i, 2, dim=0)
-            x_list = [x_1, x_2]
-        for x_i in x_list:
-            with torch.no_grad():
-                _, _, z_i, _= model(x_i.to(device),x_i.to(device))  
+        x_list = torch.split(x_i, max_size, dim=0)
+        fp_size = 0
+        for x in x_list:
+            try:
+                with torch.no_grad():
+                    _, _, z_i, _= model(x.to(device),x.to(device)) 
 
-            # print(f"Shape of z_i: {z_i.shape}")
+            except Exception as e:
+                print(f"Error in model forward pass in file")
+                print(f"Shape of x_i (dummy): {x.shape}")
+                print(f"x_i mean: {x.mean()}, x_i std: {x.std()}")
+                print(f"All x shapes in list: {[x_.shape for x_ in x_list]}")
+                print(f"Index of data {idx}")
+                continue 
+
             fp.append(z_i.detach().cpu().numpy())
-
-        # print(f"Shape of fp: len(fp): {len(fp)}, shape: {fp[-1].shape}")
+            fp_size += z_i.shape[0]
         
         if verbose and idx % 100 == 0:
-            print(f"Step [{idx}/{len(dataloader)}]\t shape: {z_i.shape}")
+            print(f"Step [{idx}/{len(dataloader)}]\t shape: {fp_size}")
     
     fp = np.concatenate(fp)
     arr_shape = (len(fp), z_i.shape[-1])
@@ -304,7 +307,7 @@ def main():
                 print("=> no checkpoint found at '{}'".format(ckp))
                 continue
             
-            if args.test_dir == 'data/fma_large.json':
+            if args.test_dir.enswith('fma_large.json'):
                 fp_dir = create_fp_dir(resume=ckp, train=False, large=True)
             else:
                 fp_dir = create_fp_dir(resume=ckp, train=False, large=False)
