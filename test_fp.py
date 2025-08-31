@@ -307,7 +307,7 @@ def main():
                 print("=> no checkpoint found at '{}'".format(ckp))
                 continue
             
-            if args.test_dir.enswith('fma_large.json'):
+            if args.test_dir.endswith('fma_large.json'):
                 fp_dir = create_fp_dir(resume=ckp, train=False, large=True)
             else:
                 fp_dir = create_fp_dir(resume=ckp, train=False, large=False)
