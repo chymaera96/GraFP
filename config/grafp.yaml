@@ -1,9 +1,9 @@
 # Dataset directories
 data_dir: 'data'
-train_dir: 'PATH/TO/TRAINING/DATA'
+train_dir: '/data/scratch/acw723/fma_medium'
 val_dir: 'PATH/TO/VALIDATION/DATA'
-ir_dir: 'PATH/TO/IR/DATA'
-noise_dir: 'PATH/TO/NOISE/DATA'
+ir_dir: '/data/scratch/acw723/datasets/ir/ir.json'
+noise_dir: '/data/scratch/acw723/datasets/noise/noise.json'
 
 
 # Model input parameters

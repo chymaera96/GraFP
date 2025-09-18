@@ -225,8 +225,8 @@ def main():
     if args.noise_idx is not None:
         noise_test_idx = load_augmentation_index(noise_dir, json_path=args.noise_idx, splits=0.8)[args.noise_split]
     else:
-        noise_test_idx = load_augmentation_index(noise_dir, splits=0.8)["test"]
-    ir_test_idx = load_augmentation_index(ir_dir, splits=0.8)["test"]
+        noise_test_idx = load_augmentation_index(noise_dir, splits=0.8)["train"]
+    ir_test_idx = load_augmentation_index(ir_dir, splits=0.8)["train"]
 
     if "sanir" in args.text:
         print("Queries without IR augmentation!")
