@@ -222,11 +222,18 @@ def main():
     print("Creating dataloaders ...")
 
     # Augmentation for testing with specific noise subsets
-    if args.noise_idx is not None:
-        noise_test_idx = load_augmentation_index(noise_dir, json_path=args.noise_idx, splits=0.8)[args.noise_split]
-    else:
-        noise_test_idx = load_augmentation_index(noise_dir, splits=0.8)["train"]
-    ir_test_idx = load_augmentation_index(ir_dir, splits=0.8)["train"]
+    # if args.noise_idx is not None:
+    #     noise_test_idx = load_augmentation_index(noise_dir, json_path=args.noise_idx, splits=0.8)[args.noise_split]
+    # else:
+    #     noise_test_idx = load_augmentation_index(noise_dir, splits=0.8)["train"]
+    # ir_test_idx = load_augmentation_index(ir_dir, splits=0.8)["train"]
+    with open(cfg["noise_dir"], 'r') as fp:
+        noise_dataset = json.load(fp)
+    noise_test_idx = noise_dataset["train"]
+    with open(cfg["ir_dir"], 'r') as fp:
+        ir_dataset = json.load(fp)
+    ir_test_idx = ir_dataset["train"]
+
 
     if "sanir" in args.text:
         print("Queries without IR augmentation!")
