@@ -39,7 +39,7 @@ error_threshold: 5
 n_frames: 32 # depends on the spectrogram parameters
 overlap: 0.9
 tr_snr: [0, 20]
-val_snr: [19, 21]
+val_snr: [3, 30]
 test_snr: [19, 21]
 time_mask: 8
 freq_mask: 16
